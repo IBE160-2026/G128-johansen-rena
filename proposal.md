@@ -1,6 +1,6 @@
 # Prosjektforslag – IBE160 Programmering med KI
 
-**Gruppe:** Kevin Renå og Stian
+**Gruppe:** Kevin Renå og Stian Knoll Johansen
 **Arbeidstittel:** TripBuilder AI
 **Vanskelighetsgrad (egen vurdering):** Vanskelig
 
