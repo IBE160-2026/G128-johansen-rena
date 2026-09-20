@@ -52,7 +52,7 @@ Ingen delt, detaljert sensureringsrubrikk er tilgjengelig utover at vanskelighet
 |---|---|---|---|
 | Brukerutfall | Tid fra prompt til publisert, fungerende deltakerside | Under 30 minutter, uten manuell koding | Test med 2–3 fiktive turer før innlevering |
 | Adopsjon/atferd | Andel KI-genererte rebusposter arrangøren beholder uten redigering | Over 60 % | Etter test med reell/fiktiv prompt |
-| Kvalitet/tillit | Andel geolokasjonssjekk som låser opp korrekt innenfor definert radius | 80 % i test | Under funksjonstesting |
+| Kvalitet/tillit | Andel geolokasjonssjekk som låser opp korrekt innenfor definert radius | Over 80 % i test | Under funksjonstesting |
 | Kvalitet/tillit | Andel KI-genererte turer som består QA-agentens sjekk uten menneskelig overstyring | Rapporteres, ikke et fast mål — brukes som datapunkt i refleksjonsrapporten | Gjennom hele utviklingsperioden |
 | Business/formål | Fungerende ende-til-ende demo (prompt → generert tur → deltakerflyt → opplåsing → poengoppdatering) | Vellykket eksamensdemo | Ved innlevering/eksamen |
 
