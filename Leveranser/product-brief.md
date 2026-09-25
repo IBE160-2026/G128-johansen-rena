@@ -1,6 +1,6 @@
 ---
 title: "Product Brief: TripBuilder AI"
-status: draft
+status: Fullført
 created: 2026-09-17
 updated: 2026-09-25
 ---
