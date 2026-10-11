@@ -2,7 +2,7 @@
 title: "Product Brief: TripBuilder AI"
 status: Fullført
 created: 2026-09-17
-updated: 2026-09-25
+updated: 2026-10-11
 ---
 
 # Product Brief: TripBuilder AI
@@ -12,6 +12,8 @@ updated: 2026-09-25
 TripBuilder AI er en webplattform der en arrangør beskriver en tur eller et arrangement i naturlig språk (destinasjon, deltakerantall, program, en rebus med poeng og fysiske poster), og en kjede av KI-agenter bygger en ferdig, mobilvennlig deltakernettside ut fra beskrivelsen. Nettsiden gir program per dag, lag og ledertavle, kart med rebusposter, geolåste oppgaver som først åpnes når deltakeren fysisk er på stedet, bildeopplasting og automatisk poengregning. Arrangøren beholder full kontroll: alt KI-en foreslår kan redigeres, regenereres eller godkjennes før turen publiseres.
 
 Teamet har allerede bygget en tilsvarende nettside manuelt for én konkret blåtur. TripBuilder AI tar det samme resultatet og gjør det til en gjenbrukbar plattform, slik at arbeidet som i dag gjøres på nytt for hver tur (oppsett av program, kart, lag og poengsystem), kan gjøres av KI-en på minutter i stedet for timer eller dager.
+
+For å sikre gjennomførbarhet i semesteret skal V1 leveres i klare trinn: først KI-generert tur med redigering og publisering, deretter geolåst rebus og poenglogikk, så ledertavle, bildeopplasting og til slutt mer avanserte regenereringsflyter. V1 prioriterer derfor en liten, solid kjerneflyt fremfor et stort konsept med flere samtidige KI-agenter og flere betalte API-er.
 
 Hvorfor nå: Språkmodeller kan i dag levere pålitelig strukturert output (JSON) og har god nok kunnskap om steder til å foreslå realistiske poster og oppgaver. Det gjør det mulig å la KI-en fylle en fast, gjennomtestet datamodell i stedet for å generere kode, og dermed få et forutsigbart resultat som arrangøren kan stole på. For bare få år siden måtte dette innholdet vært skrevet for hånd, eller malene vært så stive at de ikke passet den enkelte turen.
 
@@ -49,23 +51,38 @@ En etablert aktør som Goosechase kunne i prinsippet legge til et reiseprogram-l
 
 ## Suksesskriterier
 
-Ingen delt, detaljert sensureringsrubrikk er tilgjengelig utover at vanskelighetsgrad teller i sensuren. Bekreft med faglærer om mulig. Signalene under er derfor satt som en arbeidsdefinisjon gruppen selv står inne for.
+Ingen delt, detaljert sensureringsrubrikk er tilgjengelig utover at vanskelighetsgrad teller i sensuren. Signalene under er derfor satt som arbeidsdefinisjoner som kan verifiseres i praksis og med tester.
 
 | Signal | Metrikk / bevis | Mål | Når målt |
 |---|---|---|---|
 | Brukerutfall | Tid fra prompt til publisert, fungerende deltakerside | Under 30 minutter, uten manuell koding | Test med 2–3 fiktive turer før innlevering |
+| KI-output | Generert JSON validerer mot datamodellen uten manuelle rettinger | 100 % av testdata validerer | Under funksjonstesting |
+| Geofencing | Alle rebusposter har koordinater innenfor turens definert område | 100 % av poster i test | Under funksjonstesting |
+| Struktur | Én oppføring per dag i oppgitt periode og riktig antall poster per dag | 100 % av dager og poster oppfyller formatet | Under funksjonstesting |
 | Adopsjon/atferd | Andel KI-genererte rebusposter arrangøren beholder uten redigering | Over 60 % | Etter test med reell/fiktiv prompt |
 | Kvalitet/tillit | Andel geolokasjonssjekk som låser opp korrekt innenfor definert radius | Over 80 % i test | Under funksjonstesting |
-| Kvalitet/tillit | Andel KI-genererte turer som består QA-agentens sjekk uten menneskelig overstyring | Rapporteres, ikke et fast mål. Brukes som datapunkt i refleksjonsrapporten | Gjennom hele utviklingsperioden |
 | Deltakeropplevelse | Tid fra poeng registreres til ledertavlen er oppdatert hos de andre deltakerne | Under 5 sekunder | Under funksjonstesting med flere mobiler samtidig |
 | Deltakeropplevelse | Innlastingstid for deltakersiden på mobil over mobilnett (4G) | Under 3 sekunder | Under funksjonstesting |
 | Business/formål | Fungerende ende-til-ende demo (prompt → generert tur → deltakerflyt → opplåsing → poengoppdatering) | Vellykket eksamensdemo | Ved innlevering/eksamen |
 
-Løsningen skal også demonstrere vanskelighetsgraden gruppen selv har meldt inn («Vanskelig»): flerstegs KI-agentkjede, strukturert JSON-utveksling, geolokasjon og sanntidsdata i samspill.
+Løsningen skal også demonstrere vanskelighetsgraden gruppen selv har meldt inn («Vanskelig»): strukturert JSON-utveksling, geolokasjon, sanntidsdata og en flerstegs KI-flyt i samspill. Det ekstra QA-trinnet skal i V1 beskrives som en regelbasert valideringsmodell fremfor et separat, betalt QA-system, med mulighet for at et ekstra KI-QA-steg kommer senere.
+
+## V1-prioritering og lokal kjørbarhet
+
+For å holde prosjektet gjennomførbart og samtidig bevise kjerneverdien vil første versjon leveres i flere faser:
+
+1. Trinn 1: KI-generert tur med prompt, redigering og publisering, uten ekstra avanserte funksjoner.
+2. Trinn 2: Geolåst rebus og automatisk poengregning, med mobilopplevelse for deltakere.
+3. Trinn 3: Sanntids ledertavle, lag, bildeopplasting og oppdatering i felt.
+4. Trinn 4: Regenerering av enkeltdeler i naturlig språk og flere iterasjoner på innholdet.
+
+Dette gjør det mulig å levere en fungerende app selv om ikke alle delene blir ferdige samtidig. Sensor og andre interessenter skal også kunne kjøre kjerneflyten lokalt uten gruppens nøkler, betalte kontoer eller egen infrastruktur. Derfor skal V1 ha en seed-data- eller demo-modus med ferdig generert prøvetur og mock-data, samt en mock- eller stub-modus for agentkjeden slik at hovedflyten kan testes uten eksterne API-er.
 
 ## Omfang
 
-**Inne (V1):** Arrangørflyt (prompt → KI → redigering og regenerering av enkeltdeler → godkjenning → publisering). Deltakerside med program, lag, ledertavle, kart og geolåst rebus. Bildeopplasting og automatisk poengregning. KI-generert innhold med et eget QA-steg før arrangøren ser resultatet. Innlogging for arrangør og deltakere, der deltakerinnloggingen skal være rask og kun kreves én gang per tur.
+**Inne (V1, trinn 1–3):** Arrangørflyt (prompt → KI → redigering og regenerering av enkeltdeler → godkjenning → publisering). Deltakerside med program, lag, ledertavle, kart og geolåst rebus. Bildeopplasting og automatisk poengregning. KI-generert innhold med et regelbasert valideringslag før arrangøren ser resultatet. Innlogging for arrangør og deltakere, der deltakerinnloggingen skal være rask og kun kreves én gang per tur.
+
+**Inne (V1, trinn 4):** Flere iterasjoner på enkelt komponenter via naturlig språk, uten at hele turen må regenereres fra bunnen.
 
 **Ute (V1):** KI-generert kodebase per tur (fast datamodell fylles av KI, koden er felles). Betaling og booking. Ruteoptimalisering. Native app. Automatisk deploy per arrangement.
 
