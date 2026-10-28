@@ -34,8 +34,8 @@ sources:
 |---|---|---|---|
 | Innlogging | Start → «Lag en tur» | E-post med magisk lenke | FR-13 |
 | Mine turer | Etter innlogging | Liste over utkast og publiserte turer, og knappen «Ny tur» | – |
-| Ny tur | Mine turer | Nøkkelfelt øverst (Destinasjon\*, Fra\*, Til\*, Deltakere\*, Lag) og deretter et stort tekstfelt («Fortell om turen») med eksempeltekst og hint om program og rebus | FR-1 |
-| Genererer | Ny tur → «Lag utkast» | Fremdrift i steg: plan → innhold → kontroll | FR-2 |
+| Ny tur | Mine turer | Nøkkelfelt øverst (Destinasjon\*, Fra\*, Til\*, Deltakere\*, Lag, Antall poster) og deretter et stort tekstfelt («Fortell om turen») med eksempeltekst og hint om program og rebus | FR-1 |
+| Genererer | Ny tur → «Lag utkast» | Fremdrift i steg: plan → innhold → kontroll. Siden må være åpen til utkastet er klart | FR-2 |
 | Utkast | Genererer, eller Mine turer | Faner for Program, Poster, Lag og Poeng. Alt kan redigeres. Postene vises også på kart | FR-3, FR-5, FR-8 |
 | Publiser | Utkast → «Publiser» | Bekreftelse, deretter turkode, lenke og QR-kode | FR-4 |
 | Godkjenning | Mine turer → tur, med teller for ventende | Kø med innsendinger som kan godkjennes eller avvises | FR-15 |
@@ -77,19 +77,19 @@ Atferd. Det visuelle står i DESIGN.md under Components.
 
 | Komponent | Bruk | Regler |
 |---|---|---|
-| Nøkkelfelt | Ny tur | Påkrevde felt er merket med \*. Feil vises inline når feltet forlates («Til-dato kan ikke være før fra-dato», «Maks 6 lag»). Datofeltene bruker den innebygde datovelgeren |
+| Nøkkelfelt | Ny tur | Påkrevde felt er merket med \*. Feil vises inline når feltet forlates («Til-dato kan ikke være før fra-dato», «Maks 6 lag», «Antall poster må være minst 1»). Datofeltene bruker den innebygde datovelgeren |
 | Promptfelt | Ny tur | Krever minst ca. 30 tegn. Ved for kort tekst: inline-hint om hva som mangler, som program eller rebus (FR-1). Felt og tekst lagres lokalt mens arrangøren skriver |
-| Fremdriftssteg | Genererer | Viser hvilket steg som kjører. Hvis valideringen feiler, prøves det én gang til i stillhet (PRD §8.5). Feiler det igjen, vises en feilmelding med «Prøv igjen» og «Rediger beskrivelsen» |
+| Fremdriftssteg | Genererer | Viser hvilket steg som kjører. Hvis valideringen feiler, prøves det én gang til i stillhet (PRD §8.5). Feiler det igjen, vises en feilmelding med «Prøv igjen» og «Rediger beskrivelsen». «Lag utkast» er låst mens genereringen pågår, så et dobbeltklikk ikke starter to genereringer |
 | Redigerbart felt | Utkast | Redigeres på stedet og lagres automatisk. Felt med valideringsfeil får rød kant og en forklaring |
-| Kartvelger | Utkast → Poster | Posten flyttes ved å dra markøren. Radius vises som en sirkel. Posisjoner utenfor turens område avvises med en forklaring |
+| Kartvelger | Utkast → Poster | Posten flyttes ved å dra markøren. Radius vises som en sirkel. Posisjoner utenfor turens område avvises med en forklaring. Turens område vises som en stor sirkel som arrangøren kan flytte og endre størrelse på før publisering |
 | Regenerer-felt | Utkast, per element (trinn D) | Kommando i fritekst. Viser forslaget ved siden av gjeldende versjon med «Bruk» og «Behold gammel». Bare det valgte elementet endres |
 | Postkort | Kart | Avstanden oppdateres mens deltakeren beveger seg. Knappen «Løs oppgaven» blir aktiv straks deltakeren er innenfor radius |
 | Foto-input | Send inn | Åpner kameraet direkte (`capture`), med galleri som alternativ. Bildet komprimeres i klienten før opplasting `[ASSUMPTION]` |
-| Endringsbanner | Deltakerflatene | «Programmet er oppdatert.» vises øverst når noe er endret siden deltakeren sist så. Trykk åpner I dag med de endrede elementene uthevet. Banneret kan lukkes. |
-| Endret-merke | Programkort, postkort og postliste | Liten chip med «Endret» på elementer som er nyere enn deltakerens siste besøk (AD-16). Den forsvinner når elementet er sett. |
+| Endringsbanner | Deltakerflatene | «Programmet er oppdatert.» vises øverst når noe er endret siden deltakeren sist så. Trykk åpner I dag med de endrede elementene uthevet. «Merk alle som sett» fjerner merkene for alt som er endret til nå, og endringer som kommer etterpå, gir banneret på nytt. |
+| Endret-merke | Programkort, postkort og postliste | Liten chip med «Endret» på elementer som er endret siden deltakeren sist så akkurat det elementet (AD-16). Den forsvinner når elementet åpnes, og andre endrede elementer beholder merket. |
 | Deaktiver post | Rediger underveis | «Deaktiver» med bekreftelse: «Lag som har løst posten, beholder poengene.» Handlingen kan angres med «Aktiver igjen». En post uten innsendinger kan slettes. |
 | KI-forslag underveis | Rediger underveis | Samme mønster som Regenerer-felt. Forslaget vises med «Bruk» og «Forkast», og ingenting går live før «Bruk» |
-| Godkjenningskort | Godkjenning | Godkjenn og Avvis er ett trykk hver. Avvis lar arrangøren legge til en kort begrunnelse (valgfritt). Angre er tilgjengelig i 5 s |
+| Godkjenningskort | Godkjenning | Godkjenn og Avvis er ett trykk hver. Avvis lar arrangøren legge til en kort begrunnelse (valgfritt). Beslutningen sendes først etter 5 s, og «Angre» i den perioden avbryter den, så verken poeng eller andre klienter påvirkes |
 | Ledertavle | Ledertavle-fanen og Turoversikt | Oppdateres uten at siden lastes på nytt. Når plasseringer endres, flyttes radene med en kort animasjon |
 | Posisjonssimulator | Kart, bare i demo-modus | Arrangøren trykker på kartet eller velger «Gå til post N» for å sette en simulert posisjon (FR-6, gjennomføringsplanen B.2) |
 
@@ -98,17 +98,17 @@ Atferd. Det visuelle står i DESIGN.md under Components.
 | Tilstand | Flate | Behandling |
 |---|---|---|
 | Tomt (ingen turer) | Mine turer | «Ingen turer ennå.» og knappen «Ny tur» |
-| Genererer | Genererer | Fremdriftssteg. Arrangøren kan forlate siden, og utkastet dukker opp i Mine turer |
+| Genererer | Genererer | Fremdriftssteg og teksten «Ikke lukk siden, dette tar litt tid.» Lukkes siden, avbrytes genereringen, og beskrivelsen er bevart |
 | Generering feilet | Genererer | Kort forklaring og to valg (se Fremdriftssteg). Det som er skrevet, beholdes |
 | Valideringsfeil | Utkast | Teller øverst («2 ting må rettes før publisering»). Publiser er deaktivert til alt er rettet |
 | Turen er ikke publisert | Bli med | «Turen er ikke åpnet ennå.» |
 | Feil turkode | Bli med | Inline-feil under feltet. Det som er skrevet, blir stående |
-| Posisjon nektet | Kart, Post | Forklaring og «Prøv igjen». Kartet virker fortsatt, men alle poster forblir låst |
+| Posisjon nektet | Kart, Post | Forklaring og «Prøv igjen». Kartet virker fortsatt. Geolåste poster forblir låst, mens åpne poster kan løses som vanlig |
 | Unøyaktig posisjon | Kart | Usikkerheten vises som en sirkel rundt egen posisjon, og teksten «Venter på bedre GPS…» |
 | Låst post | Post | Avstand, retning og hint. Selve oppgaveteksten er skjult |
 | Opplåst post | Post | Oppgaveteksten og knappen «Løs oppgaven» |
 | Sender | Send inn | Knappen blir til en spinner, og skjemaet er låst |
-| Uten nett | Send inn | Innsendingen legges i kø lokalt og sendes automatisk senere. Teksten er «Sendes når du har dekning». `[ASSUMPTION]` Dette kan bli en utvidelse etter V1 |
+| Uten nett eller feilet opplasting | Send inn | Ingenting legges i kø i V1. Teksten er «Ingen dekning. Prøv igjen når du har nett.» Svaret og bildet blir stående i skjemaet, og «Sendt»-kvitteringen vises først når serveren har bekreftet |
 | Venter | Laget, Post | Chip i `warning` med «Venter på godkjenning» |
 | Godkjent | Laget, Post, Ledertavle | Chip i `success`. Poengene telles og ledertavlen oppdateres (under 5 s, SM-5) |
 | Avvist | Laget, Post | Chip i `danger` og eventuell begrunnelse. Laget kan sende inn på nytt `[ASSUMPTION]` |
@@ -208,8 +208,7 @@ Edge case: Marte deaktiverer post 4 fordi den er stengt. To lag har allerede lø
 
 ## Åpne punkter
 
-- Hvordan lagtildelingen skal skje: arrangøren fordeler, eller deltakeren velger selv.
 - Om avviste innsendinger kan sendes inn på nytt, og om de i så fall gir fulle poeng.
-- Om køing av innsendinger uten nett er med i V1 eller kommer senere.
 - Om arrangøren også kan delta på turen med samme bruker.
+- Besluttet etter QA (2026-10-28): automatisk lagtildeling med flytting i etterkant, ingen kø uten nett i V1, sett-status per element, angre som forsinket sending, og at genereringssiden må være åpen.
 - Hvordan sanntiden synkroniseres mellom faner i demo-modus. Dette henger sammen med PRD §8.4, som er utsatt.

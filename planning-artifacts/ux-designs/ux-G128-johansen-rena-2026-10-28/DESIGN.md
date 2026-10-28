@@ -141,7 +141,7 @@ Systemfonter, slik at ingen fontfiler må lastes. Det hjelper på kravet om unde
 
 Skalaen er 4, 8, 12, 16, 24 og 32 px. Mobilmargen er 16 px. Deltakervisningen er alltid én kolonne, med bunnfaner som er lett å nå med tommelen.
 
-Arrangørvisningen på PC har to kolonner: utkastets innhold til venstre og kart eller detaljer til høyre. Under 768 px faller den sammen til én kolonne. `[ASSUMPTION]`
+Arrangørvisningen på PC har to kolonner: utkastets innhold til venstre og kart eller detaljer til høyre. Under 1024 px faller den sammen til én kolonne med kartet i en egen fane, samme brytepunkt som i EXPERIENCE.md.
 
 ## Elevation & Depth
 

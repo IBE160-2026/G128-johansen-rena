@@ -4,6 +4,14 @@ Gruppeprosjekt i **IBE160 Programmering med KI** ved Høgskolen i Molde, høsten
 
 Repoet inneholder gruppens applikasjon og dokumentasjon av utvikling, testing og kvalitetssikring med KI.
 
+## Status (28. oktober 2026)
+
+- **Fase:** Planleggingen (fase 0) er ferdig frem til sprint planning. Applikasjonen er ikke implementert ennå.
+- **Plan:** [planning-artifacts/gjennomforingsplan.md](planning-artifacts/gjennomforingsplan.md)
+- **Leveranser:** [Leveranser/product-brief.md](Leveranser/product-brief.md) er den gjeldende briefen. Kopien i `planning-artifacts/briefs/` er BMAD-arbeidskopien.
+- **Planleggingsdokumenter:** PRD, UX, arkitektur og epics/stories ligger i [planning-artifacts/](planning-artifacts/).
+- **QA:** Uavhengig QA i [OpenAI_QA/](OpenAI_QA/), og oppfølgingen av den i [planning-artifacts/qa-oppfolging-2026-10-28.md](planning-artifacts/qa-oppfolging-2026-10-28.md).
+
 ## Medlemmer
 
 - Stian Knoll Johansen

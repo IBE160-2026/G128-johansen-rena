@@ -19,8 +19,8 @@ Dokumentet deler TripBuilder AI opp i epics og stories som kan implementeres. Gr
 
 ### Funksjonelle krav
 
-FR1: Arrangøren fyller ut nøkkelfelt (destinasjon, fra- og til-dato, antall deltakere og eventuelt antall lag) og beskriver resten i naturlig språk. Manglende eller ugyldige felt og for kort tekst gir en tydelig feilmelding.
-FR2: Systemet genererer et strukturert turutkast (dager, programposter, poster, lag) som validerer mot datamodellen og reglene. Ved feil får KI-en ett nytt forsøk, og deretter vises en tydelig feilmelding.
+FR1: Arrangøren fyller ut nøkkelfelt (destinasjon, fra- og til-dato, antall deltakere, og eventuelt antall lag og antall poster) og beskriver resten i naturlig språk. Manglende eller ugyldige felt og for kort tekst gir en tydelig feilmelding.
+FR2: Systemet genererer et strukturert turutkast (dager, programposter, poster, lag) som validerer mot datamodellen og reglene, med nøyaktig én dag per dato og minst én programpost per dag. Ved feil får KI-en ett nytt forsøk, og deretter vises en tydelig feilmelding.
 FR3: Arrangøren kan redigere enkeltelementer i utkastet uten at andre elementer påvirkes, og kan be om nytt forslag for ett element i naturlig språk.
 FR4: Arrangøren publiserer turen med en eksplisitt handling, og deretter er turen tilgjengelig for deltakerne.
 FR5: Hver rebuspost har gyldige koordinater og en opplåsingsradius, og er enten geolåst eller åpen (`requires_location`). Poster uten gyldig område avvises i valideringen.
@@ -33,7 +33,7 @@ FR11: Appen kan startes lokalt med en ferdig prøvetur (seed-data) uten eksterne
 FR12: KI-delen kan mockes, og kjerneflyten kan kjøres i demo-modus uten innlogging og med valg av rolle.
 FR13: Arrangøren logger inn med e-post (magisk lenke). Bare arrangøren av turen kan endre den, publisere den og godkjenne innsendinger.
 FR14: Deltakeren blir med via turkode og navn én gang og forblir innlogget gjennom turen. Deltakeren ser bare sin egen tur.
-FR15: Arrangøren godkjenner eller avviser innsendinger (ventende → godkjent eller avvist). Bare godkjente innsendinger gir poeng, og deltakeren ser statusen.
+FR15: Arrangøren godkjenner eller avviser innsendinger (ventende → godkjent eller avvist). Bare godkjente innsendinger gir poeng, og poengene fryses ved godkjenning. Deltakeren ser statusen.
 FR16: KI-en velger et enkelt tema per tur (aksentfarge og symbol fra faste lister). Arrangøren kan endre det, og deltakersiden bruker det.
 FR17: Arrangøren kan endre, legge til og deaktivere programposter og poster på en publisert tur, for hånd eller med KI-forslag som må godkjennes. Hver endring valideres og gjelder med en gang. Poster med godkjente innsendinger deaktiveres i stedet for å slettes, og poengene beholdes.
 FR18: Deltakerne ser endringer innen 5 s uten refresh, med «Endret»-merke og banneret «Programmet er oppdatert». Deaktiverte poster vises nedtonet og merket «Deaktivert».
@@ -41,36 +41,37 @@ FR18: Deltakerne ser endringer innen 5 s uten refresh, med «Endret»-merke og b
 ### Ikke-funksjonelle krav
 
 NFR1: Fra prompt til publisert deltakerside tar det under 30 minutter, uten manuell koding (SM-1).
-NFR2: 100 % av generert JSON validerer mot datamodellen (SM-2).
+NFR2: 100 % av utkast som lagres eller vises, validerer. Andelen genereringer som lykkes innen ett nytt forsøk, rapporteres separat (SM-2).
 NFR3: 100 % av postene i testdataene ligger innenfor turens område (SM-3).
-NFR4: Over 80 % av geofencing-sjekkene låser opp korrekt (SM-4).
+NFR4: 100 % riktige svar i deterministiske tester av opplåsing, og over 80 % i felttest med ekte GPS (SM-4).
 NFR5: Ledertavlen oppdateres innen 5 s etter godkjenning (SM-5).
 NFR6: Over 60 % av KI-genererte poster beholdes uten redigering (SM-6, måles manuelt).
-NFR7: Deltakersiden laster på under 3 s over 4G (SM-7).
+NFR7: I dag-fanen har Largest Contentful Paint under 3 s i Lighthouse mobilprofil med 4G-struping og kald cache, median av 3 målinger (SM-7).
 NFR8: Kjerneflyten kan kjøres i demo-modus uten eksterne kontoer (SM-8).
 NFR9: Appen er enkel å bruke for arrangører uten teknisk bakgrunn, og det genererte innholdet er strukturert og lett å gå gjennom.
 NFR10: Personvern: posisjon lagres aldri som historikk, og bilder er bare tilgjengelige for deltakerne på turen.
 
 ### Tilleggskrav (arkitektur)
 
-- **Startmal:** Gruppen laster opp koden fra den tidligere blåtursiden (React, Supabase, Leaflet) som mal. Epic 1, Story 1 setter opp prosjektet fra denne malen og løfter den til stacken i spinen: Vite `react-ts`, TypeScript 7.0 og Tailwind 4.3. Hvis malen ikke er inne når arbeidet starter, brukes den rene Vite-malen. Stories beskriver oppførsel og er ikke bundet til kode i malen.
+- **Startmal:** Gruppen laster opp koden fra den tidligere blåtursiden (React, Supabase, Leaflet) som mal. Epic 1, Story 1 setter opp prosjektet fra denne malen og løfter den til stacken i spinen: Vite `react-ts`, TypeScript 7.0 og Tailwind 4.3. Hvis malen ikke er inne når arbeidet starter, brukes den rene Vite-malen. Stories beskriver oppførsel og er ikke bundet til kode i malen. Versjonene verifiseres på nytt ved oppsett, og `package-lock.json` committes.
 - AD-14: Temaet er data (enum-verdier for aksent og ikon), ikke CSS.
 - AD-15: `TripRequest` (nøkkelfelt og beskrivelse) er input til `AgentPort.generate`. `validateTrip(draft, req)` sjekker at periode og antall lag stemmer.
 - AD-1: Ren domenekjerne i `src/domain` (skjema, validering, geo, poeng) som bare importerer zod.
 - AD-2 og AD-3: Zod-skjemaet `TripDraft` og `validateTrip()` er den eneste kontrakten. Edge Function gjør ett nytt forsøk med valideringsfeilene, og returnerer ellers `VALIDATION_FAILED`.
 - AD-4: Porter (`TripRepo`, `AgentPort`, `AuthPort`, `RealtimePort`, `StoragePort`, `PositionSource`) med demo- og supabase-adaptere. `VITE_APP_MODE` leses bare i `src/app/services.ts`. Demo starter uten miljøvariabler.
-- AD-5: Poeng avledes (viewet `team_scores` og `scoring.ts`) og lagres aldri. Hver post teller maks én gang per lag.
+- AD-5: Poeng avledes fra godkjente innsendinger (viewet `team_scores` og `scoring.ts`). `awarded_points` fryses ved godkjenning, og hver post teller maks én gang per lag.
 - AD-6: Haversine i `geo.ts`. Posisjonen sendes eller lagres aldri.
 - AD-7: Innsendinger følger livsløpet ventende → godkjent eller avvist, via RPC-en `review_submission`.
 - AD-8: Supabase Auth med e-post for arrangør og anonym innlogging for deltaker via RPC-en `join_trip`. All tilgang håndheves med RLS.
-- AD-9: Claude kalles bare i `supabase/functions/` (`generate-trip`, `regenerate-part`), og nøkkelen er en Supabase-secret.
+- AD-9: Claude kalles bare i `supabase/functions/` (`generate-trip`, `regenerate-part`), og nøkkelen er en Supabase-secret. Serverhemmeligheter har aldri `VITE_`-prefiks og finnes ikke i frontendbygget.
 - AD-10: Sanntid er signal og ny henting. Live bruker Supabase Realtime, demo bruker BroadcastChannel.
 - AD-11: Privat bucket `submissions/{trip_id}/{submission_id}.jpg`, komprimert til maks 1600 px, med signerte URL-er. Demo bruker IndexedDB.
 - AD-12: Regenerering bytter ut ett element med samme id, og hele turen valideres etterpå.
 - AD-13: En publisert tur kan endres med validering. Poster med innsendinger deaktiveres (`posts.status`) og slettes aldri. `updated_at` settes ved hver endring.
-- AD-16: `RealtimePort.onTripChanged` gir et signal om å hente på nytt. «Endret» betyr `updated_at` nyere enn `last_seen_at`, som lagres lokalt.
+- AD-16: `RealtimePort.onTripChanged` gir et signal om å hente på nytt. «Endret» beregnes per element mot lokal sett-status (`seen[element_id]` og `baseline_at`).
+- AD-17: All lagring av turstruktur i live-modus går gjennom Edge Function `save-trip` og SQL-funksjonen `apply_trip_change` i én transaksjon, med versjonskontroll (`VERSION_CONFLICT`). Klientene har bare lesetilgang til turtabellene.
 - Databasemigrasjoner ligger i `supabase/migrations/`. Miljøvariabler er dokumentert i `.env.example`. Frontend deployes til Vercel.
-- Tester: Vitest for domenet og Playwright for flyter i demo-modus.
+- Tester: Vitest for domenet og Playwright for flyter i demo-modus. Tilgangsregler testes med en live-integrasjonstest med to arrangører og to turer.
 
 ### UX-designkrav
 
@@ -81,13 +82,13 @@ UX-DR4: Kartmarkører i tre tilstander (låst, opplåst, fullført) med ikon og 
 UX-DR5: Flytende postkort over kartet med avstand, status og knappen «Løs oppgaven».
 UX-DR6: Status-chips (Venter, Godkjent, Avvist) med ikon og tekst.
 UX-DR7: Ledertavlerad med lagfarge, poeng i `score` og eget lag uthevet. Radene flyttes med animasjon, unntatt når brukeren har bedt om redusert bevegelse.
-UX-DR8: Godkjenningskort for arrangøren med Godkjenn, Avvis (valgfri begrunnelse) og angre i 5 s.
+UX-DR8: Godkjenningskort for arrangøren med Godkjenn, Avvis (valgfri begrunnelse) og angre i 5 s (forsinket sending).
 UX-DR9: Bunnfaner for deltakeren (I dag, Kart, Ledertavle, Laget).
 UX-DR10: Demo-banner i warning, og posisjonssimulator på kartet i demo-modus.
-UX-DR11: Ny tur har nøkkelfelt (Destinasjon\*, Fra\*, Til\*, Deltakere\*, Lag) med inline-validering, og et promptfelt med hint ved for kort tekst. Alt lagres lokalt mens arrangøren skriver.
+UX-DR11: Ny tur har nøkkelfelt (Destinasjon\*, Fra\*, Til\*, Deltakere\*, Lag, Antall poster) med inline-validering, og et promptfelt med hint ved for kort tekst. Alt lagres lokalt mens arrangøren skriver.
 UX-DR12: Fremdriftssteg under generering (plan → innhold → kontroll) med feiltilstand og valgene «Prøv igjen» og «Rediger beskrivelsen».
 UX-DR13: Redigering på stedet med autolagring, og valideringsfeil vist med rød kant og en teller som deaktiverer publisering.
-UX-DR14: Kartvelger der posten flyttes ved å dra, med radius som sirkel, og avvisning utenfor turens område.
+UX-DR14: Kartvelger der posten flyttes ved å dra, med radius som sirkel, og avvisning utenfor turens område. Turens område vises som en sirkel som arrangøren kan flytte og endre.
 UX-DR15: Tilstandene i EXPERIENCE.md under State Patterns er implementert (tomt, genererer, feil, posisjon nektet, unøyaktig posisjon, låst, opplåst, sender, venter, godkjent, avvist, ingen ventende).
 UX-DR16: Norsk mikrotekst etter tabellen under Voice and Tone. Ingen tekniske ord vises for brukeren.
 UX-DR17: Tilgjengelighet: etiketter med rolle og tilstand, status vises aldri bare med farge, `aria-live` på ledertavle og status, trykkflater på minst 48 px og synlig fokus.
@@ -98,7 +99,7 @@ UX-DR21: Deling ved publisering: turkode, lenke og QR-kode. Lenken forhåndsutfy
 UX-DR22: Faste lister for tema (aksentfarger som er forhåndsgodkjent for kontrast, og symboler) legges inn i DESIGN.md og brukes i toppen og aksentene på deltakersiden.
 UX-DR23: Åpne poster (ikke geolåst) får en egen markør og en egen tilstand på postkortet. Knappen «Løs oppgaven» er alltid aktiv for dem.
 UX-DR24: Deaktiverte poster: nedtonet markør med rød kant og chipen «Deaktivert». Oppgaven er skjult, og lag som har fullført, ser fortsatt hake og poeng.
-UX-DR25: Endret-merke på programkort og poster, og endringsbanneret «Programmet er oppdatert.» som åpner I dag med endringene uthevet.
+UX-DR25: Endret-merke per element på programkort og poster (forsvinner bare for elementet som åpnes), og endringsbanneret «Programmet er oppdatert.» som åpner I dag med endringene uthevet og har «Merk alle som sett».
 UX-DR26: Rediger underveis er laget for mobil først, med «+ Post», «+ Programpost», «Ny post med KI», «Deaktiver» og «Aktiver igjen», og bekreftelsen «Lagret. Deltakerne ser endringen nå.»
 
 ### Dekning av funksjonelle krav
@@ -178,7 +179,11 @@ slik at jeg kan prøve løsningen uten gruppens nøkler.
 **Gitt** kildekoden
 **Når** `VITE_APP_MODE` leses
 **Så** skjer det bare i `src/app/services.ts` (AD-4)
-**Og** `.env.example` dokumenterer alle variabler
+**Og** `.env.example` dokumenterer bare offentlige `VITE_`-variabler, uten hemmeligheter (AD-9)
+
+**Gitt** et nytt oppsett
+**Når** avhengighetene installeres
+**Så** er versjonene i spinen sjekket mot npm på nytt, og `package-lock.json` er committet
 
 ### Story 1.2: Turdata valideres av domenekjernen
 
@@ -193,9 +198,10 @@ slik at jeg aldri ser eller publiserer en ødelagt tur.
 **Så** returneres `{ ok: true }` for en gyldig tur
 **Og** feil returneres som `issues` med sti og norsk melding
 
-**Gitt** en tur der en dato i perioden mangler dag, en post ligger utenfor området, `radius_m` er 0 eller lavere, eller et poengtall ikke er positivt
+**Gitt** en tur der en dato i perioden mangler dag, en dag ligger utenfor perioden eller finnes to ganger, en dag mangler programposter, en post ligger utenfor området, `radius_m` er 0 eller lavere, eller et poengtall ikke er et positivt heltall
 **Når** den valideres
 **Så** avvises den med én konkret feil per brudd (FR2, FR5)
+**Og** hvert av disse tilfellene har sin egen enhetstest
 
 **Gitt** to kjente koordinater
 **Når** `distanceMeters()` i `geo.ts` kalles
@@ -273,7 +279,7 @@ slik at jeg finner veien til neste post.
 
 **Gitt** Kart-fanen
 **Når** den åpnes
-**Så** vises dagens poster som nummererte markører i riktig tilstand: låst, åpen (`requires_location = false`) eller fullført (UX-DR4, UX-DR23)
+**Så** vises dagens poster som nummererte markører i riktig tilstand: låst eller åpen (`requires_location = false`) (UX-DR4, UX-DR23). Tilstanden fullført kommer med godkjenning i Story 3.5
 **Og** kartet er zoomet slik at alle dagens poster synes
 
 **Gitt** kartet
@@ -303,7 +309,11 @@ slik at turene mine er mine og ingen andre kan endre dem (FR13).
 
 **Gitt** migrasjonen for denne storyen
 **Når** den kjøres
-**Så** finnes tabellen `trips` med `organizer_id`, og RLS gir bare eieren lese- og skrivetilgang til utkast (AD-8)
+**Så** finnes tabellen `trips` med `organizer_id` og `version`, og RLS gir bare eieren lesetilgang. Skriving skjer bare via funksjonene fra Story 2.4 (AD-8, AD-17)
+
+**Gitt** to arrangører med hver sin tur
+**Når** arrangør B prøver å lese eller endre turen til A med direkte API-kall
+**Så** avvises det
 
 **Gitt** demo-modus
 **Når** jeg velger rollen arrangør
@@ -322,7 +332,7 @@ slik at KI-en får sikre fakta uten at jeg må fylle ut et langt skjema (FR1).
 **Så** står teksten «Ingen turer ennå.» og knappen «Ny tur»
 
 **Gitt** Ny tur
-**Når** jeg lar Destinasjon, Fra, Til eller Deltakere stå tomme, setter til-dato før fra-dato, eller oppgir lag utenfor 1–6 eller flere lag enn deltakere
+**Når** jeg lar Destinasjon, Fra, Til eller Deltakere stå tomme, setter til-dato før fra-dato, oppgir lag utenfor 1–6 eller flere lag enn deltakere, eller oppgir antall poster under 1
 **Så** vises en inline-feil ved feltet, og «Lag utkast» sender ikke inn (UX-DR11)
 
 **Gitt** Ny tur
@@ -348,7 +358,12 @@ slik at hele arrangørflyten kan prøves lokalt (FR2, FR12).
 **Gitt** demo-modus og en gyldig beskrivelse
 **Når** jeg trykker «Lag utkast»
 **Så** viser Genererer fremdriftsstegene plan → innhold → kontroll (UX-DR12)
-**Og** mock-`AgentPort` returnerer en gyldig `TripDraft` basert på seed, tilpasset periode og antall lag fra `TripRequest`, som lagres som utkast og åpnes
+**Og** mock-`AgentPort` returnerer en gyldig `TripDraft` basert på seed, tilpasset periode, antall lag og antall poster fra `TripRequest`, som lagres som utkast og åpnes
+**Og** destinasjonen er alltid prøveturens, og Genererer viser «Demo: KI-en er simulert, og destinasjonen er alltid prøveturens»
+
+**Gitt** at genereringen pågår
+**Når** jeg trykker «Lag utkast» igjen eller forlater siden
+**Så** er knappen låst, og forlater jeg siden, avbrytes genereringen uten at beskrivelsen går tapt
 
 **Gitt** at mocken er satt til å feile (testflagg)
 **Når** genereringen kjøres
@@ -365,7 +380,7 @@ slik at turen er klar på minutter (FR2, FR16).
 **Gitt** live-modus
 **Når** `AgentPort` kaller `generate-trip`
 **Så** kaller Edge Function Claude med `TripRequest` og nøkkelen fra Supabase-secret, og returnerer en `TripDraft` som har passert `validateTrip(draft, req)` (AD-2, AD-9, AD-15)
-**Og** utkastet inneholder et tema valgt fra de faste listene
+**Og** utkastet inneholder et tema valgt fra de faste listene og et område (`area`) rundt destinasjonen
 
 **Gitt** et KI-svar som feiler valideringen
 **Når** Edge Function behandler det
@@ -374,7 +389,12 @@ slik at turen er klar på minutter (FR2, FR16).
 
 **Gitt** migrasjonen for denne storyen
 **Når** den kjøres
-**Så** finnes `days`, `program_items`, `posts` og `teams` med RLS for eieren, og utkastet lagres i dem
+**Så** finnes `days`, `program_items`, `posts` og `teams` med `CHECK`-begrensninger og RLS som bare gir eieren lesetilgang
+**Og** SQL-funksjonen `apply_trip_change` lagrer utkastet i én transaksjon, og `generate-trip` bruker den (AD-17)
+
+**Gitt** produksjonsbygget av frontenden
+**Når** det søkes etter `ANTHROPIC` og nøkkelverdien i `dist/`
+**Så** finnes ingen treff (AD-9)
 
 ### Story 2.5: Arrangøren redigerer program og poster
 
@@ -393,6 +413,17 @@ slik at turen blir slik jeg vil ha den (FR3, FR5).
 **Så** flyttes posten, og radius vises som en sirkel
 **Og** en posisjon utenfor turens område avvises med en forklaring (UX-DR14)
 **Og** jeg kan slå `requires_location` av eller på per post
+
+**Gitt** Poster-fanen
+**Når** jeg flytter eller endrer størrelse på sirkelen for turens område
+**Så** valideres alle poster mot det nye området, og poster utenfor får en feil (UX-DR14)
+
+**Gitt** live-modus
+**Når** en endring lagres
+**Så** går den gjennom Edge Function `save-trip`, som validerer og kaller `apply_trip_change` i én transaksjon (AD-17)
+**Og** et direkte skrivekall mot `posts` fra klienten avvises av RLS
+**Og** et ugyldig utkast sendt direkte til `save-trip` gir `VALIDATION_FAILED` og endrer ingenting
+**Og** lagres turen fra to enheter med samme `base_version`, får den siste `VERSION_CONFLICT` og henter turen på nytt
 
 **Gitt** valideringsfeil i utkastet
 **Når** de finnes
@@ -439,9 +470,9 @@ slik at deltakerne kommer inn (FR4).
 **Når** jeg prøver å publisere
 **Så** er det ikke mulig
 
-**Gitt** en publisert tur
-**Når** jeg prøver å slette en post som har innsendinger eller fjerne en dag
-**Så** blir sletting avvist med en forklaring, og jeg tilbys å deaktivere posten i stedet (AD-13)
+**Gitt** live-modus
+**Når** jeg publiserer
+**Så** skjer det via `save-trip` med `publish = true`, som validerer på serveren, så et ugyldig utkast ikke kan publiseres, heller ikke med direkte kall (AD-17)
 
 ## Epic 3: Deltakerne løser rebusen, og arrangøren godkjenner
 
@@ -464,13 +495,17 @@ slik at jeg slipper å lage konto (FR14).
 **Så** opprettes en anonym Supabase-sesjon, og `join_trip(code, name)` oppretter en `participant` som plasseres på laget med færrest medlemmer
 **Og** sesjonen overlever at nettleseren lukkes og åpnes igjen
 
+**Gitt** migrasjonen for denne storyen
+**Når** den kjøres
+**Så** finnes `participants` med RLS og RPC-en `join_trip`, og storyen virker på en ren database uten senere migrasjoner (AD-8)
+
 **Gitt** feil kode eller en tur som ikke er publisert
 **Når** jeg sender inn
 **Så** vises «Fant ikke turen. Sjekk koden og prøv igjen.» eller «Turen er ikke åpnet ennå.», og det jeg har skrevet, blir stående
 
-**Gitt** RLS
-**Når** jeg leser data
-**Så** ser jeg bare min egen publiserte tur (AD-8)
+**Gitt** to publiserte turer
+**Når** en deltaker på tur X leser data for tur Y med direkte API-kall
+**Så** får hen ingen rader (AD-8)
 
 ### Story 3.2: Poster låses opp når jeg er på stedet
 
@@ -507,7 +542,7 @@ slik at opplåsing kan prøves og testes innendørs.
 
 **Gitt** en Vitest-test med en tabell av posisjoner rundt en post
 **Når** opplåsingen beregnes
-**Så** stemmer over 80 % av tilfellene (målet er 100 %) med fasiten (NFR4)
+**Så** stemmer 100 % av tilfellene med fasiten, også posisjoner like innenfor, nøyaktig på og like utenfor radius (NFR4)
 
 ### Story 3.4: Deltakeren sender tekstsvar
 
@@ -521,10 +556,15 @@ slik at laget kan få poeng (FR7).
 **Når** jeg skriver svaret og trykker Send
 **Så** blir knappen en spinner, og det opprettes en `submission` med `status = pending` for laget mitt
 **Og** jeg ser «Sendt! Venter på godkjenning fra arrangøren.» og en Venter-chip (UX-DR6)
+**Og** kvitteringen vises først når serveren har bekreftet. Feiler sendingen, vises «Ingen dekning. Prøv igjen når du har nett.», og svaret blir stående (UX-DR15)
 
 **Gitt** migrasjonen for denne storyen
 **Når** den kjøres
-**Så** finnes `participants` og `submissions`, og RLS tillater bare at en deltaker oppretter innsendinger med status `pending` for eget lag (AD-7)
+**Så** finnes `submissions` med `awarded_points` og fremmednøkkelen `post_id` med `ON DELETE RESTRICT`, og RLS tillater bare at en deltaker oppretter innsendinger med status `pending` for eget lag (AD-7, AD-13)
+
+**Gitt** en deltaker
+**Når** hen med direkte API-kall sender inn med en annen turs `post_id`, et annet lags `team_id` eller `status = approved`
+**Så** avvises kallet
 
 **Gitt** Laget-fanen
 **Når** den åpnes
@@ -544,8 +584,20 @@ slik at bare riktige svar gir poeng (FR15).
 
 **Gitt** et godkjenningskort
 **Når** jeg trykker Godkjenn eller Avvis (med valgfri begrunnelse)
-**Så** kaller `review_submission` og endrer statusen. Bare arrangøren av turen kan gjøre dette (AD-7)
-**Og** angre er tilgjengelig i 5 s
+**Så** sendes beslutningen etter 5 s til `review_submission`, som endrer statusen og ved godkjenning setter `awarded_points` til postens poeng (AD-5, AD-7)
+**Og** trykker jeg «Angre» innen 5 s, sendes ingenting
+
+**Gitt** en deltaker eller en arrangør av en annen tur
+**Når** hen kaller `review_submission` direkte
+**Så** avvises kallet
+
+**Gitt** en innsending som allerede er godkjent
+**Når** `review_submission` kalles med samme beslutning igjen
+**Så** endres ingenting, og poengene telles fortsatt én gang
+
+**Gitt** at laget har en godkjent innsending på en post
+**Når** deltakerne ser kartet
+**Så** har posten tilstanden fullført (UX-DR4)
 
 **Gitt** en avvist innsending
 **Når** deltakeren ser den
@@ -565,7 +617,16 @@ slik at jeg vet hvordan vi ligger an (FR8).
 
 **Gitt** godkjente, ventende og avviste innsendinger, også flere godkjente på samme post
 **Når** `scoring.ts` og viewet `team_scores` beregner poengene
-**Så** teller bare godkjente, maks én gang per lag og post, og begge gir samme svar på de samme testtilfellene (AD-5)
+**Så** teller bare `awarded_points` fra godkjente innsendinger, maks én gang per lag og post, og begge gir samme svar på de samme testtilfellene (AD-5)
+**Og** databasen tillater ikke to godkjente innsendinger for samme lag og post
+
+**Gitt** at postens poeng endres etter at en innsending er godkjent
+**Når** poengene beregnes
+**Så** er lagets sum uendret (AD-5)
+
+**Gitt** to turer
+**Når** en deltaker leser `team_scores`
+**Så** får hen bare rader for sin egen tur
 
 **Gitt** poengregler i utkastet med tomme eller negative verdier
 **Når** de valideres
@@ -616,6 +677,10 @@ slik at konkurransen blir synlig (FR10).
 **Når** jeg slipper
 **Så** hentes poengene på nytt
 
+**Gitt** to lag med lik poengsum
+**Når** ledertavlen vises
+**Så** får de samme plassering og sorteres alfabetisk
+
 ### Story 4.3: Ledertavlen oppdateres i sanntid
 
 Som deltaker
@@ -658,6 +723,18 @@ slik at vi kan løse fotooppgaver (FR7).
 **Når** bildet sendes
 **Så** lagres det i IndexedDB og vises på godkjenningskortet
 
+**Gitt** en fil som ikke er JPEG, PNG eller WebP, eller som er større enn 15 MB før komprimering `[ASSUMPTION]`
+**Når** jeg prøver å sende den
+**Så** avvises den med en forklaring
+
+**Gitt** at opplastingen feiler
+**Når** jeg sender
+**Så** vises ingen «Sendt»-kvittering, og bildet og teksten blir stående så jeg kan prøve igjen
+
+**Gitt** en deltaker eller arrangør på en annen tur
+**Når** hen prøver å hente eller signere et bilde fra denne turen
+**Så** avvises det (AD-11)
+
 ## Epic 5: Arrangøren justerer turen underveis
 
 Arrangøren kan endre, legge til og deaktivere programposter og poster på en publisert tur fra mobilen, og deltakerne ser endringene med en gang.
@@ -676,8 +753,12 @@ slik at jeg kan bytte til den kule restauranten vi fant underveis (FR17).
 
 **Gitt** en endring i en programpost eller post
 **Når** jeg lagrer
-**Så** kjøres `validateTrip()`. Hvis den er gyldig, lagres endringen med ny `updated_at`, og jeg ser «Lagret. Deltakerne ser endringen nå.» (AD-13)
+**Så** kjøres `validateTrip()`, i live-modus på serveren via `save-trip` (AD-17). Hvis den er gyldig, lagres endringen med ny `updated_at`, og jeg ser «Lagret. Deltakerne ser endringen nå.» (AD-13)
 **Og** hvis den er ugyldig, lagres ingenting, og feilen vises ved feltet
+
+**Gitt** en post som har godkjente innsendinger
+**Når** jeg endrer poengene
+**Så** gjelder de nye poengene bare fremtidige godkjenninger, og ledertavlen er uendret (AD-5)
 
 ### Story 5.2: Arrangøren legger til nye poster og programposter underveis
 
@@ -706,7 +787,7 @@ slik at ingen går dit, uten at lagene mister poeng de har fått (FR17).
 **Gitt** en post med godkjente innsendinger
 **Når** jeg trykker «Deaktiver» og bekrefter
 **Så** får posten `status = deactivated`, og poengene den har gitt, teller fortsatt i `team_scores` (AD-5, AD-13)
-**Og** sletting er ikke mulig for denne posten
+**Og** sletting er ikke mulig for denne posten, verken i UI eller med direkte kall (databasen avviser det med `ON DELETE RESTRICT`)
 
 **Gitt** en deaktivert post
 **Når** en deltaker åpner den
@@ -737,10 +818,22 @@ slik at jeg ikke går til den gamle restauranten (FR18).
 **Når** arrangøren lagrer en endring
 **Så** oppdateres deltakerfanen via `BroadcastChannel`
 
-**Gitt** elementer med `updated_at` nyere enn deltakerens `last_seen_at`
+**Gitt** elementer som er endret etter deltakerens `baseline_at` og etter at deltakeren sist så akkurat det elementet
 **Når** deltakersiden vises
-**Så** har de merket «Endret», og banneret «Programmet er oppdatert.» vises øverst (UX-DR25)
-**Og** et trykk på banneret åpner I dag med endringene uthevet, og når banneret lukkes, settes `last_seen_at`
+**Så** har de merket «Endret», og banneret «Programmet er oppdatert.» vises øverst (UX-DR25, AD-16)
+**Og** et trykk på banneret åpner I dag med endringene uthevet
+
+**Gitt** at middagen og post 4 er endret
+**Når** deltakeren bare åpner middagen
+**Så** har post 4 fortsatt merket «Endret»
+
+**Gitt** at deltakeren trykker «Merk alle som sett»
+**Når** en ny endring kommer etterpå
+**Så** får det nye elementet merket, og banneret vises igjen
+
+**Gitt** en deltaker som blir med etter at turen er endret
+**Når** turen lastes første gang
+**Så** vises ingen «Endret»-merker
 
 ## Epic 6: Regenerering og KI-forslag
 
@@ -823,9 +916,9 @@ slik at jeg kan bruke den i sollys og med én hånd.
 **Når** de gjennomgås
 **Så** finnes alle tilstandene fra State Patterns (UX-DR15), mikroteksten følger Voice and Tone uten tekniske ord (UX-DR16), og kravene i Accessibility Floor er oppfylt (UX-DR17)
 
-**Gitt** deltakersiden bygget for produksjon
-**Når** den måles med Lighthouse og 4G-struping
-**Så** laster den på under 3 s (NFR7)
+**Gitt** produksjonsbygget
+**Når** I dag-fanen måles tre ganger med Lighthouse i mobilprofil med 4G-struping og kald cache
+**Så** er median Largest Contentful Paint under 3 s, og alle målingene er lagret (NFR7)
 
 ### Story 7.3: README og måling av suksesskriterier
 
@@ -842,6 +935,8 @@ slik at jeg kan kjøre og vurdere løsningen.
 **Gitt** tabellen over suksesskriterier
 **Når** den er fylt ut
 **Så** har SM-1 til SM-8 faktiske målte verdier, og det står hvordan hver er målt
+**Og** SM-2 rapporterer første forsøk, etter nytt forsøk og aksepterte utkast hver for seg, målt på ekte KI-output
+**Og** SM-4 har både resultatet av de deterministiske testene og en felttest med ekte GPS etter en beskrevet protokoll
 **Og** tiden fra prompt til publisert tur er målt med 2–3 fiktive turer og er under 30 minutter (NFR1)
 **Og** andelen KI-genererte poster som ble beholdt uten redigering, er telt opp for de samme turene (NFR6)
 **Og** én person uten teknisk bakgrunn har laget og publisert en tur uten hjelp, og observasjonene er notert (NFR9)
@@ -858,3 +953,7 @@ slik at den kan brukes på en ekte tur.
 **Når** stegene for live-oppsett i README følges
 **Så** er migrasjonene kjørt, Edge Functions er deployet med Claude-secret, bucketen er opprettet, og frontenden er deployet med `VITE_APP_MODE=live`
 **Og** flyten fra Story 7.1 er gjort manuelt på to mobiler
+
+**Gitt** live-modus med to arrangører og to turer
+**Når** tilgangstestene kjøres (direkte kall mot tabeller, `team_scores`, `join_trip`, `review_submission`, `save-trip` og Storage)
+**Så** får ingen lese- eller skrivetilgang til den andre turen, og resultatet er dokumentert

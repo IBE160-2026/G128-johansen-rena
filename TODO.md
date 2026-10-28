@@ -3,16 +3,18 @@
 ## Status
 - [x] Product brief oppdatert etter foreleserfeedback
 - [x] PRD oppdatert / lagt til i planning-artifacts
-- [ ] UX-design dokumentasjon
-- [ ] Arkitektur-dokument
-- [ ] Epics og stories
+- [x] UX-design dokumentasjon (utkast skrevet, ikke godkjent av gruppen)
+- [x] Arkitektur-dokument (utkast skrevet, ikke godkjent av gruppen)
+- [x] Epics og stories (7 epics, 34 stories)
+- [x] QA-funn fra `OpenAI_QA/` vurdert og fulgt opp (se `planning-artifacts/qa-oppfolging-2026-10-28.md`)
+- [ ] Sprint planning (steg 0.6)
 - [ ] Implementasjonsstart / kode
 - [ ] Testplan og QA
 - [ ] README / kjørbarhet og demo-modus
 
 ## Kort oppsummering
 
-Prosjektet er i BMAD-flyten fra produktbrief til PRD. Nå er neste naturlige steg å produsere UX-dokumentasjon, deretter teknisk arkitektur, før epics og stories blir delfinert og implementasjonen starter.
+Fase 0 (planlegging) er gjennomført frem til sprint planning: brief, PRD, UX, arkitektur og epics/stories finnes, og QA-funnene fra `OpenAI_QA/` er fulgt opp. UX og arkitektur er utkast som gruppen må gå gjennom. Neste steg er sprint planning (`bmad-sprint-planning`), deretter implementering story for story med `bmad-build`. Se [planning-artifacts/gjennomforingsplan.md](planning-artifacts/gjennomforingsplan.md).
 
 ## Plan for videre arbeid
 

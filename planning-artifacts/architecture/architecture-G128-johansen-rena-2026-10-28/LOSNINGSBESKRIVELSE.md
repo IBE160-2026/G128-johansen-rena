@@ -35,11 +35,11 @@ Hvilke adaptere som brukes, bestemmes på ett eneste sted ut fra miljøvariabele
 2. Klienten kaller `AgentPort`. I live-modus går kallet til Edge Function `generate-trip`, som er det eneste stedet Claude-nøkkelen finnes (AD-9).
 3. Edge Function ber Claude om JSON etter turskjemaet og kjører **regelbasert validering** (AD-2, AD-3). Den sjekker påkrevde felt, at hver dag i perioden finnes, at postene ligger innenfor turens område, og at radius og poeng er gyldige.
 4. Feiler valideringen, sendes feilene tilbake til Claude i **ett** nytt forsøk. Feiler det også, får arrangøren en forståelig feilmelding, og teksten blir ikke borte.
-5. Det gyldige utkastet vises for redigering. Den samme valideringen kjøres igjen før publisering.
+5. Det gyldige utkastet vises for redigering. Den samme valideringen kjøres på serveren ved hver lagring, også publisering og endringer underveis (AD-17).
 
-Vi valgte bort et eget QA-steg med en annen KI-leverandør i V1. Regelbasert validering er billigere og deterministisk, og den kan testes automatisk mot suksesskriteriene (100 % gyldig JSON, poster innenfor området, én oppføring per dag). Et KI-basert QA-steg kan legges til senere uten å endre kontrakten.
+Vi valgte bort et eget QA-steg med en annen KI-leverandør i V1. Regelbasert validering er billigere og deterministisk, og den kan testes automatisk mot suksesskriteriene (100 % gyldige aksepterte utkast, poster innenfor området, minst én programpost per dag). Et KI-basert QA-steg kan legges til senere uten å endre kontrakten.
 
-Regenerering av enkeltdeler (trinn D) følger samme mønster. KI-en får hele turen og en instruksjon, returnerer bare ett nytt element, og hele turen valideres på nytt før endringen tas i bruk (AD-12).
+Regenerering av enkeltdeler (trinn E) følger samme mønster. KI-en får hele turen og en instruksjon, returnerer bare ett nytt element, og hele turen valideres på nytt før endringen tas i bruk (AD-12).
 
 ## 4. Datamodell
 
@@ -48,7 +48,8 @@ Minimumsmodellen (som avklarer PRD §8.1) har sju tabeller: `trips`, `days`, `pr
 - En **tur** har periode, område (sentrum og radius), status (utkast eller publisert) og en turkode.
 - **Poster** har koordinater, opplåsingsradius, oppgavetekst, svartype og poeng.
 - **Innsendinger** har status ventende, godkjent eller avvist.
-- **Poeng lagres aldri.** Lagets poengsum regnes alltid ut fra godkjente innsendinger, og hver post teller maks én gang per lag (AD-5). Det gjør det umulig for poengsummen og innsendingene å komme ut av synk.
+- **Poeng fryses ved godkjenning.** Når en innsending godkjennes, lagres postens poeng på innsendingen (`awarded_points`). Lagets poengsum er alltid summen av godkjente innsendinger, og hver post teller maks én gang per lag (AD-5). Endrer arrangøren poengene på en post underveis, gjelder det bare nye godkjenninger, så ingen lag mister eller får poeng i ettertid.
+- **Lagring er autoritativ på serveren.** Klientene kan bare lese turtabellene. All lagring går gjennom Edge Function `save-trip`, som validerer og skriver alt i én transaksjon med versjonskontroll (AD-17). Da kan verken direkte API-kall eller avbrutte lagringer gi en ugyldig eller halvferdig tur.
 
 ## 5. Geolokasjon og opplåsing
 
@@ -67,7 +68,8 @@ Når arrangøren godkjenner en innsending, sender systemet ut et signal. Kliente
 - Arrangøren logger inn med e-post og magisk lenke. Deltakeren får en anonym innlogging og kobles til turen med turkode og navn. Deltakeren trenger ingen konto og logger inn bare én gang per tur (AD-8).
 - All tilgang håndheves i databasen med Row Level Security. Deltakeren ser bare sin egen publiserte tur og kan bare sende inn for sitt eget lag. Bare arrangøren kan godkjenne innsendinger og redigere turen.
 - Bildene ligger i en privat lagringsbøtte og vises via tidsbegrensede, signerte lenker (AD-11).
-- KI-nøkkelen finnes bare på serveren.
+- KI-nøkkelen finnes bare på serveren som en Supabase-secret. Bare offentlig klientkonfigurasjon har `VITE_`-prefiks, og produksjonsbygget sjekkes for at det ikke inneholder hemmeligheter (AD-9).
+- Tilgangsreglene testes med en egen live-integrasjonstest med to arrangører og to turer.
 
 ## 8. Teknologi og drift
 

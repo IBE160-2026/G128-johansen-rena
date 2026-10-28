@@ -10,7 +10,7 @@ kilder:
 
 # Gjennomføringsplan: TripBuilder AI
 
-Planen bryter product brief og PRD ned i små steg som kan tas ett om gangen. Hvert steg har et tydelig **ferdig når**-kriterium. Vi går ikke videre før det er oppfylt. Etter hvert trinn (A–D) har vi en app som fungerer og kan vises fram, selv om de senere trinnene ikke blir ferdige.
+Planen bryter product brief og PRD ned i små steg som kan tas ett om gangen. Hvert steg har et tydelig **ferdig når**-kriterium. Vi går ikke videre før det er oppfylt. Etter hvert trinn (A–E) har vi en app som fungerer og kan vises fram, selv om de senere trinnene ikke blir ferdige.
 
 **Prinsipper (fra brief og tilbakemelding):**
 - Trinnene tas i rekkefølge. Et trinn skal være stabilt før neste startes.
@@ -29,7 +29,7 @@ Planen bryter product brief og PRD ned i små steg som kan tas ett om gangen. Hv
 | 0.2 | Rett inkonsistenser i briefen (se merknader nederst) | `bmad-product-brief` | Briefen og PRD-en sier det samme |
 | 0.3 | UX: hovedflyter for arrangør og deltaker, skjermbilder og mobilbruk i felt | `bmad-ux` | `DESIGN.md` og `EXPERIENCE.md` finnes |
 | 0.4 | Arkitektur: systemstruktur, datamodell (tur, dag, programpost, lag, deltaker, rebuspost, innlevering), mock-modus og geofencing | `bmad-architecture` | Arkitekturdokumentet er godkjent av begge |
-| 0.5 | Epics og stories, gruppert etter trinn A–D | `bmad-create-epics-and-stories` | Hver story har testbare akseptansekriterier |
+| 0.5 | Epics og stories, gruppert etter trinn A–E | `bmad-create-epics-and-stories` | Hver story har testbare akseptansekriterier |
 | 0.6 | Sprintplan og sjekk av at vi er klare | `bmad-sprint-planning` | Sprint-status-fila er generert |
 
 ## Fase 1 – Fundament
@@ -38,14 +38,14 @@ Planen bryter product brief og PRD ned i små steg som kan tas ett om gangen. Hv
 |---|---|---|
 | 1.1 | Sett opp prosjektet med Vite, React, Tailwind, lint/format og testrammeverk (Vitest) | `npm run dev` og `npm test` kjører |
 | 1.2 | Datamodellen som TypeScript-typer og JSON-skjema (f.eks. Zod) | Skjemaet avviser ugyldige turer i tester |
-| 1.3 | Regelbasert validator: påkrevde felt, koordinater innenfor turens område, én oppføring per dag og riktig antall poster | Tester dekker SM-2 og SM-3 |
+| 1.3 | Regelbasert validator: påkrevde felt, koordinater innenfor turens område, nøyaktig én dag per dato med minst én programpost, og antall poster lik oppgitt antall | Tester dekker tom dag, duplisert og ekstra dato, og SM-2 og SM-3 |
 | 1.4 | Seed-data: én ferdig prøvetur, f.eks. basert på blåturen | Prøveturen validerer 100 % |
 | 1.5 | Datalag med to implementasjoner: lokal (minne/localStorage) og Supabase. En miljøvariabel velger hvilken | Appen starter uten Supabase-nøkler |
 | 1.6 | Første utkast av README: hvordan appen kjøres i demo-modus | En av oss klarer å kjøre appen fra en ren klone kun ved å følge README |
 
 ## Trinn A – KI-generert tur, redigering og publisering
 
-*Minste leverbare versjon. Arrangøren lager en tur, og deltakerne ser den.*
+*Første kjørbare versjon. Arrangøren lager en tur, og deltakerne ser den. Minimumsleveransen er milepæl B.*
 
 | # | Steg | Krav | Ferdig når |
 |---|---|---|---|
@@ -55,7 +55,7 @@ Planen bryter product brief og PRD ned i små steg som kan tas ett om gangen. Hv
 | A.4 | Visning og redigering av utkastet: program, poster og lag | FR-3 | Når én post endres, påvirkes ingen andre |
 | A.5 | Publisering som eksplisitt handling, med en delbar lenke | FR-4 | Publisert tur åpnes i deltakervisningen |
 | A.6 | Deltakerside på mobil med dagens program og kart med poster (Leaflet) | UJ-3 | Siden virker på mobil og laster på under 3 s (SM-7) |
-| A.7 | Enkel innlogging: arrangør, og deltaker via turkode én gang per tur | – | Deltakeren forblir innlogget gjennom hele turen |
+| A.7 | Innlogging for arrangør (magisk lenke) | FR-13 | En annen arrangør kan ikke lese eller endre turen |
 
 **Milepæl A:** Demo av hele flyten fra prompt via redigering og publisering til deltakerside, i mock-modus.
 
@@ -65,19 +65,21 @@ Planen bryter product brief og PRD ned i små steg som kan tas ett om gangen. Hv
 |---|---|---|---|
 | B.1 | Avstandsberegning (haversine) som en ren funksjon | FR-5 | Enhetstester med kjente koordinater |
 | B.2 | Posisjon fra nettleseren, og en simulert posisjon i demo-modus («jeg er her»-knapp eller URL-parameter) | FR-6 | Opplåsing kan testes uten å gå ut |
-| B.3 | Posten låses opp innenfor radius og forblir låst utenfor | FR-6 | Over 80 % korrekt i test (SM-4) |
-| B.4 | Tekstsvar på oppgaver | FR-7 | Svaret lagres på riktig post og lag |
-| B.5 | Poengregler og poengregning per lag | FR-8 | Ugyldige regler avvises, og poengene stemmer i tester |
+| B.3 | Posten låses opp innenfor radius og forblir låst utenfor | FR-6 | 100 % korrekt i deterministiske tester (SM-4) |
+| B.4 | Deltaker blir med via turkode og plasseres automatisk på laget med færrest medlemmer | FR-14, FR-8 | Deltakeren forblir innlogget og ser bare sin egen tur |
+| B.5 | Tekstsvar på oppgaver | FR-7 | Svaret lagres som ventende på riktig post og lag |
+| B.6 | Arrangøren godkjenner eller avviser tekstsvar | FR-15 | Bare godkjente svar gir poeng |
+| B.7 | Poengregler og poengregning per lag | FR-8 | Ugyldige regler avvises, og poengene stemmer i tester |
 
-**Milepæl B:** Deltakeren går til posten (simulert), låser den opp, svarer og får poeng.
+**Milepæl B (minimumsleveranse):** Deltakeren blir med, går til posten (simulert), låser den opp og svarer. Arrangøren godkjenner, og laget får poeng.
 
 ## Trinn C – Sanntids ledertavle, lag og bildeopplasting
 
 | # | Steg | Krav | Ferdig når |
 |---|---|---|---|
-| C.1 | Tildele deltakere til lag | FR-8 | Deltakeren ser hvilket lag hen er på |
+| C.1 | Arrangøren flytter deltakere mellom lag | FR-8 | Deltakeren ser det nye laget |
 | C.2 | Ledertavle med Supabase Realtime, og polling eller BroadcastChannel i demo-modus | FR-9, FR-10 | Oppdatering på under 5 s mellom to klienter (SM-5) |
-| C.3 | Bildeopplasting til Supabase Storage, med lokal lagring i demo-modus | FR-7 | Bildet knyttes til riktig post og lag |
+| C.3 | Bildeopplasting til Supabase Storage, med lokal lagring i demo-modus | FR-7, FR-15 | Bildet knyttes til riktig post og lag og godkjennes som tekstsvar |
 | C.4 | Tilgangsregler (RLS) slik at bare turens deltakere ser bildene | – | Tilgangsreglene er testet med to turer |
 
 **Milepæl C:** To mobiler samtidig, der poeng fra den ene vises hos den andre.
@@ -109,12 +111,12 @@ Planen bryter product brief og PRD ned i små steg som kan tas ett om gangen. Hv
 | 2.2 | Kodegjennomgang per epic (`bmad-code-review`) | Funnene er rettet eller begrunnet |
 | 2.3 | Mål suksesskriteriene SM-1 til SM-8 og dokumenter resultatet | Tabellen er utfylt med faktiske tall |
 | 2.4 | Ferdigstill README: demo-modus, ekte modus og tester | Sensor kan kjøre appen uten nøklene våre |
-| 2.5 | Deploy til Vercel (valgfritt) og øvelse på demoen | Eksamensdemoen er øvd |
+| 2.5 | Deploy til Vercel og Supabase, og øvelse på demoen. Deploy kreves for full V1 og for demo på mobiler, fordi GPS krever HTTPS | Eksamensdemoen er øvd |
 | 2.6 | Retrospektiv (`bmad-retrospective`) | Retrospektiven ligger i mappen |
 
 ---
 
-## Merknader til briefen (rettes i steg 0.2)
+## Merknader til briefen (løst i steg 0.2, 2026-10-28)
 
 1. Under «Omfang» står det at teknologivalget er «Claude API for agentkjeden og OpenAI for QA-agenten». Det strider mot beslutningen om regelbasert validering i V1. OpenAI bør flyttes til «senere».
 2. «Inne (V1, trinn 1–3)» tar med regenerering av enkeltdeler, men dette ligger i trinn 4.

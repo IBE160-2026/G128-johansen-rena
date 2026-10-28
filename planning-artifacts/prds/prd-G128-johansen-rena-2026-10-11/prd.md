@@ -101,12 +101,13 @@ Dette er ikke målrettet mot:
 **Funksjonelle krav:**
 
 #### FR-1: Arrangør kan beskrive turen med naturlig språk
-Arrangøren fyller ut noen få nøkkelfelt (destinasjon, fra- og til-dato, antall deltakere og eventuelt antall lag) og beskriver resten med egne ord: program, rebus, tone og deltakergruppe. Realiserer UJ-1.
+Arrangøren fyller ut noen få nøkkelfelt (destinasjon, fra- og til-dato, antall deltakere, og eventuelt antall lag og antall rebusposter) og beskriver resten med egne ord: program, rebus, tone og deltakergruppe. Realiserer UJ-1.
 
 **Testbare konsekvenser:**
 - Systemet må kunne ta imot nøkkelfelt og en beskrivelse i tekstform.
 - Destinasjon, periode og antall deltakere er påkrevd. Til-dato kan ikke være før fra-dato, og antall lag må være mellom 1 og 6 og ikke flere enn antall deltakere.
-- Generert tur må ha samme periode som nøkkelfeltene.
+- Antall rebusposter er valgfritt og må være minst 1 når det er oppgitt.
+- Generert tur må ha samme periode som nøkkelfeltene, og samme antall lag og poster når de er oppgitt.
 - Ugyldig eller tom input skal få en tydelig feilmelding eller en liten oppfølgingsspørsmålssvøm.
 
 #### FR-2: Systemet genererer et ferdig utkast til tur
@@ -115,7 +116,7 @@ Systemet skal produsere en strukturert turmodell med enkeltdager, oppgaver, lag 
 **Testbare konsekvenser:**
 - Generert JSON skal validere mot datamodellen og de regelbaserte kontrollene.
 - Feiler valideringen, sendes feilene tilbake til KI-en for ett nytt forsøk. Feiler også det, får arrangøren en tydelig feilmelding.
-- Hver dag i perioden skal ha minst én oppføring.
+- Hver dag i perioden skal ha minst én programpost (oppføring), og ingen dag kan ligge utenfor perioden eller finnes to ganger.
 - Alle poster skal ha påkrevde felter som koordinat, tekst og type.
 
 #### FR-3: Arrangør kan redigere og oppdatere utkastet
@@ -149,6 +150,7 @@ Arrangøren kan endre, legge til og deaktivere programposter og rebusposter på 
 **Testbare konsekvenser:**
 - Hver endring valideres før den lagres, og en ugyldig endring lagres ikke.
 - Nye poster og programposter kan legges til på en publisert tur.
+- Endres poengene på en post, gjelder det bare fremtidige godkjenninger.
 - En post som har godkjente innsendinger, kan ikke slettes, bare deaktiveres. Poengene den har gitt, beholdes på ledertavlen, og den tar ikke imot nye innsendinger.
 - KI-forslag til endringer (regenerering eller «ny post med KI») kan brukes på en publisert tur, men går først live når arrangøren har godkjent dem.
 
@@ -173,6 +175,7 @@ Systemet skal tilordne hver rebuspost koordinater og definere gyldig avstand for
 - Hver rebuspost skal ha gyldige koordinater.
 - Radius skal være definert og konsistent.
 - Poster uten gyldig område skal avvises i validering.
+- Turens område foreslås av KI-en ut fra destinasjonen og kan justeres av arrangøren før publisering. Postene valideres mot dette området.
 - Hver post er enten geolåst eller åpen (`requires_location`). Både KI-en og arrangøren kan sette dette per post. Åpne poster trenger koordinater for kartet, men låses ikke.
 
 #### FR-6: Oppgave låses opp etter fysisk nærhet
@@ -198,6 +201,7 @@ Arrangøren skal se innsendte svar og bilder per tur og godkjenne eller avvise h
 - En innsending har status ventende, godkjent eller avvist.
 - Ventende og avviste innsendinger gir ikke poeng.
 - Deltakeren ser statusen på sin egen innsending.
+- Poengene en innsending gir, er postens poeng i det øyeblikket den godkjennes.
 
 ### 4.3 Lag, poeng og ledertavle
 
@@ -278,6 +282,13 @@ Agentflyten skal kunne kjøres med mock- eller stub-data når eksterne API-er ik
 
 ## 6. MVP-omfang
 
+### 6.0 Minimumsleveranse og full V1
+
+- **Minimumsleveranse (milepæl B, Epic 1–3):** demo-modus med prøvetur, KI-generering med redigering og publisering, og rebus med geolåsing, tekstsvar, godkjenning og poeng. Dette skal være ferdig og stabilt før noe annet.
+- **Full V1 (Epic 1–7):** i tillegg lag og sanntids ledertavle, bilder, endringer underveis, regenerering og KI-forslag, verifisering og deploy.
+
+Listen under beskriver full V1.
+
 ### 6.1 Inne i MVP
 
 - Arrangør beskriver tur i naturlig språk.
@@ -305,14 +316,14 @@ Agentflyten skal kunne kjøres med mock- eller stub-data når eksterne API-er ik
 
 ### Primære
 - SM-1: Tid fra prompt til publisert, fungerende deltakerside skal være under 30 minutter uten manuell koding. Validerer FR-1, FR-2, FR-4.
-- SM-2: 100 % av generert JSON skal validere mot datamodellen i testmiljø. Validerer FR-2, FR-5.
-- SM-3: 100 % av rebusposter i testdata skal ha koordinater innenfor definert område. Validerer FR-5.
-- SM-4: 80 % av geofencing-sjekkene skal låse opp korrekt innenfor definert radius. Validerer FR-6.
+- SM-2: 100 % av utkast som lagres eller vises for arrangøren, validerer mot datamodellen og reglene. I tillegg rapporteres andelen genereringer som lykkes på første forsøk og etter ett nytt forsøk, målt på ekte KI-output og ikke på mock (mål: minst 90 % etter nytt forsøk `[ASSUMPTION]`). Validerer FR-2, FR-5.
+- SM-3: 100 % av rebusposter i testdata skal ha koordinater innenfor turens område, slik arrangøren har bekreftet det. Validerer FR-5.
+- SM-4: 100 % av de deterministiske testene av opplåsing (posisjoner innenfor, på og utenfor radius) gir riktig svar. I en felttest med ekte GPS skal over 80 % av forsøkene låse opp korrekt. Protokollen (enheter, antall forsøk, nøyaktighet og falske opplåsinger) dokumenteres. Validerer FR-6.
 - SM-5: Ledertavle skal oppdatere poeng på lag innen 5 sekunder etter at arrangøren har godkjent en innsending, i funksjonstest. Validerer FR-15, FR-8, FR-9, FR-10.
 
 ### Sekundære
-- SM-6: Over 60 % av KI-genererte rebusposter blir beholdt uten redigering. Validerer FR-3.
-- SM-7: Deltakersiden skal laste på under 3 sekunder over mobilnett i testmiljø. Validerer FR-10.
+- SM-6: Over 60 % av KI-genererte rebusposter blir beholdt uten redigering, målt på ekte KI-output og ikke på demo. Validerer FR-3.
+- SM-7: I dag-fanen på deltakersiden har Largest Contentful Paint under 3 sekunder, målt med Lighthouse i mobilprofil med 4G-struping og kald cache, som median av 3 målinger på produksjonsbygget. Validerer FR-10.
 - SM-8: Kjerneflyten skal kunne kjøres i lokal demo-modus uten eksterne kontoer. Validerer FR-11, FR-12.
 
 ### Motmål
@@ -323,7 +334,7 @@ Agentflyten skal kunne kjøres med mock- eller stub-data når eksterne API-er ik
 
 **Besluttet (2026-10-28):**
 
-1. *Minimumsdatamodell:* Avgjøres i arkitektursteget.
+1. *Minimumsdatamodell:* Besluttet i arkitekturen (ARCHITECTURE-SPINE.md, Structural Seed og AD-2, AD-5 og AD-17).
 2. *Autentisering:* Arrangøren har konto (e-post med magisk lenke). Deltakeren blir med via turkode og navn én gang, og sesjonen huskes. Demo-modus har ingen innlogging, bare valg av rolle. Se FR-13 og FR-14.
 3. *Ugyldige bilder og svar:* Arrangøren godkjenner eller avviser hver innsending, og poeng gis først ved godkjenning. Se FR-15.
 5. *AI-QA:* V1 bruker kun regelbasert validering (skjema og regler). Feiler valideringen, får KI-en ett nytt forsøk med feilene. KI-QA kan komme i et senere trinn.

@@ -56,13 +56,13 @@ Ingen delt, detaljert sensureringsrubrikk er tilgjengelig utover at vanskelighet
 | Signal | Metrikk / bevis | Mål | Når målt |
 |---|---|---|---|
 | Brukerutfall | Tid fra prompt til publisert, fungerende deltakerside | Under 30 minutter, uten manuell koding | Test med 2–3 fiktive turer før innlevering |
-| KI-output | Generert JSON validerer mot datamodellen uten manuelle rettinger | 100 % av testdata validerer | Under funksjonstesting |
-| Geofencing | Alle rebusposter har koordinater innenfor turens definert område | 100 % av poster i test | Under funksjonstesting |
-| Struktur | Én oppføring per dag i oppgitt periode og riktig antall poster per dag | 100 % av dager og poster oppfyller formatet | Under funksjonstesting |
+| KI-output | Utkast som vises eller lagres, validerer mot datamodellen. Andelen genereringer som lykkes innen ett nytt forsøk, rapporteres separat | 100 % av aksepterte utkast validerer | Under funksjonstesting |
+| Geofencing | Alle rebusposter har koordinater innenfor turens område, slik arrangøren har bekreftet det | 100 % av poster i test | Under funksjonstesting |
+| Struktur | Hver dag i oppgitt periode har minst én programpost, og antall poster er likt det arrangøren har oppgitt (når det er oppgitt) | 100 % av dager og poster oppfyller formatet | Under funksjonstesting |
 | Adopsjon/atferd | Andel KI-genererte rebusposter arrangøren beholder uten redigering | Over 60 % | Etter test med reell/fiktiv prompt |
-| Kvalitet/tillit | Andel geolokasjonssjekk som låser opp korrekt innenfor definert radius | Over 80 % i test | Under funksjonstesting |
+| Kvalitet/tillit | Andel geolokasjonssjekker som låser opp korrekt innenfor definert radius | 100 % i automatiske tester, over 80 % i felttest med ekte GPS | Under funksjonstesting |
 | Deltakeropplevelse | Tid fra arrangøren godkjenner en innsending til ledertavlen er oppdatert hos deltakerne | Under 5 sekunder | Under funksjonstesting med flere mobiler samtidig |
-| Deltakeropplevelse | Innlastingstid for deltakersiden på mobil over mobilnett (4G) | Under 3 sekunder | Under funksjonstesting |
+| Deltakeropplevelse | Innlastingstid for deltakersiden på mobil over mobilnett (4G), målt som Largest Contentful Paint med Lighthouse | Under 3 sekunder | Under funksjonstesting |
 | Business/formål | Fungerende ende-til-ende demo (prompt → generert tur → deltakerflyt → opplåsing → poengoppdatering) | Vellykket eksamensdemo | Ved innlevering/eksamen |
 
 Løsningen skal også demonstrere vanskelighetsgraden gruppen selv har meldt inn («Vanskelig»): strukturert JSON-utveksling, geolokasjon, sanntidsdata og en flerstegs KI-flyt i samspill. Det ekstra QA-trinnet skal i V1 beskrives som en regelbasert valideringsmodell fremfor et separat, betalt QA-system, med mulighet for at et ekstra KI-QA-steg kommer senere.
@@ -72,8 +72,8 @@ Løsningen skal også demonstrere vanskelighetsgraden gruppen selv har meldt inn
 For å holde prosjektet gjennomførbart og samtidig bevise kjerneverdien vil første versjon leveres i flere faser:
 
 1. Trinn 1: KI-generert tur med prompt, redigering og publisering, og en enkel deltakerside med program og kart.
-2. Trinn 2: Geolåst rebus og automatisk poengregning, med mobilopplevelse for deltakere.
-3. Trinn 3: Sanntids ledertavle, lag, bildeopplasting med godkjenning fra arrangøren, og oppdatering i felt.
+2. Trinn 2: Geolåst rebus med tekstsvar, godkjenning fra arrangøren og automatisk poengregning, med mobilopplevelse for deltakere. Trinn 1 og 2 utgjør minimumsleveransen.
+3. Trinn 3: Sanntids ledertavle, lagflytting, bildeopplasting og endringer underveis i felt.
 4. Trinn 4: Regenerering av enkeltdeler i naturlig språk og flere iterasjoner på innholdet.
 
 Dette gjør det mulig å levere en fungerende app selv om ikke alle delene blir ferdige samtidig. Sensor og andre interessenter skal også kunne kjøre kjerneflyten lokalt uten gruppens nøkler, betalte kontoer eller egen infrastruktur. Derfor skal V1 ha en seed-data- eller demo-modus med ferdig generert prøvetur og mock-data, samt en mock- eller stub-modus for agentkjeden slik at hovedflyten kan testes uten eksterne API-er.

@@ -4,7 +4,7 @@ type: architecture-spine
 purpose: build-substrate
 altitude: feature
 paradigm: 'ports & adapters (heksagonal), med en ren domenekjerne'
-scope: 'TripBuilder AI V1, trinn A–D i gjennomføringsplanen'
+scope: 'TripBuilder AI V1 (Epic 1–7, trinn A–E i gjennomføringsplanen)'
 status: draft
 created: '2026-10-28'
 updated: '2026-10-28'
@@ -54,7 +54,7 @@ Pilene viser hva som får lov å importere hva. `src/domain` importerer bare `zo
 
 - **Binds:** FR-2, FR-3, FR-4, FR-5, FR-11, FR-12
 - **Prevents:** at KI-output, seed-data og redigert innhold får ulike former.
-- **Rule:** All turdata som går mellom KI og app, er en `TripDraft` som valideres av `validateTrip()` (zod-skjema og regler). Reglene er: hver dato i perioden har en dag, poster har koordinater innenfor turens område, `radius_m` er større enn 0, poengene er positive, og alle påkrevde felt er fylt ut. Den samme funksjonen kjøres på (a) KI-svar, (b) seed-turen i en test og (c) før publisering.
+- **Rule:** All turdata som går mellom KI og app, er en `TripDraft` som valideres av `validateTrip()` (zod-skjema og regler). Reglene er: hver dato i perioden har nøyaktig én dag, og ingen dag ligger utenfor perioden. Hver dag har minst én programpost. Poster har koordinater innenfor turens område, `radius_m` er større enn 0, poengene er positive heltall, og alle påkrevde felt er fylt ut. Den samme funksjonen kjøres på (a) KI-svar, (b) seed-turen i en test og (c) før hver lagring, også publisering og endringer underveis (AD-17).
 
 ### AD-3: Validering med ett nytt forsøk [ADOPTED]
 
@@ -68,11 +68,11 @@ Pilene viser hva som får lov å importere hva. `src/domain` importerer bare `zo
 - **Prevents:** at demo-logikk sprer seg som `if (demo)` i komponentene.
 - **Rule:** `VITE_APP_MODE=demo|live` leses bare i `src/app/services.ts`, som bygger porteobjektet (`TripRepo`, `AgentPort`, `AuthPort`, `RealtimePort`, `StoragePort`, `PositionSource`). Komponentene henter tjenestene via `useServices()`. Det eneste unntaket er `useMode()`, som brukes av demo-banneret og posisjonssimulatoren. Demo-modus skal starte med `npm install && npm run dev` uten noen miljøvariabler.
 
-### AD-5: Poeng avledes og lagres aldri
+### AD-5: Poeng avledes fra godkjente innsendinger og fryses ved godkjenning
 
-- **Binds:** FR-8, FR-9, FR-10, FR-15
-- **Prevents:** at poengsummen kommer ut av synk med innsendingene.
-- **Rule:** Lagets poeng er summen av `post.points` for poster der laget har en godkjent innsending. Hvert par av lag og post teller maks én gang. Det finnes ingen kolonne for poeng per lag. I live-modus regner viewet `team_scores` ut summen, og i demo-modus gjør `scoring.ts` det. Begge testes mot de samme testtilfellene.
+- **Binds:** FR-8, FR-9, FR-10, FR-15, FR-17
+- **Prevents:** at poengsummen kommer ut av synk med innsendingene, og at en senere endring av en post endrer poeng lagene allerede har fått.
+- **Rule:** Når en innsending godkjennes, settes `submissions.awarded_points` til postens `points` i det øyeblikket. Lagets poeng er summen av `awarded_points` for godkjente innsendinger. Hvert par av lag og post teller maks én gang, sikret med en unik delindeks på `(team_id, post_id)` der `status = approved`. Det finnes ingen kolonne for poeng per lag. Endring av `post.points`, regenerering og deaktivering påvirker derfor bare fremtidige godkjenninger. I live-modus regner viewet `team_scores` ut summen, og i demo-modus gjør `scoring.ts` det. Begge testes mot de samme testtilfellene.
 
 ### AD-6: Opplåsing ved posisjon skjer i klienten
 
@@ -84,7 +84,7 @@ Pilene viser hva som får lov å importere hva. `src/domain` importerer bare `zo
 
 - **Binds:** FR-7, FR-15, PRD §8.3
 - **Prevents:** at poeng gis før godkjenning, eller at deltakere kan endre statusen selv.
-- **Rule:** `submission.status ∈ {pending, approved, rejected}`. Deltakeren kan bare opprette en innsending med status `pending` for sitt eget lag. Bare arrangøren av turen kan endre `status`, og det skjer via RPC-en `review_submission(id, decision, reason?)`. Avviste innsendinger kan sendes inn på nytt som en ny rad. `[ASSUMPTION]`
+- **Rule:** `submission.status ∈ {pending, approved, rejected}`. Deltakeren kan bare opprette en innsending med status `pending` for sitt eget lag. Bare arrangøren av turen kan endre `status`, og det skjer via RPC-en `review_submission(id, decision, reason?)`. Avviste innsendinger kan sendes inn på nytt som en ny rad. `review_submission` er idempotent: samme beslutning to ganger endrer ingenting. «Angre» i UI er en forsinket sending (5 s) og krever ingen omgjøring på serveren.
 
 ### AD-8: Identitet og tilgang [ADOPTED]
 
@@ -96,7 +96,7 @@ Pilene viser hva som får lov å importere hva. `src/domain` importerer bare `zo
 
 - **Binds:** FR-2, FR-3
 - **Prevents:** at API-nøkkelen lekker i klientkoden.
-- **Rule:** Kall til Claude skjer bare i `supabase/functions/` (`generate-trip`, og `regenerate-part` i trinn D). Nøkkelen er en Supabase-secret. I klienten kalles KI-en bare gjennom `AgentPort`. I demo-modus er dette en mock som returnerer seed-turen.
+- **Rule:** Kall til Claude skjer bare i `supabase/functions/` (`generate-trip`, og `regenerate-part` i trinn E). Nøkkelen er en Supabase-secret. Serverhemmeligheter som `ANTHROPIC_API_KEY` settes bare med `supabase secrets set` og leses bare i Edge Functions. De har aldri `VITE_`-prefiks, står aldri med verdi i `.env.example`, og produksjonsbygget av frontenden skal ikke inneholde dem. I klienten kalles KI-en bare gjennom `AgentPort`. I demo-modus er dette en mock som returnerer seed-turen.
 
 ### AD-10: Sanntid betyr «hent på nytt ved signal»
 
@@ -112,7 +112,7 @@ Pilene viser hva som får lov å importere hva. `src/domain` importerer bare `zo
 
 ### AD-12: Regenerering bytter ut ett element
 
-- **Binds:** FR-3, UJ-2 (trinn D)
+- **Binds:** FR-3, FR-17, UJ-2 (trinn E)
 - **Prevents:** at regenerering skriver over arrangørens andre endringer.
 - **Rule:** `regenerate-part` får hele turen og `{ kind: "day" | "post" | "program_item" | "new_post" | "new_program_item", id?, instruction }`. For eksisterende elementer returnerer den bare det nye elementet med samme `id`. For `new_*` returnerer den ett nytt element. Klienten slår det sammen og kjører `validateTrip()` på hele turen. Et ugyldig resultat vises aldri som akseptert. Dette gjelder også publiserte turer, og der går forslaget først live når arrangøren har godkjent det (AD-13).
 
@@ -120,7 +120,7 @@ Pilene viser hva som får lov å importere hva. `src/domain` importerer bare `zo
 
 - **Binds:** FR-4, FR-17
 - **Prevents:** at innsendinger og poeng blir koblet til poster som ikke finnes lenger, og at ugyldige endringer går live.
-- **Rule:** En publisert tur redigeres med de samme operasjonene i `TripRepo` som et utkast. Hver endring kjøres gjennom `validateTrip()` før den lagres. `posts.status ∈ {active, deactivated}`. En post med innsendinger kan bare få status `deactivated`, aldri slettes. En deaktivert post avviser nye innsendinger, men godkjente innsendinger teller fortsatt i `team_scores` (AD-5). En dag som har poster med innsendinger, kan ikke fjernes. Tabellene `program_items` og `posts` har `updated_at`, som settes ved hver endring.
+- **Rule:** En publisert tur redigeres med de samme operasjonene i `TripRepo` som et utkast, og alle lagringer går gjennom AD-17. `posts.status ∈ {active, deactivated}`. En post med innsendinger kan bare få status `deactivated`, aldri slettes. Databasen håndhever dette med `ON DELETE RESTRICT` på `submissions.post_id`. En deaktivert post avviser nye innsendinger, men godkjente innsendinger teller fortsatt i `team_scores` (AD-5). En dag som har poster med innsendinger, kan ikke fjernes. Tabellene `program_items` og `posts` har `updated_at`, som settes ved hver endring.
 
 ### AD-14: Temaet er data, ikke stil `[ADOPTED]`
 
@@ -132,13 +132,19 @@ Pilene viser hva som får lov å importere hva. `src/domain` importerer bare `zo
 
 - **Binds:** FR-1, FR-2
 - **Prevents:** at KI-en gjetter periode og antall, og at mock og Edge Function får ulik input.
-- **Rule:** `AgentPort.generate(req: TripRequest)`, der `TripRequest = { destination, start_date, end_date, participant_count, team_count?, description }` er definert og validert i `schema.ts`. `validateTrip(draft, req)` sjekker i tillegg at utkastets periode er lik `start_date` og `end_date`, og at antall lag er lik `team_count` når det er oppgitt.
+- **Rule:** `AgentPort.generate(req: TripRequest)`, der `TripRequest = { destination, start_date, end_date, participant_count, team_count?, post_count?, description }` er definert og validert i `schema.ts`. `validateTrip(draft, req)` sjekker i tillegg at utkastets periode er lik `start_date` og `end_date`, at antall lag er lik `team_count`, og at antall aktive poster er lik `post_count`, når de er oppgitt.
 
 ### AD-16: Endringer i turen sendes ut som «hent på nytt»-signal [ADOPTED]
 
 - **Binds:** FR-18
 - **Prevents:** at deltakere ser utdatert program, og at merket «Endret» blir beregnet forskjellig.
-- **Rule:** `RealtimePort.onTripChanged(tripId, cb)` følger samme mønster som AD-10. Live-modus abonnerer på endringer i `program_items` og `posts`, og demo-modus bruker `BroadcastChannel`. Klienten henter turen på nytt. Et element er «Endret» når `updated_at` er nyere enn deltakerens `last_seen_at` for turen. `last_seen_at` lagres lokalt på enheten og settes når deltakeren lukker banneret eller åpner elementet.
+- **Rule:** `RealtimePort.onTripChanged(tripId, cb)` følger samme mønster som AD-10. Live-modus abonnerer på endringer i `program_items` og `posts`, og demo-modus bruker `BroadcastChannel`. Klienten henter turen på nytt. Sett-status lagres lokalt på enheten per element: `seen[element_id]` er den `updated_at` elementet hadde da deltakeren sist så det, og `baseline_at` er tidspunktet for deltakerens første innlasting av turen. Et element er «Endret» når `updated_at` er nyere enn både `baseline_at` og `seen[element_id]`. Å åpne et element markerer bare det elementet som sett. «Merk alle som sett» markerer elementene som var endret i det øyeblikket, og endringer som kommer etterpå, forblir uleste.
+
+### AD-17: All lagring av turstruktur i live-modus går gjennom én autoritativ skriveoperasjon [ADOPTED]
+
+- **Binds:** FR-2, FR-3, FR-4, FR-17
+- **Prevents:** at ugyldige turer eller halvveis lagrede endringer havner i databasen via direkte skrivekall, og at to enheter overskriver hverandre i stillhet.
+- **Rule:** Klienter har bare lesetilgang (RLS `SELECT`) til `trips`, `days`, `program_items`, `posts` og `teams`. Alle skriv går gjennom Edge Function `save-trip`, og `generate-trip` bruker samme vei. Funksjonen validerer med `validateTrip()` fra domenekjernen og kaller SQL-funksjonen `apply_trip_change(trip_id, base_version, draft, publish)`, som skriver alt i én transaksjon. `trips.version` økes ved hver lagring. Avviker `base_version`, returneres `VERSION_CONFLICT`, og klienten henter turen på nytt. Databasen har i tillegg `CHECK`-begrensninger for enkle invarianter (`radius_m > 0`, `points > 0`, gyldige statusverdier). Demo-`TripRepo` kjører den samme valideringen før lagring i localStorage.
 
 ## Consistency Conventions
 
@@ -148,11 +154,11 @@ Pilene viser hva som får lov å importere hva. `src/domain` importerer bare `zo
 | ID-er | Alle ID-er er UUID v4 og genereres av klienten (`crypto.randomUUID()`), også i KI-output, der Edge Function fyller inn manglende ID-er før validering |
 | Datoer og tid | Datoer som `YYYY-MM-DD`, klokkeslett som `HH:mm` (lokal tid for turen), tidsstempler som ISO 8601 UTC |
 | Koordinater | `{ lat, lng }` i desimalgrader (WGS84). Avstander i meter som heltall |
-| Turens område | `area = { center: {lat,lng}, radius_m }`. «Innenfor området» betyr at avstanden fra `center` er mindre enn eller lik `radius_m` |
+| Turens område | `area = { center: {lat,lng}, radius_m }`. «Innenfor området» betyr at avstanden fra `center` er mindre enn eller lik `radius_m`. Området foreslås av KI-en ut fra destinasjonen og kan flyttes og endres av arrangøren i Utkast |
 | Feil | Porter og Edge Functions returnerer `{ ok: true, data } | { ok: false, error: { code, message, issues? } }`. Koder skrives i `UPPER_SNAKE`. UI oversetter koden til norsk mikrotekst (EXPERIENCE.md) |
 | Tilstand | Serverdata hentes og caches via én datahook per ressurs (`useTrip`, `useScores`). Det brukes ingen global store til serverdata |
-| Konfigurasjon | Alle miljøvariabler starter med `VITE_`, er dokumentert i `.env.example` og leses bare i `src/app/services.ts` |
-| Tester | Domenet testes med enhetstester i Vitest (`*.test.ts` ved siden av filen). Flyter testes med Playwright i demo-modus |
+| Konfigurasjon | Bare offentlig klientkonfigurasjon har `VITE_`-prefiks (`VITE_APP_MODE`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`). Den er dokumentert i `.env.example` og leses bare i `src/app/services.ts`. Serverhemmeligheter følger AD-9 |
+| Tester | Domenet testes med enhetstester i Vitest (`*.test.ts` ved siden av filen). Flyter testes med Playwright i demo-modus. Tilgangsregler (RLS, RPC-er, `save-trip` og Storage) testes med en live-integrasjonstest med to arrangører og to turer |
 
 ## Stack
 
@@ -197,6 +203,7 @@ erDiagram
     date end_date
     jsonb area
     jsonb theme
+    int version
   }
   POSTS {
     uuid id
@@ -213,6 +220,7 @@ erDiagram
   SUBMISSIONS {
     uuid id
     text status "pending|approved|rejected"
+    int awarded_points
     text text_answer
     text photo_path
   }
@@ -237,7 +245,7 @@ flowchart LR
       AU["Auth (e-post, anonym)"]
       ST["Storage: submissions"]
       RT["Realtime"]
-      EF["Edge Functions<br/>generate-trip, regenerate-part"]
+      EF["Edge Functions<br/>generate-trip, save-trip,<br/>regenerate-part"]
     end
     C["Claude API"]
   end
@@ -264,7 +272,7 @@ src/
   seed/demo-trip.json
 supabase/
   migrations/
-  functions/generate-trip/, functions/regenerate-part/
+  functions/generate-trip/, functions/save-trip/, functions/regenerate-part/
 e2e/                 # Playwright, kjøres i demo-modus
 ```
 
@@ -274,11 +282,11 @@ e2e/                 # Playwright, kjøres i demo-modus
 | --- | --- | --- |
 | FR-1, FR-2 Prompt og generering | `features/organizer`, `AgentPort`, `functions/generate-trip` | AD-2, AD-3, AD-9 |
 | FR-3 Redigering og regenerering | `features/organizer`, `functions/regenerate-part` | AD-2, AD-12 |
-| FR-4 Publisering | `TripRepo.publish` | AD-2, AD-13 |
+| FR-4 Publisering | `TripRepo.publish` → `save-trip` | AD-2, AD-13, AD-17 |
 | FR-5, FR-6 Poster og opplåsing | `domain/geo.ts`, `PositionSource` | AD-6 |
 | FR-7, FR-15 Innsending og godkjenning | `features/participant`, `features/organizer`, `StoragePort` | AD-7, AD-11 |
 | FR-8, FR-9, FR-10 Lag, poeng og ledertavle | `domain/scoring.ts`, `team_scores`, `RealtimePort` | AD-5, AD-10 |
-| FR-17, FR-18 Endringer underveis | `features/organizer` (redigering av publisert tur), `RealtimePort.onTripChanged` | AD-13, AD-16, AD-12 |
+| FR-17, FR-18 Endringer underveis | `features/organizer` (redigering av publisert tur), `RealtimePort.onTripChanged` | AD-12, AD-13, AD-16, AD-17 |
 | FR-16 Tema | `domain/schema.ts`, designsteget i `generate-trip` | AD-14 |
 | FR-11, FR-12 Demo og mock | `adapters/demo`, `seed/` | AD-4 |
 | FR-13, FR-14 Tilgang | `AuthPort`, RLS, `join_trip` | AD-8 |
@@ -289,6 +297,7 @@ e2e/                 # Playwright, kjøres i demo-modus
 - **Skjult destinasjon:** Utenfor V1.
 - **Testoppsett for sanntid (PRD §8.4):** Mekanismen er bestemt (AD-10). Hvordan den testes og vises på eksamen, avgjøres før trinn C.
 - **Lagtildeling:** Om arrangøren fordeler deltakerne eller deltakerne velger selv (åpent punkt i UX). Det påvirker bare UI og én RLS-regel, og avgjøres i stories for trinn C.
+- **Generering i bakgrunnen:** I V1 må siden være åpen til utkastet er klart. Jobbstatus som overlever at siden lukkes, kan komme senere.
 - **Køing uten nett:** Om innsendinger kan sendes uten dekning. Det kan legges til i `StoragePort` uten å endre kontraktene.
 - **Hvilken Claude-modell og hvilken prompt:** Dette er detaljer inne i Edge Function. Det velges når A.3 implementeres, med tanke på kostnad.
 - **KI-basert QA og OpenAI:** Utenfor V1 (PRD §8.5).
