@@ -6,3 +6,5 @@
 - [ ] 2026-10-28 [gjennomforingsplan](999-2026-10-28-19-19-10-gjennomforingsplan.md) — gå gjennom `[ASSUMPTION]`-merkene i UX (DESIGN.md/EXPERIENCE.md) og arkitekturspinen
 - [ ] 2026-10-28 [gjennomforingsplan](999-2026-10-28-19-19-10-gjennomforingsplan.md) — last opp blåtur-malen og oppdater arkitekturspinen etter den
 - [ ] 2026-10-28 [gjennomforingsplan](999-2026-10-28-19-19-10-gjennomforingsplan.md) — avgjør testoppsett for sanntidsledertavle (PRD §8.4) før trinn C
+- [ ] 2026-10-28 [qa-oppfolging](998-2026-10-28-20-43-00-qa-oppfolging.md) — bekreft valgene i qa-oppfolging (poeng fryses ved godkjenning, «Antall poster», SM-2 90 %, 15 MB, minimumsleveranse = milepæl B)
+- [ ] 2026-10-28 [qa-oppfolging](998-2026-10-28-20-43-00-qa-oppfolging.md) — legg inn kildelenker i konkurrentanalysen (QA-15)
