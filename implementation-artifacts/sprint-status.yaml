@@ -1,0 +1,112 @@
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created, ready for development
+#   - in-progress: Developer actively working on implementation
+#   - review: Implementation complete, ready for review
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# Action Item Status:
+#   - open: Committed during a retrospective, not yet addressed
+#   - in-progress: Actively being worked on
+#   - done: Completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when its first story starts (via build's sprint sync)
+# - Stories can be worked in parallel if team capacity allows
+# - Developer typically creates the next story after the previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+# - Retrospective appends its action items to action_items; the status view surfaces open ones
+
+generated: 10-28-2026 21:03
+last_updated: 10-28-2026 21:03
+project: G128-johansen-rena
+project_key: NOKEY
+tracking_system: file-system
+story_location: "implementation-artifacts"
+
+development_status:
+  epic-1: backlog
+  1-1-appen-starter-i-demo-modus-fra-blåtur-malen: backlog
+  1-2-turdata-valideres-av-domenekjernen: backlog
+  1-3-prøveturen-lastes-fra-seed-data: backlog
+  1-4-rollevalg-på-startsiden: backlog
+  1-5-deltakeren-ser-dagens-program: backlog
+  1-6-deltakeren-ser-postene-på-kartet: backlog
+  epic-1-retrospective: optional
+
+  epic-2: backlog
+  2-1-arrangøren-logger-inn-med-magisk-lenke: backlog
+  2-2-arrangøren-beskriver-en-ny-tur: backlog
+  2-3-utkast-genereres-med-mock-agenten: backlog
+  2-4-utkast-genereres-med-claude-i-edge-function: backlog
+  2-5-arrangøren-redigerer-program-og-poster: backlog
+  2-6-turen-får-tema: backlog
+  2-7-arrangøren-publiserer-turen: backlog
+  epic-2-retrospective: optional
+
+  epic-3: backlog
+  3-1-deltakeren-blir-med-via-turkode: backlog
+  3-2-poster-låses-opp-når-jeg-er-på-stedet: backlog
+  3-3-posisjonssimulator-i-demo-modus: backlog
+  3-4-deltakeren-sender-tekstsvar: backlog
+  3-5-arrangøren-godkjenner-eller-avviser: backlog
+  3-6-poeng-beregnes-fra-godkjente-innsendinger: backlog
+  epic-3-retrospective: optional
+
+  epic-4: backlog
+  4-1-arrangøren-fordeler-deltakerne-på-lag: backlog
+  4-2-deltakeren-ser-ledertavlen: backlog
+  4-3-ledertavlen-oppdateres-i-sanntid: backlog
+  4-4-deltakeren-sender-bilde: backlog
+  epic-4-retrospective: optional
+
+  epic-5: backlog
+  5-1-arrangøren-endrer-en-publisert-tur: backlog
+  5-2-arrangøren-legger-til-nye-poster-og-programposter-underveis: backlog
+  5-3-arrangøren-deaktiverer-en-post: backlog
+  5-4-deltakerne-ser-endringer-med-en-gang: backlog
+  epic-5-retrospective: optional
+
+  epic-6: backlog
+  6-1-arrangøren-regenererer-én-post: backlog
+  6-2-arrangøren-regenererer-en-dag-eller-en-programpost: backlog
+  6-3-ki-forslag-på-en-publisert-tur: backlog
+  epic-6-retrospective: optional
+
+  epic-7: backlog
+  7-1-kjerneflyten-testes-ende-til-ende: backlog
+  7-2-tilgjengelighet-tekst-og-feltkvalitet-er-kontrollert: backlog
+  7-3-readme-og-måling-av-suksesskriterier: backlog
+  7-4-live-oppsett-og-deploy: backlog
+  epic-7-retrospective: optional
+
+# Readiness-funn fra sprint planning (CONCERNS), ikke fra en retrospektiv
+action_items:
+  - epic: 1
+    action: "Blåtur-malen og gruppens arkitektur mangler. Story 1.5 har ikke noe navigasjonsmønster før malen er inne, og spinen må oppdateres (bmad-architecture, Update) når den kommer."
+    owner: "Kevin og Stian"
+    status: open
+  - epic: 2
+    action: "Fargetokens og temalister (Story 1.1 og 2.6) er antakelser i DESIGN.md. Gruppen skal vurdere fargene."
+    owner: "Kevin og Stian"
+    status: open
+  - epic: 4
+    action: "Personvern for bilder (samtykke, lagringstid og sletting) må avklares før Story 4.4 (PRD §8.6)."
+    owner: "Kevin og Stian"
+    status: open
+  - epic: 4
+    action: "Testoppsett for sanntidsledertavle på eksamen må avgjøres før Story 4.3 (PRD §8.4)."
+    owner: "Kevin og Stian"
+    status: open

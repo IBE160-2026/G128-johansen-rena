@@ -7,7 +7,7 @@
 - [x] Arkitektur-dokument (utkast skrevet, ikke godkjent av gruppen)
 - [x] Epics og stories (7 epics, 34 stories)
 - [x] QA-funn fra `OpenAI_QA/` vurdert og fulgt opp (se `planning-artifacts/qa-oppfolging-2026-10-28.md`)
-- [ ] Sprint planning (steg 0.6)
+- [x] Sprint planning (steg 0.6): `implementation-artifacts/sprint-status.yaml`, CONCERNS med 4 åpne punkter
 - [ ] Implementasjonsstart / kode
 - [ ] Testplan og QA
 - [ ] README / kjørbarhet og demo-modus

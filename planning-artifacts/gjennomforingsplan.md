@@ -127,7 +127,7 @@ Planen bryter product brief og PRD ned i små steg som kan tas ett om gangen. Hv
 
 ## Fremdrift
 
-- [ ] Fase 0 – Planlegging
+- [x] Fase 0 – Planlegging (ferdig 2026-10-28, sprint planning ga CONCERNS, se `implementation-artifacts/sprint-status.yaml`)
 - [ ] Fase 1 – Fundament
 - [ ] Trinn A – KI-generert tur (milepæl A)
 - [ ] Trinn B – Geolåst rebus og poeng (milepæl B)

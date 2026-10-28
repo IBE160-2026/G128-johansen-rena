@@ -6,7 +6,7 @@ Repoet inneholder gruppens applikasjon og dokumentasjon av utvikling, testing og
 
 ## Status (28. oktober 2026)
 
-- **Fase:** Planleggingen (fase 0) er ferdig frem til sprint planning. Applikasjonen er ikke implementert ennå.
+- **Fase:** Planleggingen (fase 0) er ferdig, og sprint-status ligger i [implementation-artifacts/sprint-status.yaml](implementation-artifacts/sprint-status.yaml). Applikasjonen er ikke implementert ennå.
 - **Plan:** [planning-artifacts/gjennomforingsplan.md](planning-artifacts/gjennomforingsplan.md)
 - **Leveranser:** [Leveranser/product-brief.md](Leveranser/product-brief.md) er den gjeldende briefen. Kopien i `planning-artifacts/briefs/` er BMAD-arbeidskopien.
 - **Planleggingsdokumenter:** PRD, UX, arkitektur og epics/stories ligger i [planning-artifacts/](planning-artifacts/).
