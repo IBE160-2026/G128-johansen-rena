@@ -44,6 +44,7 @@ Prosjektet er i BMAD-flyten fra produktbrief til PRD. Nå er neste naturlige ste
 - BMAD-flyten skal fortsette i rekkefølgen: brief → PRD → arkitektur → epics/stories → implementasjon
 
 ## Referanser
+- [planning-artifacts/gjennomforingsplan.md](planning-artifacts/gjennomforingsplan.md) – steg-for-steg plan
 - [Leveranser/product-brief.md](Leveranser/product-brief.md)
 - [planning-artifacts/prds/prd-G128-johansen-rena-2026-10-11/prd.md](planning-artifacts/prds/prd-G128-johansen-rena-2026-10-11/prd.md)
 - [planning-artifacts/prds/prd-G128-johansen-rena-2026-10-11/addendum.md](planning-artifacts/prds/prd-G128-johansen-rena-2026-10-11/addendum.md)

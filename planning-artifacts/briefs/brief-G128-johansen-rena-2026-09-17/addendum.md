@@ -31,7 +31,7 @@ Mindtrip, Layla, Wonderplan, GuideGeek, Vacay tar naturlig-språk-input og gener
 
 - **Frontend:** React + Vite + Tailwind, react-leaflet for kart
 - **Backend/database:** Supabase (Postgres, auth, storage), Edge Functions eller Node-backend for KI-pipeline
-- **KI:** Claude API med strukturert JSON-output for Planner-, Innholds- og Designagenten. **QA-agenten kjører på OpenAI**, bevisst et annet system enn resten av kjeden, slik at kontrollsteget ikke er det samme systemet som godkjenner sitt eget resultat.
+- **KI:** Claude API med strukturert JSON-output for Planner-, Innholds- og Designagenten. Opprinnelig var planen at **QA-agenten skulle kjøre på OpenAI**, et annet system enn resten av kjeden, slik at kontrollsteget ikke er det samme systemet som godkjenner sitt eget resultat. *Endret 2026-10-28:* I V1 erstattes QA-agenten av regelbasert validering, etter faglærers forslag. Et KI-basert QA-steg på OpenAI er et mulig senere trinn.
 - **Geolokasjon:** nettleserens Geolocation API og avstandsberegning mot postenes koordinater
 - **Hosting:** Vercel
 - **Utviklingsmetode:** BMAD med Claude Code som kodeagent

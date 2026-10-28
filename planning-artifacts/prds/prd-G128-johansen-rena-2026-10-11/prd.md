@@ -2,7 +2,7 @@
 title: "PRD: TripBuilder AI"
 status: draft
 created: 2026-10-11
-updated: 2026-10-11
+updated: 2026-10-28
 ---
 
 # PRD: TripBuilder AI
@@ -45,7 +45,7 @@ Dette er ikke målrettet mot:
 #### UJ-1. Arrangøren beskriver en tur på naturlig språk
 - Persona + kontekst: En arrangør skal planlegge en tur for venner eller studentgruppe uten teknisk bakgrunn.
 - Inntrådt tilstand: Arrangøren har en idé om destinasjon, dato, program og opplevelser, men mangler struktur.
-- Bane: Arrangøren skriver en kort beskrivelse, velger format og publiserer. Systemet genererer første utkast.
+- Bane: Arrangøren fyller ut nøkkelfeltene, skriver en kort beskrivelse og publiserer. Systemet genererer første utkast.
 - Klimaks: Systemet foreslår program, poster, oppgaver og lagstruktur som er logisk sammenhengt.
 - Oppløsning: Arrangøren vurderer utkastet og redigerer det før publisering.
 - Edge case: Hvis input er for kort eller inkonsekvent, skal systemet be om nærmere opplysninger eller tilby et mer generisk utkast.
@@ -67,9 +67,17 @@ Dette er ikke målrettet mot:
 #### UJ-4. Deltaker får verdi i real time
 - Persona + kontekst: Flere deltagere løser oppgaver samtidig.
 - Inntrådt tilstand: Oppgaver er løst og poeng skal oppdateres live.
-- Bane: Deltaker logger svar eller bilde, systemet validerer oppgave, oppdaterer lagstatus og ledertavle.
-- Klimaks: Deltakeren får umiddelbar tilbakemelding om poeng og status.
+- Bane: Deltaker sender svar eller bilde. Arrangøren ser innsendingen og godkjenner eller avviser den. Ved godkjenning oppdateres lagstatus og ledertavle.
+- Klimaks: Deltakeren får umiddelbar kvittering på at innsendingen er mottatt og venter på godkjenning. Når arrangøren godkjenner, får laget poengene.
 - Oppløsning: Deltaker fortsetter med programmet og kan se endringen i ledertavlen uten å oppdatere manuelt.
+
+#### UJ-5. Arrangøren justerer turen underveis
+- Persona + kontekst: Arrangøren er på turen og finner en bedre restaurant, eller kommer på en ny rebuspost.
+- Inntrådt tilstand: Turen er publisert, og deltakerne er i gang.
+- Bane: Arrangøren åpner turen på mobilen, endrer programposten eller legger til en post, for hånd eller med forslag fra KI-en, og lagrer.
+- Klimaks: Deltakerne ser endringen med en gang, med et «Endret»-merke og et banner om at programmet er oppdatert.
+- Oppløsning: Turen fortsetter med det oppdaterte programmet uten at noe er tapt.
+- Edge case: En post som noen lag allerede har løst, deaktiveres i stedet for å slettes. Poengene som er gitt, beholdes.
 
 ## 3. Ordliste
 
@@ -93,18 +101,20 @@ Dette er ikke målrettet mot:
 **Funksjonelle krav:**
 
 #### FR-1: Arrangør kan beskrive turen med naturlig språk
-Arrangøren kan skrive en kort tekst som beskriver oppdrag, sted, antall dager, deltakergruppe, program og rute. Realiserer UJ-1.
+Arrangøren fyller ut noen få nøkkelfelt (destinasjon, fra- og til-dato, antall deltakere og eventuelt antall lag) og beskriver resten med egne ord: program, rebus, tone og deltakergruppe. Realiserer UJ-1.
 
 **Testbare konsekvenser:**
-- Systemet må kunne ta imot beskrivelse i tekstform.
-- Systemet må kunne oppdage minst destinasjon, periode og målgruppe fra innputtet.
+- Systemet må kunne ta imot nøkkelfelt og en beskrivelse i tekstform.
+- Destinasjon, periode og antall deltakere er påkrevd. Til-dato kan ikke være før fra-dato, og antall lag må være mellom 1 og 6 og ikke flere enn antall deltakere.
+- Generert tur må ha samme periode som nøkkelfeltene.
 - Ugyldig eller tom input skal få en tydelig feilmelding eller en liten oppfølgingsspørsmålssvøm.
 
 #### FR-2: Systemet genererer et ferdig utkast til tur
 Systemet skal produsere en strukturert turmodell med enkeltdager, oppgaver, lag og poster innenfor en definert datamodell. Realiserer UJ-1.
 
 **Testbare konsekvenser:**
-- Generert JSON skal validere mot datamodellen.
+- Generert JSON skal validere mot datamodellen og de regelbaserte kontrollene.
+- Feiler valideringen, sendes feilene tilbake til KI-en for ett nytt forsøk. Feiler også det, får arrangøren en tydelig feilmelding.
 - Hver dag i perioden skal ha minst én oppføring.
 - Alle poster skal ha påkrevde felter som koordinat, tekst og type.
 
@@ -122,9 +132,33 @@ Når utkastet er godkjent, skal arrangøren kunne publisere turen slik at deltak
 - Publiserte turer skal være tilgjengelige i deltakerflyten.
 - Publisering skal kreve eksplisitt handling fra arrangør.
 
+#### FR-16: Turen får et enkelt tema
+KI-en (designsteget i agentkjeden) velger et tema for turen: en aksentfarge og et symbol fra faste lister. Arrangøren kan endre temaet. Deltakersiden bruker temaet i toppen og i aksentene. Realiserer UJ-1.
+
+**Testbare konsekvenser:**
+- Temaet validerer mot de faste listene.
+- Ugyldig eller manglende tema gir et standardtema.
+
 **Feature-specific NFRs:**
 - Opplevelsen skal være enkel for brukere uten teknisk bakgrunn.
 - Generert innhold skal være strukturert for å være lett å gjennomgå og redigere.
+
+#### FR-17: Arrangør kan endre en publisert tur underveis
+Arrangøren kan endre, legge til og deaktivere programposter og rebusposter på en publisert tur, også fra mobil. Endringene gjelder med en gang. Realiserer UJ-5.
+
+**Testbare konsekvenser:**
+- Hver endring valideres før den lagres, og en ugyldig endring lagres ikke.
+- Nye poster og programposter kan legges til på en publisert tur.
+- En post som har godkjente innsendinger, kan ikke slettes, bare deaktiveres. Poengene den har gitt, beholdes på ledertavlen, og den tar ikke imot nye innsendinger.
+- KI-forslag til endringer (regenerering eller «ny post med KI») kan brukes på en publisert tur, men går først live når arrangøren har godkjent dem.
+
+#### FR-18: Deltakere ser endringer med en gang
+Når arrangøren endrer turen, oppdateres deltakersiden uten manuell refresh, og deltakerne ser hva som er endret. Realiserer UJ-5.
+
+**Testbare konsekvenser:**
+- Endringen vises hos deltakerne innen 5 sekunder i testmiljø.
+- Endrede programkort og poster får et «Endret»-merke, og et banner sier at programmet er oppdatert til deltakeren har sett det.
+- Deaktiverte poster vises nedtonet og merket «Deaktivert».
 
 ### 4.2 Rebus og geofencing
 
@@ -139,9 +173,10 @@ Systemet skal tilordne hver rebuspost koordinater og definere gyldig avstand for
 - Hver rebuspost skal ha gyldige koordinater.
 - Radius skal være definert og konsistent.
 - Poster uten gyldig område skal avvises i validering.
+- Hver post er enten geolåst eller åpen (`requires_location`). Både KI-en og arrangøren kan sette dette per post. Åpne poster trenger koordinater for kartet, men låses ikke.
 
 #### FR-6: Oppgave låses opp etter fysisk nærhet
-Når deltakeren er innenfor definert radius, skal oppgave åpne og være tilgjengelig for løsning. Realiserer UJ-3.
+Når deltakeren er innenfor definert radius på en geolåst post, skal oppgave åpne og være tilgjengelig for løsning. Realiserer UJ-3.
 
 **Testbare konsekvenser:**
 - Systemet skal styre oppgave status basert på brukerposisjon.
@@ -153,7 +188,16 @@ Deltaker skal kunne sende tekst, foto eller annen definert respons til systemet 
 
 **Testbare konsekvenser:**
 - Bildefil skal kunne lastes opp og lagres i riktig kontekst.
-- Systemet skal kunne godkjenne eller motta respons uten at appen krasjer.
+- Systemet skal kunne motta respons uten at appen krasjer.
+- Deltakeren får umiddelbar kvittering med status «venter på godkjenning».
+
+#### FR-15: Arrangør godkjenner eller avviser innsendinger
+Arrangøren skal se innsendte svar og bilder per tur og godkjenne eller avvise hver av dem. Bare godkjente innsendinger gir poeng. Realiserer UJ-4.
+
+**Testbare konsekvenser:**
+- En innsending har status ventende, godkjent eller avvist.
+- Ventende og avviste innsendinger gir ikke poeng.
+- Deltakeren ser statusen på sin egen innsending.
 
 ### 4.3 Lag, poeng og ledertavle
 
@@ -166,14 +210,14 @@ Systemet skal støtte opprettelse av lag og et poengsystem som kan brukes for b�
 
 **Testbare konsekvenser:**
 - Lag skal kunne opprettes og tilordnes deltakere.
-- Poeng skal beregnes basert på definert regelverk.
+- Poeng skal beregnes basert på definert regelverk og kun fra godkjente innsendinger.
 - Tomme eller ugyldige poengregler skal avvises.
 
 #### FR-9: Poeng registreres og oppdateres i real time
-Når en oppgave er løst, skal poeng oppdateres på riktig lag uten lang forsinkelse. Realiserer UJ-4.
+Når arrangøren godkjenner en innsending, skal poeng oppdateres på riktig lag uten lang forsinkelse. Realiserer UJ-4.
 
 **Testbare konsekvenser:**
-- Endring i poeng skal være synlig for deltakere innen 5 sekunder i testmiljø.
+- Endring i poeng skal være synlig for deltakere innen 5 sekunder etter godkjenning i testmiljø.
 - Oppdatert lagstatus skal være konsistent over flere klienter.
 
 #### FR-10: Deltakere kan se ledertavle og status
@@ -183,7 +227,26 @@ Deltakerne skal kunne se lagstatus, poeng og gjennomførte oppgaver i mobilvisni
 - Tidsstempel eller oppdragsstatus skal være tydelig.
 - Ledertavle skal oppdatere uten manuell refresh.
 
-### 4.4 Lokal demo og testbarhet
+### 4.4 Tilgang og roller
+
+**Beskrivelse:** Arrangør og deltaker har ulike rettigheter. Terskelen for deltakere skal være lav i felt.
+
+#### FR-13: Arrangør logger inn med konto
+Arrangøren logger inn med e-post (magisk lenke) for å opprette, redigere, publisere og godkjenne. Realiserer UJ-1 og UJ-2.
+
+**Testbare konsekvenser:**
+- Bare innlogget arrangør kan endre eller publisere sin egen tur.
+- Bare turens arrangør kan godkjenne innsendinger.
+
+#### FR-14: Deltaker blir med via turkode én gang
+Deltakeren skriver turkode og navn én gang og forblir innlogget gjennom turen uten å opprette konto. Realiserer UJ-3.
+
+**Testbare konsekvenser:**
+- Feil turkode gir tydelig feilmelding.
+- Sesjonen overlever at nettleseren lukkes og åpnes igjen.
+- Deltakeren ser bare data og bilder fra sin egen tur.
+
+### 4.5 Lokal demo og testbarhet
 
 **Beskrivelse:** For å kunne gjennomføre prosjektet med begrenset tid og uten egne API-nøkler, må løsningen kunne kjøres som demo med forhåndsdefinert innhold og mock-data.
 
@@ -202,6 +265,7 @@ Agentflyten skal kunne kjøres med mock- eller stub-data når eksterne API-er ik
 **Testbare konsekvenser:**
 - Systemet skal kunne håndtere et mock-svar uten at appen feiler.
 - Kjerneflyten skal kunne testes i demo-modus uten autentisering mot externe tjenester.
+- I demo-modus er det ingen innlogging. Brukeren velger rolle (arrangør eller deltaker).
 
 ## 5. Ikke-mål (eksplisitt)
 
@@ -218,11 +282,13 @@ Agentflyten skal kunne kjøres med mock- eller stub-data når eksterne API-er ik
 
 - Arrangør beskriver tur i naturlig språk.
 - Turen genereres som strukturert modell med program, poster og lag.
-- Arrangør kan redigere og regenerere enkelte deler.
+- Arrangør kan redigere og regenerere enkelte deler, også etter publisering, og endringene vises hos deltakerne med en gang.
 - Deltaker får en mobilvennlig deltakerside med program, ledertavle og kart.
 - Geofencing-based oppgaveopplåsing.
 - Poeng og lagstatus oppdateres i real time.
 - Bildeopplasting som svar på oppgaver.
+- Arrangør godkjenner innsendinger før de gir poeng.
+- Arrangør med konto, og deltaker som blir med via turkode.
 - Demo-/seed-data og mock-modus for lokal kjøring.
 
 ### 6.2 Utenfor MVP
@@ -233,6 +299,7 @@ Agentflyten skal kunne kjøres med mock- eller stub-data når eksterne API-er ik
 - Kompleks ruteoptimalisering.
 - Flere ulike premium-tema eller komplette AI-dynamiske designpakker.
 - Full to-way AI-ekspert QA med flere betalte leverandører i samme versjon.
+- Skjult destinasjon frem til avreise (fra proposal-eksempelet). Kan komme etter V1.
 
 ## 7. Succesmålinger
 
@@ -241,7 +308,7 @@ Agentflyten skal kunne kjøres med mock- eller stub-data når eksterne API-er ik
 - SM-2: 100 % av generert JSON skal validere mot datamodellen i testmiljø. Validerer FR-2, FR-5.
 - SM-3: 100 % av rebusposter i testdata skal ha koordinater innenfor definert område. Validerer FR-5.
 - SM-4: 80 % av geofencing-sjekkene skal låse opp korrekt innenfor definert radius. Validerer FR-6.
-- SM-5: Ledertavle skal oppdatere poeng på lag innen 5 sekunder i funksjonstest. Validerer FR-8, FR-9, FR-10.
+- SM-5: Ledertavle skal oppdatere poeng på lag innen 5 sekunder etter at arrangøren har godkjent en innsending, i funksjonstest. Validerer FR-15, FR-8, FR-9, FR-10.
 
 ### Sekundære
 - SM-6: Over 60 % av KI-genererte rebusposter blir beholdt uten redigering. Validerer FR-3.
@@ -252,19 +319,24 @@ Agentflyten skal kunne kjøres med mock- eller stub-data når eksterne API-er ik
 - SM-C1: Produktet skal ikke optimumsere for "flest mulig funksjoner" på bekostning av tydelighet og stabilitet i v1.
 - SM-C2: Produktet skal ikke øke kompleksitet i arrangørflyten dersom det gjør det vanskeligere for ikke-tekniske brukere å stole på resultatet.
 
-## 8. Åpne spørsmål
+## 8. Åpne spørsmål og beslutninger
 
-1. Hva er den mest realistiske minimumsdatamodellen for en tur i v1, og hvor langt skal den gå uten at den blir for rigid?
-2. Hvilken nivå av autentisering trenger vi for arrangør og deltakere i demo- og eksamensscenarioet?
-3. Hvordan skal oppgavevalidering håndteres dersom bruker sender bilde av noe som ikke er gyldig?
-4. Hva er forventet testoppsett for sanntidsledertavle i eksamen, og hvilke mock-verdier er akseptable?
-5. Er det ønskelig å ha en forkortet "AI QA"-fase i v1, eller skal denne erstattes helt av regelbasert validering?
+**Besluttet (2026-10-28):**
+
+1. *Minimumsdatamodell:* Avgjøres i arkitektursteget.
+2. *Autentisering:* Arrangøren har konto (e-post med magisk lenke). Deltakeren blir med via turkode og navn én gang, og sesjonen huskes. Demo-modus har ingen innlogging, bare valg av rolle. Se FR-13 og FR-14.
+3. *Ugyldige bilder og svar:* Arrangøren godkjenner eller avviser hver innsending, og poeng gis først ved godkjenning. Se FR-15.
+5. *AI-QA:* V1 bruker kun regelbasert validering (skjema og regler). Feiler valideringen, får KI-en ett nytt forsøk med feilene. KI-QA kan komme i et senere trinn.
+
+**Fortsatt åpent:**
+
+4. Hva er forventet testoppsett for sanntidsledertavle i eksamen, og hvilke mock-verdier er akseptable? *Utsatt. Avgjøres før sanntidstrinnet (trinn C).*
 
 ## 9. Assumsjonsindeks
 
 - [ASSUMPTION: V1 skal fokuseres på kjerneflyten for arrangement og ikke på fullt produktstablet markedsoppsett.]
 - [ASSUMPTION: Geo-radien er noe fast definert i datamodellen, og kan testes med simulerte posisjoner i lokale tester.]
-- [ASSUMPTION: Arrangør og deltaker bruker samme plattform, men med ulike roller og rettigheter.]
-- [ASSUMPTION: Demo-modus skal kunne starte uten å kreve autentisering mot Supabase eller eksterne KI-tjenester.]
-- [ASSUMPTION: Regulært QA-trinn i v1 blir erstattet av strukturell validering, med optional ekstra KI-QA senere.]
+- Arrangør og deltaker bruker samme plattform, men med ulike roller og rettigheter (bekreftet, se FR-13 og FR-14).
+- Demo-modus starter uten autentisering mot Supabase eller eksterne KI-tjenester (bekreftet, se FR-12 og §8.2).
+- QA-trinnet i v1 er regelbasert validering, og ekstra KI-QA kan komme senere (bekreftet, se §8.5).
 - [ASSUMPTION: Markedet er en uformell gruppe og ikke stor institusjonell event-sektor.]
