@@ -33,7 +33,7 @@ FR11: Appen kan startes lokalt med en ferdig prøvetur (seed-data) uten eksterne
 FR12: KI-delen kan mockes, og kjerneflyten kan kjøres i demo-modus uten innlogging og med valg av rolle.
 FR13: Arrangøren logger inn med e-post (magisk lenke). Bare arrangøren av turen kan endre den, publisere den og godkjenne innsendinger.
 FR14: Deltakeren blir med via turkode og navn én gang og forblir innlogget gjennom turen. Deltakeren ser bare sin egen tur.
-FR15: Arrangøren godkjenner eller avviser innsendinger (ventende → godkjent eller avvist). Bare godkjente innsendinger gir poeng, og poengene fryses ved godkjenning. Deltakeren ser statusen.
+FR15: Arrangøren godkjenner eller avviser innsendinger (ventende → godkjent eller avvist). Bare godkjente innsendinger gir poeng, og endres postens poeng, gjelder det alle lag som har løst den. Deltakeren ser statusen.
 FR16: KI-en velger et enkelt tema per tur (aksentfarge og symbol fra faste lister). Arrangøren kan endre det, og deltakersiden bruker det.
 FR17: Arrangøren kan endre, legge til og deaktivere programposter og poster på en publisert tur, for hånd eller med KI-forslag som må godkjennes. Hver endring valideres og gjelder med en gang. Poster med godkjente innsendinger deaktiveres i stedet for å slettes, og poengene beholdes.
 FR18: Deltakerne ser endringer innen 5 s uten refresh, med «Endret»-merke og banneret «Programmet er oppdatert». Deaktiverte poster vises nedtonet og merket «Deaktivert».
@@ -53,13 +53,13 @@ NFR10: Personvern: posisjon lagres aldri som historikk, og bilder er bare tilgje
 
 ### Tilleggskrav (arkitektur)
 
-- **Startmal:** Gruppen laster opp koden fra den tidligere blåtursiden (React, Supabase, Leaflet) som mal. Epic 1, Story 1 setter opp prosjektet fra denne malen og løfter den til stacken i spinen: Vite `react-ts`, TypeScript 7.0 og Tailwind 4.3. Hvis malen ikke er inne når arbeidet starter, brukes den rene Vite-malen. Stories beskriver oppførsel og er ikke bundet til kode i malen. Versjonene verifiseres på nytt ved oppsett, og `package-lock.json` committes.
+- **Startmal:** Gruppen laster opp koden fra den tidligere blåtursiden (React, Supabase, Leaflet) som mal. Epic 1, Story 1 setter opp prosjektet fra denne malen og løfter den til stacken i spinen: Vite `react-ts`, TypeScript 7.0 og Tailwind 4.3. Hvis malen ikke er inne når arbeidet starter, brukes den rene Vite-malen. Malen kommer når planleggingsfasen er ferdig. Stories beskriver oppførsel og er ikke bundet til kode i malen. Versjonene verifiseres på nytt ved oppsett, og `package-lock.json` committes.
 - AD-14: Temaet er data (enum-verdier for aksent og ikon), ikke CSS.
 - AD-15: `TripRequest` (nøkkelfelt og beskrivelse) er input til `AgentPort.generate`. `validateTrip(draft, req)` sjekker at periode og antall lag stemmer.
 - AD-1: Ren domenekjerne i `src/domain` (skjema, validering, geo, poeng) som bare importerer zod.
 - AD-2 og AD-3: Zod-skjemaet `TripDraft` og `validateTrip()` er den eneste kontrakten. Edge Function gjør ett nytt forsøk med valideringsfeilene, og returnerer ellers `VALIDATION_FAILED`.
 - AD-4: Porter (`TripRepo`, `AgentPort`, `AuthPort`, `RealtimePort`, `StoragePort`, `PositionSource`) med demo- og supabase-adaptere. `VITE_APP_MODE` leses bare i `src/app/services.ts`. Demo starter uten miljøvariabler.
-- AD-5: Poeng avledes fra godkjente innsendinger (viewet `team_scores` og `scoring.ts`). `awarded_points` fryses ved godkjenning, og hver post teller maks én gang per lag.
+- AD-5: Poeng avledes fra godkjente innsendinger og postens gjeldende poeng (viewet `team_scores` og `scoring.ts`). Hver post teller maks én gang per lag, og endrede poeng gjelder alle lag som har løst posten.
 - AD-6: Haversine i `geo.ts`. Posisjonen sendes eller lagres aldri.
 - AD-7: Innsendinger følger livsløpet ventende → godkjent eller avvist, via RPC-en `review_submission`.
 - AD-8: Supabase Auth med e-post for arrangør og anonym innlogging for deltaker via RPC-en `join_trip`. All tilgang håndheves med RLS.
@@ -83,7 +83,7 @@ UX-DR5: Flytende postkort over kartet med avstand, status og knappen «Løs oppg
 UX-DR6: Status-chips (Venter, Godkjent, Avvist) med ikon og tekst.
 UX-DR7: Ledertavlerad med lagfarge, poeng i `score` og eget lag uthevet. Radene flyttes med animasjon, unntatt når brukeren har bedt om redusert bevegelse.
 UX-DR8: Godkjenningskort for arrangøren med Godkjenn, Avvis (valgfri begrunnelse) og angre i 5 s (forsinket sending).
-UX-DR9: Bunnfaner for deltakeren (I dag, Kart, Ledertavle, Laget).
+UX-DR9: Hovednavigasjon for deltakeren mellom I dag, Kart, Ledertavle og Laget. Mønsteret avgjøres ut fra blåtur-malen, og bunnfaner er foreløpig valgt bort.
 UX-DR10: Demo-banner i warning, og posisjonssimulator på kartet i demo-modus.
 UX-DR11: Ny tur har nøkkelfelt (Destinasjon\*, Fra\*, Til\*, Deltakere\*, Lag, Antall poster) med inline-validering, og et promptfelt med hint ved for kort tekst. Alt lagres lokalt mens arrangøren skriver.
 UX-DR12: Fremdriftssteg under generering (plan → innhold → kontroll) med feiltilstand og valgene «Prøv igjen» og «Rediger beskrivelsen».
@@ -262,7 +262,7 @@ slik at jeg vet hva som skjer nå og senere i dag.
 
 **Gitt** deltakervisningen
 **Når** den vises
-**Så** har den bunnfanene I dag, Kart, Ledertavle og Laget, og den aktive fanen er markert (UX-DR9)
+**Så** kan jeg navigere mellom I dag, Kart, Ledertavle og Laget, og den aktive flaten er markert. Navigasjonsmønsteret følger blåtur-malen (UX-DR9)
 **Og** innholdet er maks 480 px bredt og sentrert på store skjermer (UX-DR18)
 
 **Gitt** at programmet er lastet én gang
@@ -560,7 +560,7 @@ slik at laget kan få poeng (FR7).
 
 **Gitt** migrasjonen for denne storyen
 **Når** den kjøres
-**Så** finnes `submissions` med `awarded_points` og fremmednøkkelen `post_id` med `ON DELETE RESTRICT`, og RLS tillater bare at en deltaker oppretter innsendinger med status `pending` for eget lag (AD-7, AD-13)
+**Så** finnes `submissions` med fremmednøkkelen `post_id` med `ON DELETE RESTRICT`, og RLS tillater bare at en deltaker oppretter innsendinger med status `pending` for eget lag (AD-7, AD-13)
 
 **Gitt** en deltaker
 **Når** hen med direkte API-kall sender inn med en annen turs `post_id`, et annet lags `team_id` eller `status = approved`
@@ -584,7 +584,7 @@ slik at bare riktige svar gir poeng (FR15).
 
 **Gitt** et godkjenningskort
 **Når** jeg trykker Godkjenn eller Avvis (med valgfri begrunnelse)
-**Så** sendes beslutningen etter 5 s til `review_submission`, som endrer statusen og ved godkjenning setter `awarded_points` til postens poeng (AD-5, AD-7)
+**Så** sendes beslutningen etter 5 s til `review_submission`, som endrer statusen (AD-7)
 **Og** trykker jeg «Angre» innen 5 s, sendes ingenting
 
 **Gitt** en deltaker eller en arrangør av en annen tur
@@ -617,12 +617,12 @@ slik at jeg vet hvordan vi ligger an (FR8).
 
 **Gitt** godkjente, ventende og avviste innsendinger, også flere godkjente på samme post
 **Når** `scoring.ts` og viewet `team_scores` beregner poengene
-**Så** teller bare `awarded_points` fra godkjente innsendinger, maks én gang per lag og post, og begge gir samme svar på de samme testtilfellene (AD-5)
+**Så** teller bare postens poeng for godkjente innsendinger, maks én gang per lag og post, og begge gir samme svar på de samme testtilfellene (AD-5)
 **Og** databasen tillater ikke to godkjente innsendinger for samme lag og post
 
 **Gitt** at postens poeng endres etter at en innsending er godkjent
 **Når** poengene beregnes
-**Så** er lagets sum uendret (AD-5)
+**Så** får alle lag som har løst posten, de nye poengene (AD-5)
 
 **Gitt** to turer
 **Når** en deltaker leser `team_scores`
@@ -723,7 +723,7 @@ slik at vi kan løse fotooppgaver (FR7).
 **Når** bildet sendes
 **Så** lagres det i IndexedDB og vises på godkjenningskortet
 
-**Gitt** en fil som ikke er JPEG, PNG eller WebP, eller som er større enn 15 MB før komprimering `[ASSUMPTION]`
+**Gitt** en fil som ikke er JPEG, PNG eller WebP, eller som er større enn 15 MB før komprimering
 **Når** jeg prøver å sende den
 **Så** avvises den med en forklaring
 
@@ -758,7 +758,7 @@ slik at jeg kan bytte til den kule restauranten vi fant underveis (FR17).
 
 **Gitt** en post som har godkjente innsendinger
 **Når** jeg endrer poengene
-**Så** gjelder de nye poengene bare fremtidige godkjenninger, og ledertavlen er uendret (AD-5)
+**Så** får alle lag som har løst posten, de nye poengene, og ledertavlen oppdateres hos alle innen 5 s (AD-5, AD-10)
 
 ### Story 5.2: Arrangøren legger til nye poster og programposter underveis
 

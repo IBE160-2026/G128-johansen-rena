@@ -150,7 +150,7 @@ Arrangøren kan endre, legge til og deaktivere programposter og rebusposter på 
 **Testbare konsekvenser:**
 - Hver endring valideres før den lagres, og en ugyldig endring lagres ikke.
 - Nye poster og programposter kan legges til på en publisert tur.
-- Endres poengene på en post, gjelder det bare fremtidige godkjenninger.
+- Endres poengene på en post, får alle lag som har løst den, de nye poengene, og ledertavlen oppdateres.
 - En post som har godkjente innsendinger, kan ikke slettes, bare deaktiveres. Poengene den har gitt, beholdes på ledertavlen, og den tar ikke imot nye innsendinger.
 - KI-forslag til endringer (regenerering eller «ny post med KI») kan brukes på en publisert tur, men går først live når arrangøren har godkjent dem.
 
@@ -201,7 +201,7 @@ Arrangøren skal se innsendte svar og bilder per tur og godkjenne eller avvise h
 - En innsending har status ventende, godkjent eller avvist.
 - Ventende og avviste innsendinger gir ikke poeng.
 - Deltakeren ser statusen på sin egen innsending.
-- Poengene en innsending gir, er postens poeng i det øyeblikket den godkjennes.
+- En godkjent innsending gir postens gjeldende poeng. Endres postens poeng, oppdateres poengene for alle lag som har løst den.
 
 ### 4.3 Lag, poeng og ledertavle
 
@@ -282,13 +282,6 @@ Agentflyten skal kunne kjøres med mock- eller stub-data når eksterne API-er ik
 
 ## 6. MVP-omfang
 
-### 6.0 Minimumsleveranse og full V1
-
-- **Minimumsleveranse (milepæl B, Epic 1–3):** demo-modus med prøvetur, KI-generering med redigering og publisering, og rebus med geolåsing, tekstsvar, godkjenning og poeng. Dette skal være ferdig og stabilt før noe annet.
-- **Full V1 (Epic 1–7):** i tillegg lag og sanntids ledertavle, bilder, endringer underveis, regenerering og KI-forslag, verifisering og deploy.
-
-Listen under beskriver full V1.
-
 ### 6.1 Inne i MVP
 
 - Arrangør beskriver tur i naturlig språk.
@@ -316,7 +309,7 @@ Listen under beskriver full V1.
 
 ### Primære
 - SM-1: Tid fra prompt til publisert, fungerende deltakerside skal være under 30 minutter uten manuell koding. Validerer FR-1, FR-2, FR-4.
-- SM-2: 100 % av utkast som lagres eller vises for arrangøren, validerer mot datamodellen og reglene. I tillegg rapporteres andelen genereringer som lykkes på første forsøk og etter ett nytt forsøk, målt på ekte KI-output og ikke på mock (mål: minst 90 % etter nytt forsøk `[ASSUMPTION]`). Validerer FR-2, FR-5.
+- SM-2: 100 % av utkast som lagres eller vises for arrangøren, validerer mot datamodellen og reglene. I tillegg rapporteres andelen genereringer som lykkes på første forsøk og etter ett nytt forsøk, målt på ekte KI-output og ikke på mock (mål: minst 80 % etter nytt forsøk). Validerer FR-2, FR-5.
 - SM-3: 100 % av rebusposter i testdata skal ha koordinater innenfor turens område, slik arrangøren har bekreftet det. Validerer FR-5.
 - SM-4: 100 % av de deterministiske testene av opplåsing (posisjoner innenfor, på og utenfor radius) gir riktig svar. I en felttest med ekte GPS skal over 80 % av forsøkene låse opp korrekt. Protokollen (enheter, antall forsøk, nøyaktighet og falske opplåsinger) dokumenteres. Validerer FR-6.
 - SM-5: Ledertavle skal oppdatere poeng på lag innen 5 sekunder etter at arrangøren har godkjent en innsending, i funksjonstest. Validerer FR-15, FR-8, FR-9, FR-10.
@@ -339,9 +332,12 @@ Listen under beskriver full V1.
 3. *Ugyldige bilder og svar:* Arrangøren godkjenner eller avviser hver innsending, og poeng gis først ved godkjenning. Se FR-15.
 5. *AI-QA:* V1 bruker kun regelbasert validering (skjema og regler). Feiler valideringen, får KI-en ett nytt forsøk med feilene. KI-QA kan komme i et senere trinn.
 
+7. *Juks med posisjon:* Gruppen aksepterer at posisjonen bare sjekkes i nettleseren. Arrangørens godkjenning er kontrollen (2026-10-28).
+
 **Fortsatt åpent:**
 
 4. Hva er forventet testoppsett for sanntidsledertavle i eksamen, og hvilke mock-verdier er akseptable? *Utsatt. Avgjøres før sanntidstrinnet (trinn C).*
+6. *Personvern for bilder:* Bilder av deltakere er personopplysninger. Samtykke, lagringstid og sletting må avklares før bildefunksjonen (Epic 4) bygges.
 
 ## 9. Assumsjonsindeks
 

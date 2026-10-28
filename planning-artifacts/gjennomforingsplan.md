@@ -18,6 +18,8 @@ Planen bryter product brief og PRD ned i små steg som kan tas ett om gangen. Hv
 - V1 bruker regelbasert validering i stedet for en QA-agent på OpenAI.
 - KI-en fyller en fast datamodell og genererer aldri kode.
 - Hvert steg avsluttes med commit, og med sesjonslogg (se `CLAUDE.md`).
+- Vi samarbeider om alle epics. Blir tiden knapp, vurderer vi kutt da (2026-10-28).
+- Blåtur-malen kommer når planleggingsfasen er ferdig, og Story 1.1 starter fra den.
 
 ---
 
@@ -45,7 +47,7 @@ Planen bryter product brief og PRD ned i små steg som kan tas ett om gangen. Hv
 
 ## Trinn A – KI-generert tur, redigering og publisering
 
-*Første kjørbare versjon. Arrangøren lager en tur, og deltakerne ser den. Minimumsleveransen er milepæl B.*
+*Første kjørbare versjon. Arrangøren lager en tur, og deltakerne ser den.*
 
 | # | Steg | Krav | Ferdig når |
 |---|---|---|---|
@@ -71,7 +73,7 @@ Planen bryter product brief og PRD ned i små steg som kan tas ett om gangen. Hv
 | B.6 | Arrangøren godkjenner eller avviser tekstsvar | FR-15 | Bare godkjente svar gir poeng |
 | B.7 | Poengregler og poengregning per lag | FR-8 | Ugyldige regler avvises, og poengene stemmer i tester |
 
-**Milepæl B (minimumsleveranse):** Deltakeren blir med, går til posten (simulert), låser den opp og svarer. Arrangøren godkjenner, og laget får poeng.
+**Milepæl B:** Deltakeren blir med, går til posten (simulert), låser den opp og svarer. Arrangøren godkjenner, og laget får poeng.
 
 ## Trinn C – Sanntids ledertavle, lag og bildeopplasting
 
@@ -111,7 +113,7 @@ Planen bryter product brief og PRD ned i små steg som kan tas ett om gangen. Hv
 | 2.2 | Kodegjennomgang per epic (`bmad-code-review`) | Funnene er rettet eller begrunnet |
 | 2.3 | Mål suksesskriteriene SM-1 til SM-8 og dokumenter resultatet | Tabellen er utfylt med faktiske tall |
 | 2.4 | Ferdigstill README: demo-modus, ekte modus og tester | Sensor kan kjøre appen uten nøklene våre |
-| 2.5 | Deploy til Vercel og Supabase, og øvelse på demoen. Deploy kreves for full V1 og for demo på mobiler, fordi GPS krever HTTPS | Eksamensdemoen er øvd |
+| 2.5 | Deploy til Vercel og Supabase, og øvelse på demoen. Deploy kreves for demo på mobiler, fordi GPS krever HTTPS | Eksamensdemoen er øvd |
 | 2.6 | Retrospektiv (`bmad-retrospective`) | Retrospektiven ligger i mappen |
 
 ---

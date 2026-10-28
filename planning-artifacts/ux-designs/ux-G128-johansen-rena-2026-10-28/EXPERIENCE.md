@@ -15,9 +15,9 @@ sources:
 
 ## Foundation
 
-- **Form-faktor:** Webapp. Deltakeren bruker mobil i felt, og den flaten er viktigst. Arrangøren bruker responsiv web, med PC som hovedflate når turen lages og mobil når innsendinger godkjennes underveis. `[ASSUMPTION]` Det lages ingen native app (PRD §5).
+- **Form-faktor:** Webapp. Deltakeren bruker mobil i felt, og den flaten er viktigst. Arrangøren bruker responsiv web, med PC som hovedflate når turen lages og mobil når innsendinger godkjennes underveis. Det lages ingen native app (PRD §5).
 - **UI-system:** Tailwind uten komponentbibliotek, og react-leaflet for kart. Tokenene i DESIGN.md mappes til Tailwind-konfigurasjonen.
-- **Språk:** Bare norsk bokmål i V1. `[ASSUMPTION]`
+- **Språk:** Bare norsk bokmål i V1.
 - **Roller:** Arrangøren har konto (FR-13). Deltakeren blir med via turkode og navn (FR-14). Demo-modus har ingen innlogging, bare valg av rolle (FR-11, FR-12).
 
 ## Information Architecture
@@ -48,15 +48,15 @@ sources:
 |---|---|---|---|
 | Bli med | Start, eller delt lenke eller QR | Turkode (forhåndsutfylt fra lenken) og navn, én gang | FR-14 |
 | I dag (fane) | Standard etter innlogging | Dagens program med den aktiviteten som pågår nå uthevet, og en snarvei til nærmeste post | UJ-3 |
-| Kart (fane) | Bunnfaner | Poster med status og egen posisjon. Et postkort vises nederst når en post velges | FR-5, FR-6 |
+| Kart (fane) | Hovednavigasjon | Poster med status og egen posisjon. Et postkort vises nederst når en post velges | FR-5, FR-6 |
 | Post | Kart eller I dag | Låst: avstand og hint. Opplåst: oppgaven, med knappen «Løs oppgaven» | FR-6 |
 | Send inn | Post → «Løs oppgaven» | Tekstsvar og/eller foto, og knappen Send | FR-7 |
-| Ledertavle (fane) | Bunnfaner | Lag rangert etter poeng, med eget lag uthevet | FR-10 |
-| Laget (fane) | Bunnfaner | Lagmedlemmer og lagets innsendinger med status (Venter, Godkjent eller Avvist) | FR-15 |
+| Ledertavle (fane) | Hovednavigasjon | Lag rangert etter poeng, med eget lag uthevet | FR-10 |
+| Laget (fane) | Hovednavigasjon | Lagmedlemmer og lagets innsendinger med status (Venter, Godkjent eller Avvist) | FR-15 |
 
-Deltakeren har fire bunnfaner: I dag, Kart, Ledertavle og Laget. `[ASSUMPTION]` Det er ingen skuff og ingen meny i flere nivåer. Modale vinduer er bare ett nivå dypt.
+Deltakeren har fire hovedflater: I dag, Kart, Ledertavle og Laget. Navigasjonsmønsteret mellom dem er ikke bestemt. Det avgjøres ut fra blåtur-malen gruppen sender når planleggingsfasen er ferdig, og bunnfaner er foreløpig valgt bort. Modale vinduer er bare ett nivå dypt.
 
-Lagtildeling: Arrangøren fordeler deltakerne på lag i Utkast eller i Turoversikt. En deltaker som ennå ikke har lag, ser «Du får lag snart» på Laget-fanen. `[ASSUMPTION]` Alternativet, at deltakeren velger lag selv når hen blir med, er ikke avgjort.
+Lagtildeling (besluttet): En ny deltaker plasseres automatisk på laget med færrest medlemmer når hen blir med (Story 3.1). Arrangøren kan flytte deltakere mellom lag i Turoversikt (Story 4.1).
 
 ## Voice and Tone
 
@@ -84,7 +84,7 @@ Atferd. Det visuelle står i DESIGN.md under Components.
 | Kartvelger | Utkast → Poster | Posten flyttes ved å dra markøren. Radius vises som en sirkel. Posisjoner utenfor turens område avvises med en forklaring. Turens område vises som en stor sirkel som arrangøren kan flytte og endre størrelse på før publisering |
 | Regenerer-felt | Utkast, per element (trinn D) | Kommando i fritekst. Viser forslaget ved siden av gjeldende versjon med «Bruk» og «Behold gammel». Bare det valgte elementet endres |
 | Postkort | Kart | Avstanden oppdateres mens deltakeren beveger seg. Knappen «Løs oppgaven» blir aktiv straks deltakeren er innenfor radius |
-| Foto-input | Send inn | Åpner kameraet direkte (`capture`), med galleri som alternativ. Bildet komprimeres i klienten før opplasting `[ASSUMPTION]` |
+| Foto-input | Send inn | Åpner kameraet direkte (`capture`), med galleri som alternativ. Bildet komprimeres i klienten før opplasting |
 | Endringsbanner | Deltakerflatene | «Programmet er oppdatert.» vises øverst når noe er endret siden deltakeren sist så. Trykk åpner I dag med de endrede elementene uthevet. «Merk alle som sett» fjerner merkene for alt som er endret til nå, og endringer som kommer etterpå, gir banneret på nytt. |
 | Endret-merke | Programkort, postkort og postliste | Liten chip med «Endret» på elementer som er endret siden deltakeren sist så akkurat det elementet (AD-16). Den forsvinner når elementet åpnes, og andre endrede elementer beholder merket. |
 | Deaktiver post | Rediger underveis | «Deaktiver» med bekreftelse: «Lag som har løst posten, beholder poengene.» Handlingen kan angres med «Aktiver igjen». En post uten innsendinger kan slettes. |
@@ -111,10 +111,10 @@ Atferd. Det visuelle står i DESIGN.md under Components.
 | Uten nett eller feilet opplasting | Send inn | Ingenting legges i kø i V1. Teksten er «Ingen dekning. Prøv igjen når du har nett.» Svaret og bildet blir stående i skjemaet, og «Sendt»-kvitteringen vises først når serveren har bekreftet |
 | Venter | Laget, Post | Chip i `warning` med «Venter på godkjenning» |
 | Godkjent | Laget, Post, Ledertavle | Chip i `success`. Poengene telles og ledertavlen oppdateres (under 5 s, SM-5) |
-| Avvist | Laget, Post | Chip i `danger` og eventuell begrunnelse. Laget kan sende inn på nytt `[ASSUMPTION]` |
+| Avvist | Laget, Post | Chip i `danger` og eventuell begrunnelse. Laget kan sende inn på nytt |
 | Ingen ventende | Godkjenning | «Alt er godkjent. Godt jobbet!» |
 | Endret | I dag, Kart, Post | Endret-merke og endringsbanner til deltakeren har sett det |
-| Deaktivert post | Kart, Post, postliste | Markøren er nedtonet med rød kant, og chipen «Deaktivert» står i `danger`. Oppgaveteksten er skjult, og «Løs oppgaven» vises ikke. Lag som har fullført posten, ser fortsatt hake og poeng `[ASSUMPTION: nøyaktig visuelt uttrykk]` |
+| Deaktivert post | Kart, Post, postliste | Markøren er nedtonet med rød kant, og chipen «Deaktivert» står i `danger`. Oppgaveteksten er skjult, og «Løs oppgaven» vises ikke. Lag som har fullført posten, ser fortsatt hake og poeng |
 | Endring lagres | Rediger underveis | «Lagret. Deltakerne ser endringen nå.» Ved valideringsfeil lagres ingenting, og feilen vises ved feltet |
 | Demo-modus | Alle flater | Demo-banner øverst og simulator på kartet |
 
@@ -142,7 +142,7 @@ Atferd. Visuell kontrast står i DESIGN.md.
 
 - Deltakerflatene designes for 360–430 px bredde først. På bredere skjermer er innholdet sentrert med maks 480 px bredde.
 - Arrangørens Utkast har to kolonner fra 1024 px (innhold og kart), og én kolonne med kartet i en egen fane under det.
-- Godkjenning er laget for mobil først, fordi arrangøren godkjenner underveis på turen. `[ASSUMPTION]`
+- Godkjenning er laget for mobil først, fordi arrangøren godkjenner underveis på turen.
 - Nettlesere som skal støttes: siste versjon av Safari på iOS og Chrome på Android. Geolokasjon krever HTTPS (eller localhost i demo-modus).
 
 ## Feltbruk

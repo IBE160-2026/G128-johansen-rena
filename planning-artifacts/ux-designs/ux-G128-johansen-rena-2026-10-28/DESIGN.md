@@ -98,7 +98,7 @@ components:
   status-chip:
     rounded: '{rounded.full}'
     typography: '{typography.meta}'
-  bottom-nav:
+  main-nav:
     background: '{colors.surface-base}'
     border: '{colors.border}'
     active: '{colors.primary}'
@@ -117,7 +117,7 @@ Arrangørsiden har samme visuelle språk, men tettere informasjon. Den er et red
 
 ## Colors
 
-Fargene er valgt for sterkt sollys utendørs. All tekst har minst 4.5:1 kontrast mot bakgrunnen. `[ASSUMPTION]`
+Fargene er valgt for sterkt sollys utendørs. All tekst har minst 4.5:1 kontrast mot bakgrunnen. `[ASSUMPTION]` Fargevalget vurderes av gruppen senere.
 
 - **Hvit (`surface-base`)** er bakgrunnen. **Lys grå (`surface-muted`)** skiller seksjoner uten skygger.
 - **Fjordgrønn (`primary`, `#0F766E`)** brukes til primærhandlinger, aktiv fane og opplåste poster. Den brukes ikke til dekorasjon.
@@ -139,7 +139,7 @@ Systemfonter, slik at ingen fontfiler må lastes. Det hjelper på kravet om unde
 
 ## Layout & Spacing
 
-Skalaen er 4, 8, 12, 16, 24 og 32 px. Mobilmargen er 16 px. Deltakervisningen er alltid én kolonne, med bunnfaner som er lett å nå med tommelen.
+Skalaen er 4, 8, 12, 16, 24 og 32 px. Mobilmargen er 16 px. Deltakervisningen er alltid én kolonne, og hovednavigasjonen skal være lett å nå med tommelen.
 
 Arrangørvisningen på PC har to kolonner: utkastets innhold til venstre og kart eller detaljer til høyre. Under 1024 px faller den sammen til én kolonne med kartet i en egen fane, samme brytepunkt som i EXPERIENCE.md.
 
@@ -161,7 +161,7 @@ Det brukes nesten ingen skygger. Kort skilles med kant og bakgrunnstone. En svak
 - **Status-chip:** pilleform med ikon og tekst. Variantene er Venter, Godkjent, Avvist og Deaktivert. Deaktivert bruker `danger`.
 - **Ledertavlerad:** plassering, lagmerke i lagfarge, lagnavn og poeng i `score`. Raden til deltakerens eget lag er uthevet med `surface-muted`.
 - **Godkjenningskort (arrangør):** bilde eller svar, lag, post og tidspunkt, med knappene Godkjenn (`success`) og Avvis (`danger`).
-- **Bunnfaner:** fire faner med ikon og tekst. Den aktive fanen er i `primary`.
+- **Hovednavigasjon:** mønsteret avgjøres ut fra blåtur-malen, og bunnfaner er foreløpig valgt bort. Den aktive flaten markeres i `primary`.
 - **Demo-banner:** en smal stripe i `warning` øverst med teksten «Demo-modus». Den vises alltid i demo-modus.
 
 ## Do's and Don'ts

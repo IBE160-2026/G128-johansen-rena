@@ -48,7 +48,7 @@ Minimumsmodellen (som avklarer PRD §8.1) har sju tabeller: `trips`, `days`, `pr
 - En **tur** har periode, område (sentrum og radius), status (utkast eller publisert) og en turkode.
 - **Poster** har koordinater, opplåsingsradius, oppgavetekst, svartype og poeng.
 - **Innsendinger** har status ventende, godkjent eller avvist.
-- **Poeng fryses ved godkjenning.** Når en innsending godkjennes, lagres postens poeng på innsendingen (`awarded_points`). Lagets poengsum er alltid summen av godkjente innsendinger, og hver post teller maks én gang per lag (AD-5). Endrer arrangøren poengene på en post underveis, gjelder det bare nye godkjenninger, så ingen lag mister eller får poeng i ettertid.
+- **Poeng følger postens gjeldende verdi.** Lagets poengsum er summen av poengene på postene laget har fått godkjent, og hver post teller maks én gang per lag (AD-5). Endrer arrangøren poengene på en post underveis, får alle lag som har løst den, den nye verdien. Da får aldri to lag ulike poeng for samme post.
 - **Lagring er autoritativ på serveren.** Klientene kan bare lese turtabellene. All lagring går gjennom Edge Function `save-trip`, som validerer og skriver alt i én transaksjon med versjonskontroll (AD-17). Da kan verken direkte API-kall eller avbrutte lagringer gi en ugyldig eller halvferdig tur.
 
 ## 5. Geolokasjon og opplåsing
@@ -67,7 +67,7 @@ Når arrangøren godkjenner en innsending, sender systemet ut et signal. Kliente
 
 - Arrangøren logger inn med e-post og magisk lenke. Deltakeren får en anonym innlogging og kobles til turen med turkode og navn. Deltakeren trenger ingen konto og logger inn bare én gang per tur (AD-8).
 - All tilgang håndheves i databasen med Row Level Security. Deltakeren ser bare sin egen publiserte tur og kan bare sende inn for sitt eget lag. Bare arrangøren kan godkjenne innsendinger og redigere turen.
-- Bildene ligger i en privat lagringsbøtte og vises via tidsbegrensede, signerte lenker (AD-11).
+- Bildene ligger i en privat lagringsbøtte og vises via tidsbegrensede, signerte lenker (AD-11). Bilder av deltakere er personopplysninger. Derfor beholdes den strenge lagringsmodellen (AD-17), og samtykke, lagringstid og sletting avklares før bildefunksjonen bygges.
 - KI-nøkkelen finnes bare på serveren som en Supabase-secret. Bare offentlig klientkonfigurasjon har `VITE_`-prefiks, og produksjonsbygget sjekkes for at det ikke inneholder hemmeligheter (AD-9).
 - Tilgangsreglene testes med en egen live-integrasjonstest med to arrangører og to turer.
 

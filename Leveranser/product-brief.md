@@ -72,7 +72,7 @@ Løsningen skal også demonstrere vanskelighetsgraden gruppen selv har meldt inn
 For å holde prosjektet gjennomførbart og samtidig bevise kjerneverdien vil første versjon leveres i flere faser:
 
 1. Trinn 1: KI-generert tur med prompt, redigering og publisering, og en enkel deltakerside med program og kart.
-2. Trinn 2: Geolåst rebus med tekstsvar, godkjenning fra arrangøren og automatisk poengregning, med mobilopplevelse for deltakere. Trinn 1 og 2 utgjør minimumsleveransen.
+2. Trinn 2: Geolåst rebus med tekstsvar, godkjenning fra arrangøren og automatisk poengregning, med mobilopplevelse for deltakere.
 3. Trinn 3: Sanntids ledertavle, lagflytting, bildeopplasting og endringer underveis i felt.
 4. Trinn 4: Regenerering av enkeltdeler i naturlig språk og flere iterasjoner på innholdet.
 

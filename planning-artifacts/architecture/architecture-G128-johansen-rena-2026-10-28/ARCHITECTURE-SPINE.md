@@ -5,7 +5,7 @@ purpose: build-substrate
 altitude: feature
 paradigm: 'ports & adapters (heksagonal), med en ren domenekjerne'
 scope: 'TripBuilder AI V1 (Epic 1–7, trinn A–E i gjennomføringsplanen)'
-status: draft
+status: final
 created: '2026-10-28'
 updated: '2026-10-28'
 binds: [FR-1, FR-2, FR-3, FR-4, FR-5, FR-6, FR-7, FR-8, FR-9, FR-10, FR-11, FR-12, FR-13, FR-14, FR-15, FR-16, FR-17, FR-18]
@@ -68,17 +68,17 @@ Pilene viser hva som får lov å importere hva. `src/domain` importerer bare `zo
 - **Prevents:** at demo-logikk sprer seg som `if (demo)` i komponentene.
 - **Rule:** `VITE_APP_MODE=demo|live` leses bare i `src/app/services.ts`, som bygger porteobjektet (`TripRepo`, `AgentPort`, `AuthPort`, `RealtimePort`, `StoragePort`, `PositionSource`). Komponentene henter tjenestene via `useServices()`. Det eneste unntaket er `useMode()`, som brukes av demo-banneret og posisjonssimulatoren. Demo-modus skal starte med `npm install && npm run dev` uten noen miljøvariabler.
 
-### AD-5: Poeng avledes fra godkjente innsendinger og fryses ved godkjenning
+### AD-5: Poeng avledes fra godkjente innsendinger og postens gjeldende poeng [ADOPTED]
 
 - **Binds:** FR-8, FR-9, FR-10, FR-15, FR-17
-- **Prevents:** at poengsummen kommer ut av synk med innsendingene, og at en senere endring av en post endrer poeng lagene allerede har fått.
-- **Rule:** Når en innsending godkjennes, settes `submissions.awarded_points` til postens `points` i det øyeblikket. Lagets poeng er summen av `awarded_points` for godkjente innsendinger. Hvert par av lag og post teller maks én gang, sikret med en unik delindeks på `(team_id, post_id)` der `status = approved`. Det finnes ingen kolonne for poeng per lag. Endring av `post.points`, regenerering og deaktivering påvirker derfor bare fremtidige godkjenninger. I live-modus regner viewet `team_scores` ut summen, og i demo-modus gjør `scoring.ts` det. Begge testes mot de samme testtilfellene.
+- **Prevents:** at poengsummen kommer ut av synk med innsendingene, og at lag som har løst samme post, får ulike poeng.
+- **Rule:** Lagets poeng er summen av gjeldende `post.points` for poster der laget har en godkjent innsending. Hvert par av lag og post teller maks én gang, sikret med en unik delindeks på `(team_id, post_id)` der `status = approved`. Det finnes ingen kolonne for poeng per lag eller per innsending. Endrer arrangøren poengene på en post, eller regenereres posten, gjelder de nye poengene for alle lag som har løst den, også tidligere godkjenninger. En deaktivert post teller fortsatt for lag som har løst den. I live-modus regner viewet `team_scores` ut summen, og i demo-modus gjør `scoring.ts` det. Begge testes mot de samme testtilfellene.
 
-### AD-6: Opplåsing ved posisjon skjer i klienten
+### AD-6: Opplåsing ved posisjon skjer i klienten [ADOPTED]
 
 - **Binds:** FR-5, FR-6
 - **Prevents:** at posisjon lagres eller sendes (personvern), og at opplåsing ikke kan testes uten å gå ut i felt.
-- **Rule:** En post med `requires_location = false` er alltid åpen. En geolåst post er opplåst når `distanceMeters(pos, post) <= post.radius_m` (haversine i `geo.ts`). Posisjonen kommer fra `PositionSource`, som enten er nettleserens geolokasjon eller en simulert posisjon (demo og tester). Posisjonen sendes aldri til serveren og lagres aldri. Integriteten sikres ved at arrangøren godkjenner innsendingen (AD-7), ikke ved at serveren sjekker posisjonen.
+- **Rule:** En post med `requires_location = false` er alltid åpen. En geolåst post er opplåst når `distanceMeters(pos, post) <= post.radius_m` (haversine i `geo.ts`). Posisjonen kommer fra `PositionSource`, som enten er nettleserens geolokasjon eller en simulert posisjon (demo og tester). Posisjonen sendes aldri til serveren og lagres aldri. Integriteten sikres ved at arrangøren godkjenner innsendingen (AD-7), ikke ved at serveren sjekker posisjonen. Gruppen aksepterer risikoen for at en deltaker jukser med posisjonen.
 
 ### AD-7: Innsendinger har livsløpet ventende → godkjent eller avvist [ADOPTED]
 
@@ -102,7 +102,7 @@ Pilene viser hva som får lov å importere hva. `src/domain` importerer bare `zo
 
 - **Binds:** FR-9, FR-10, SM-5
 - **Prevents:** at ledertavlen viser ulike tall hos ulike klienter.
-- **Rule:** `RealtimePort.onScoresChanged(tripId, cb)` gir bare et signal. Klienten henter da poengene på nytt fra kilden (`team_scores` eller `scoring.ts`). Data i hendelsen brukes aldri til å oppdatere poengene direkte. Live-modus abonnerer på endringer i `submissions` via Supabase Realtime. Demo-modus bruker `BroadcastChannel` mellom faner.
+- **Rule:** `RealtimePort.onScoresChanged(tripId, cb)` gir bare et signal. Klienten henter da poengene på nytt fra kilden (`team_scores` eller `scoring.ts`). Data i hendelsen brukes aldri til å oppdatere poengene direkte. Live-modus abonnerer på endringer i `submissions` og i `posts` (poengendringer) via Supabase Realtime. Demo-modus bruker `BroadcastChannel` mellom faner.
 
 ### AD-11: Bilder ligger i en privat bucket
 
@@ -220,7 +220,6 @@ erDiagram
   SUBMISSIONS {
     uuid id
     text status "pending|approved|rejected"
-    int awarded_points
     text text_answer
     text photo_path
   }
@@ -293,7 +292,8 @@ e2e/                 # Playwright, kjøres i demo-modus
 
 ## Deferred
 
-- **Blåtur-malen:** Gruppen laster opp koden fra den tidligere blåtursiden som mal. Når den er inne, kjøres en oppdatering av denne spinen. Konvensjonene i malen blir da ratifisert der de ikke bryter AD-1 til AD-14.
+- **Blåtur-malen:** Gruppen sender koden fra den tidligere blåtursiden som mal når planleggingsfasen er ferdig. Da kjøres en oppdatering av denne spinen, og konvensjonene i malen blir ratifisert der de ikke bryter AD-1 til AD-17. Navigasjonsmønsteret for deltakeren avgjøres også ut fra malen.
+- **Personvern for bilder:** Samtykke, lagringstid og sletting av bilder avklares før Epic 4 (PRD §8.6). AD-11 og AD-17 gir tilgangskontrollen, men ikke svaret på disse spørsmålene.
 - **Skjult destinasjon:** Utenfor V1.
 - **Testoppsett for sanntid (PRD §8.4):** Mekanismen er bestemt (AD-10). Hvordan den testes og vises på eksamen, avgjøres før trinn C.
 - **Lagtildeling:** Om arrangøren fordeler deltakerne eller deltakerne velger selv (åpent punkt i UX). Det påvirker bare UI og én RLS-regel, og avgjøres i stories for trinn C.
