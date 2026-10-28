@@ -42,3 +42,19 @@ Kjøre steg 0.6, sprint planning (`bmad-sprint-planning`), som avslutter fase 0.
 
 ### Åpne punkter
 - Installer `uv` (for eksempel `brew install uv`), slik at BMAD-skriptene kan kjøres som tenkt, og kjør deretter `bmad-sprint-planning` (validate) for å sjekke fila deterministisk.
+
+## 2026-10-28 kl. 21:09 — Kevin Renå
+
+### Oppgave
+Oppdatere verktøyene på maskinen, slik at BMAD-skriptene og appen kan kjøres.
+
+### Plan
+- Installere `uv` og Node.js med Homebrew. Systemets Python 3.9 blir ikke endret.
+
+### Resultat
+- Installert: `uv` 0.13.6 (henter Python 3.15 og avhengighetene til skriptene selv), Node.js v26.12.1 og npm 11.20.0.
+- `sprint_plan.py validate` sier at fila er gyldig, og `generate --dry-run` gir `in_sync: true` uten avvik. Fila fra reserveløsningen er altså identisk i nøkler.
+- `memlog.py` og `resolve_customization.py` kjører via `uv run`.
+
+### Åpne punkter
+- Docker og Supabase CLI trengs først når Supabase skal kjøres lokalt (Epic 2, live-modus).

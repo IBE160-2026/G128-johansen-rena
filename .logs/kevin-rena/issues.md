@@ -10,4 +10,5 @@
 - [ ] 2026-10-28 [qa-oppfolging](998-2026-10-28-20-43-00-qa-oppfolging.md) — legg inn kildelenker i konkurrentanalysen (QA-15)
 - [ ] 2026-10-28 [qa-oppfolging](998-2026-10-28-20-43-00-qa-oppfolging.md) — avgjør navigasjonsmønster og farger i UX når blåtur-malen kommer
 - [ ] 2026-10-28 [qa-oppfolging](998-2026-10-28-20-43-00-qa-oppfolging.md) — avklar personvern for bilder (samtykke, lagringstid og sletting) før Epic 4 (PRD §8.6)
-- [ ] 2026-10-28 [gjennomforingsplan](999-2026-10-28-19-19-10-gjennomforingsplan.md) — installer `uv` og valider sprint-status.yaml med `bmad-sprint-planning` (validate)
+- [x] 2026-10-28 [gjennomforingsplan](999-2026-10-28-19-19-10-gjennomforingsplan.md) — installer `uv` og valider sprint-status.yaml med `bmad-sprint-planning` (validate) (løst 2026-10-28)
+- [ ] 2026-10-28 [gjennomforingsplan](999-2026-10-28-19-19-10-gjennomforingsplan.md) — installer Docker og Supabase CLI før live-modus (Epic 2)
