@@ -25,3 +25,20 @@ Hente siste versjon fra GitHub, lese product brief og lage en steg-for-steg-plan
 - UX og arkitektur står som draft med `[ASSUMPTION]`-merker som gruppen må gå gjennom. Det gjelder blant annet utseendet på deaktiverte poster.
 - Blåtur-malen skal lastes opp. Deretter skal arkitekturspinen oppdateres (`bmad-architecture`, Update).
 - Testoppsett for sanntid (PRD §8.4) må avgjøres før trinn C.
+
+## 2026-10-28 kl. 21:03 — Kevin Renå
+
+### Oppgave
+Kjøre steg 0.6, sprint planning (`bmad-sprint-planning`), som avslutter fase 0.
+
+### Plan
+- Readiness-kontroll mot PRD, arkitektur (final), UX (draft) og epics.
+- Generering av `implementation-artifacts/sprint-status.yaml`.
+
+### Resultat
+- Readiness-kontrollen ga **CONCERNS**, og gruppen valgte å fortsette. Funnene er ført som 4 åpne `action_items` i sprint-status: blåtur-mal og navigasjon (Story 1.5), farger, personvern for bilder (før 4.4) og testoppsett for sanntid (før 4.3).
+- `sprint_plan.py` kunne ikke kjøres, fordi den krever Python ≥ 3.10 og `ruamel.yaml`, og maskinen har 3.9 uten `uv`. Fila ble derfor laget med en reserveløsning som bruker skriptets egne regex, slug-regel og header. Den har 7 epics, 34 stories (alle `backlog`) og 7 retrospektiver, og den er YAML-validert med Ruby.
+- Gjennomføringsplanen, TODO og README viser at fase 0 er ferdig.
+
+### Åpne punkter
+- Installer `uv` (for eksempel `brew install uv`), slik at BMAD-skriptene kan kjøres som tenkt, og kjør deretter `bmad-sprint-planning` (validate) for å sjekke fila deterministisk.
