@@ -71,6 +71,8 @@ Claudes funn om hardkodet tur, valg av første medlemskap, manglende opprettelse
 
 Bare denne loggen og tilhørende `issues.md` er oppdatert. Ingen appkode, SQL eller arkitekturbeslutninger er endret.
 
+Brukeren ba deretter om push til GitHub. QA-tillegget er committet som `f0247b4`. Denne loggoppdateringen committes separat, og begge commitene pushes til `origin/main` som avsluttende steg.
+
 ### Åpne punkter
 
 - Eksisterende punkter fra Claudes gjennomgang gjelder fortsatt; avklar arkitekturendringer og én/to apper med Kevin før dokumentene oppdateres.
