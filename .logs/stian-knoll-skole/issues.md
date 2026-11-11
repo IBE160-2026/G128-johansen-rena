@@ -10,3 +10,6 @@
 - [ ] 2026-11-11 [blatur-mal-gjennomgang](998-2026-11-11-22-19-11-blatur-mal-gjennomgang.md) — avgjør om generator og mal er én app eller to apper med samme database
 - [ ] 2026-11-11 [blatur-mal-gjennomgang](998-2026-11-11-22-19-11-blatur-mal-gjennomgang.md) — samordne skjemaet i Supabase-prosjektet CharterFeber AI med appens skjema før live-data
 - [ ] 2026-11-11 [blatur-mal-gjennomgang](998-2026-11-11-22-19-11-blatur-mal-gjennomgang.md) — hent signerte bilde-URL-er samlet med createSignedUrls
+- [ ] 2026-11-11 [blatur-mal-gjennomgang – Codex QA](998-2026-11-11-22-19-11-blatur-mal-gjennomgang.md) — avklar GPS-konflikten: malens README krever serververifisering, mens AD-6 holder posisjon kun på enheten
+- [ ] 2026-11-11 [blatur-mal-gjennomgang – Codex QA](998-2026-11-11-22-19-11-blatur-mal-gjennomgang.md) — dokumenter hvordan autoritativ validering og atomisk lagring (AD-17) videreføres eller eksplisitt erstattes ved tilpasning til malen
+- [ ] 2026-11-11 [blatur-mal-gjennomgang – Codex QA](998-2026-11-11-22-19-11-blatur-mal-gjennomgang.md) — verifiser produksjonsbygg, mobilflyter og live Auth/RLS/Storage/sanntid med separate brukerøkter; fem hjelpetester er ikke integrasjonsgodkjenning

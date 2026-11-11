@@ -40,3 +40,40 @@ Gå gjennom den nye mappa `template_trip/` (Blåtur ren V1). Stian bekreftet at 
 - Avgjør om generatoren og malen skal være én app eller to apper med samme Supabase-database.
 - `START_LOKALT.md` sier at Supabase-prosjektet «CharterFeber AI» har et annet skjema enn appen: `trips.title` og `private.trip_secrets` mot `trips.name` og `private.trip_access`. Skjemaene må samordnes før appen kobles til live-data.
 - Henting av signerte URL-er skjer ett bilde om gangen ved hver oppdatering (`src/lib/api.js:282`). Det bør gjøres samlet med `createSignedUrls`.
+
+## 2026-11-11 kl. 22:21 — StianKnollSkole (QA med OpenAI/Codex)
+
+### Oppgave
+
+Gi en uavhengig vurdering av Claudes gjennomgang ovenfor og samle vurderingene i samme logg, slik at Stian kan diskutere hele grunnlaget med Kevin.
+
+### Plan
+
+- Lese dagens Claude-logg og QA-oppfølgingen fra 28. oktober.
+- Kontrollere funnene mot `template_trip/`: arbeidsregler, README, oppstartsdokumentasjon, API, kontekst, komponenter, tester og SQL-migrasjoner.
+- Sammenligne med den gjeldende arkitekturspinen og kjøre malens eksisterende tester.
+
+### Resultat
+
+**Samlet vurdering: Enig i hovedretningen, med forbehold om hva som skal gjenbrukes og hva som fortsatt må implementeres.**
+
+Claudes funn om hardkodet tur, valg av første medlemskap, manglende opprettelse av lag og dokumentert skjemaforskjell mot eksisterende database støttes av filene. Skjemaforskjellen er beskrevet i `START_LOKALT.md`; den faktiske hostede databasen er ikke inspisert av Codex. Henvisningene i første del av loggen har to feil linjenumre: hardkodet slug står nå i `template_trip/src/context/TripContext.jsx:120`, og individuell signering står i `template_trip/src/lib/api.js:26`.
+
+**Presiseringer til anbefalingen om å tilpasse arkitekturen:**
+
+1. **Gjenbruk grensesnitt og brukerflyter.** Det er fornuftig å bygge videre på malen. JavaScript og vanlig CSS kan beholdes hvis gruppen beslutter det; bytte til TypeScript/Tailwind alene rettferdiggjør ikke en omskriving.
+2. **Arkitekturen er allerede godkjent.** Spinen har `status: final`, og Kevins logg fra 28. oktober kl. 20:59 dokumenterer gruppens godkjenning. Formuleringen ovenfor om å følge «et utkast» er derfor ikke presis for gjeldende arkitektur. Revider den godkjente arkitekturen eksplisitt ved nye valg.
+3. **Bevar avtalte produktkrav og garantier.** Geofencing, KI-generering og flere validerings-/oppdateringsgarantier er fortsatt implementasjonsarbeid. At de mangler i malen betyr ikke at de automatisk skal fjernes fra prosjektet. AD-17 beskriver autoritativ, transaksjonell lagring av turstruktur; malen bruker blant annet direkte `createRecord`/`changeRecord`/`removeRecord`. Tilgangsregler i malen erstatter ikke automatisk hele denne kontrakten.
+4. **Avklar GPS-konflikten.** Malens README sier at GPS senere må valideres på serveren. Gjeldende AD-6 sier derimot at posisjon aldri sendes til serveren, og at arrangørgodkjenning er integritetskontrollen. Velg og dokumenter én løsning før geofencing implementeres.
+5. **Skill testet demologikk fra verifisert integrasjon.** Codex kjørte `npm test` på nytt: 5 av 5 tester bestod. De tester hjelpefunksjoner for dato, programsortering, poeng, avstand og bildefilvalidering. De verifiserer ikke React-flytene, produksjonsbygget, Auth, RLS, Storage eller sanntid med flere brukere. `npm run build`, nettlesertest og live Supabase-test er ikke kjørt i denne vurderingen. RLS og privat bucket finnes i migrasjonene, men er ikke dermed funksjons- eller sikkerhetsgodkjent.
+
+**Anbefaling til diskusjonen med Kevin:** Bruk malen som deltaker- og arrangørgrensesnitt. Revider arkitekturen rundt delene dere vil beholde, og behold de avtalte validerings- og tilgangsgarantiene. Én applikasjon med egne områder for generator, arrangør og deltaker er et fornuftig utgangspunkt; to applikasjoner krever mer integrasjonsarbeid. Dette er en anbefaling, ikke en ny gruppebeslutning.
+
+Bare denne loggen og tilhørende `issues.md` er oppdatert. Ingen appkode, SQL eller arkitekturbeslutninger er endret.
+
+### Åpne punkter
+
+- Eksisterende punkter fra Claudes gjennomgang gjelder fortsatt; avklar arkitekturendringer og én/to apper med Kevin før dokumentene oppdateres.
+- Avklar GPS-konflikten mellom malens README og AD-6: serververifisering eller posisjon kun på enheten.
+- Ved tilpasning av arkitekturen: dokumenter hvordan autoritativ validering og atomisk lagring (AD-17) videreføres eller eksplisitt erstattes.
+- Verifiser produksjonsbygg, mobilflyter og live Auth/RLS/Storage/sanntid med separate brukerøkter før malen betegnes som integrasjonsklar.
