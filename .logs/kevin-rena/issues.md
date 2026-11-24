@@ -31,3 +31,5 @@
 - [ ] 2026-11-25 [story-3-2-opplasing-ved-posisjon](988-2026-11-25-03-05-00-story-3-2-opplasing-ved-posisjon.md) — merge `story-3-2-opplasing-ved-posisjon` og sett Story 3.2 til done
 - [ ] 2026-11-25 [story-3-2-opplasing-ved-posisjon](988-2026-11-25-03-05-00-story-3-2-opplasing-ved-posisjon.md) — feltprøve med ekte GPS (SM-4) avgjør om GPS-margin eller hysterese trengs
 - [ ] 2026-11-25 [story-3-3-posisjonssimulator](987-2026-11-25-04-05-00-story-3-3-posisjonssimulator.md) — merge `story-3-3-posisjonssimulator` og sett Story 3.3 til done
+- [ ] 2026-11-25 [story-3-4-bilde-som-svar](986-2026-11-25-05-05-00-story-3-4-bilde-som-svar.md) — merge `story-3-4-bilde-som-svar` og sett Story 3.4 til done
+- [ ] 2026-11-25 [story-3-4-bilde-som-svar](986-2026-11-25-05-05-00-story-3-4-bilde-som-svar.md) — migrasjon `202611250001_story_3_4_submissions.sql` er ukjørt; test mot Supabase (Story 7.4)

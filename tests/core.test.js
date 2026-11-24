@@ -28,7 +28,11 @@ test('GPS-avstand er null på samme sted', () => {
 
 test('bildeinnsending godtar vanlige fotoformater og avviser tekst og store filer', () => {
   assert.doesNotThrow(() => validateImage({ type: 'image/jpeg', size: 2_000_000 }))
-  assert.doesNotThrow(() => validateImage({ type: 'image/heic', size: 3_000_000 }))
+  assert.doesNotThrow(() => validateImage({ type: 'image/webp', size: 3_000_000 }))
+  assert.throws(() => validateImage({ type: 'image/heic', size: 3_000_000 }), /JPG-, PNG- eller WebP/)
+  assert.throws(() => validateImage({ type: 'image/gif', size: 3_000 }), /JPG-, PNG- eller WebP/)
   assert.throws(() => validateImage({ type: 'text/plain', size: 1_000 }), /bilde/i)
-  assert.throws(() => validateImage({ type: 'image/png', size: 9_000_000 }), /8 MB/)
+  assert.doesNotThrow(() => validateImage({ type: 'image/png', size: 15 * 1024 * 1024 }))
+  assert.throws(() => validateImage({ type: 'image/png', size: 15 * 1024 * 1024 + 1 }), /15 MB/)
+  assert.throws(() => validateImage({ type: 'image/png', size: NaN }), /15 MB/)
 })

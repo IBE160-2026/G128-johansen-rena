@@ -2,6 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { initialDemoData } from '../data/demo.js'
 import { demoMode, supabase } from '../lib/supabase.js'
 import { clearTripCache, isNetworkError, loadTripCache, saveTripCache } from '../lib/tripCache.js'
+import { compressImage } from '../lib/image.js'
+import { buildSubmissionEntry, validateNote, validationError } from '../lib/submission.js'
 import { changeRecord, clearDemoUser, createRecord, loadDemo, readDemoUser, writeDemoUser, loadTrip, removeRecord, resetDemo as resetDemoStore, saveDemo, uploadPhoto } from '../lib/api.js'
 import { demoOwn, demoUserForRole, findTripBySlug, roleHome, standings, tripPath, validateImage } from '../lib/core.js'
 import { demoImageDataUrl } from '../lib/demoImage.js'
@@ -203,21 +205,27 @@ export function TripProvider({ slug, children }) {
     else { await changeRecord('trips', data.trip.id, patch); await refresh(userId) }
   }
 
-  async function submit(checkpointId, file) {
-    if (!own?.team_id) throw new Error('Du må være på et lag før du kan sende inn.')
-    validateImage(file)
+  async function submit(checkpointId, file, note) {
+    if (!own?.team_id) throw validationError('Du må være på et lag før du kan sende inn.')
+    const noteError = validateNote(note)
+    if (noteError) throw validationError(noteError)
+    try { validateImage(file) } catch (e) { throw validationError(e.message) }
     const existing = data.submissions.find((s) => s.team_id === own.team_id && s.checkpoint_id === checkpointId && s.status !== 'rejected')
-    if (existing) throw new Error('Laget har allerede sendt inn denne posten.')
-    const entry = { trip_id: data.trip.id, team_id: own.team_id, checkpoint_id: checkpointId, submitted_by: userId, status: 'pending' }
+    if (existing) throw validationError('Laget har allerede sendt inn denne posten.')
+    const entry = buildSubmissionEntry({ tripId: data.trip.id, teamId: own.team_id, checkpointId, userId, note })
     if (demoMode) {
       const url = await demoImageDataUrl(file)
       const updated = { ...data, submissions: [{ ...entry, url, id: crypto.randomUUID(), created_at: new Date().toISOString() }, ...data.submissions] }
       if (!saveDemo(storage, updated)) throw new Error('Demolagringen er full. Slett noen bilder eller nullstill demoen.')
       setData(updated)
     } else {
-      const path = await uploadPhoto(data.trip.id, userId, file)
+      const blob = await compressImage(file) // maks 1600 px, JPEG (AD-11)
+      const path = await uploadPhoto(data.trip.id, userId, blob)
       try { await createRecord('submissions', { ...entry, storage_path: path }) }
-      catch (e) { await supabase.storage.from('trip-media').remove([path]); throw e }
+      catch (e) {
+        try { await supabase.storage.from('trip-media').remove([path]) } catch { /* feilen fra innsettingen skal vises, ikke opprydningen */ }
+        throw e
+      }
       await refresh(userId)
     }
   }
@@ -231,11 +239,11 @@ export function TripProvider({ slug, children }) {
   async function addPhoto(file) {
     if (!userId) throw new Error('Logg inn først.')
     if (demoMode) {
-      if (file.size > 450000) throw new Error('I demoen kan bilder være maks 450 KB. Produksjonsmodus støtter 8 MB.')
+      if (file.size > 450000) throw new Error('I demoen kan bilder være maks 450 KB. I live-modus komprimeres bildet automatisk.')
       const url = await fileAsDataUrl(file)
       setData((previous) => ({ ...previous, photos: [{ id: crypto.randomUUID(), trip_id: previous.trip.id, uploaded_by: userId, url, created_at: new Date().toISOString() }, ...previous.photos] }))
     } else {
-      const path = await uploadPhoto(data.trip.id, userId, file)
+      const path = await uploadPhoto(data.trip.id, userId, await compressImage(file))
       try { await createRecord('photos', { trip_id: data.trip.id, uploaded_by: userId, storage_path: path }) }
       catch (e) { await supabase.storage.from('trip-media').remove([path]); throw e }
       await refresh(userId)

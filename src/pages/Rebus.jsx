@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTrip } from '../context/TripContext.jsx'
-import { LOCKED_HINT, activeCheckpoints, checkpointStatus } from '../lib/core.js'
+import { LOCKED_HINT, activeCheckpoints, checkpointStatus, validateImage } from '../lib/core.js'
+import { NOTE_MAX, SENT_MESSAGE, canSendSubmission, submissionErrorMessage, validateNote } from '../lib/submission.js'
 import PostMap from '../components/PostMap.jsx'
 import usePosition from '../hooks/usePosition.js'
 import PositionSimulator from '../components/PositionSimulator.jsx'
@@ -12,6 +13,8 @@ export default function Rebus() {
   const [simulated, setSimulated] = useState(null) // demo: bare i minnet, glemt når Kart forlates
   const [selected, setSelected] = useState(null)
   const [photo, setPhoto] = useState(null)
+  const [note, setNote] = useState('')
+  const [sent, setSent] = useState(false)
   const [preview, setPreview] = useState(null)
   const [submissionError, setSubmissionError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -42,19 +45,31 @@ export default function Rebus() {
     if (busy) return
     setSelected(null)
     setPhoto(null)
+    setNote('')
+    setSent(false)
     setSubmissionError('')
+  }
+
+  function pickPhoto(file) {
+    setSubmissionError('')
+    if (!file) return
+    try { validateImage(file); setPhoto(file) } catch (err) { setPhoto(null); setSubmissionError(err.message) }
   }
 
   if (!trip.destination_revealed) return <div className="page-stack"><div className="page-heading"><span className="eyebrow">KONKURRANSEN</span><h1>Rebus<span className="copper-dot">.</span></h1><p>Oppgavene blir tilgjengelige når arrangøren avslører destinasjonen.</p></div><div className="empty-state tall"><span>🔒</span><h3>Rebusen er ikke åpnet</h3><p>Følg med på startsiden for oppdateringer.</p></div></div>
 
   async function send(e) {
     e.preventDefault()
-    if (!photo) { setSubmissionError('Velg eller ta et bilde før du sender inn.'); return }
+    if (busy || !canSendSubmission({ photo, note, busy })) return // også mot dobbelt trykk
     setBusy(true)
     setSubmissionError('')
-    try { await submit(selected.id, photo); setSelected(null); setPhoto(null); setError('') }
-    catch (err) { setSubmissionError(err.message) }
-    finally { setBusy(false) }
+    try {
+      await submit(selected.id, photo, note)
+      setSent(true) // kvitteringen vises først når sendingen er bekreftet
+      setError('')
+    } catch (err) {
+      setSubmissionError(submissionErrorMessage(err, typeof navigator === 'undefined' ? true : navigator.onLine)) // bilde og notat blir stående
+    } finally { setBusy(false) }
   }
 
   return <div className="page-stack"><div className="page-heading"><span className="eyebrow">KONKURRANSEN</span><h1>Kart<span className="copper-dot">.</span></h1><p>Finn postene, løs oppgavene og samle poeng.</p></div>
@@ -67,6 +82,9 @@ export default function Rebus() {
       })}</div>
       {!posts.length && <div className="empty-state">Ingen poster lagt inn ennå.</div>}
     </section>
-    {selected && <div className="modal-backdrop" onClick={closeSubmission}><div className="modal" role="dialog" aria-modal="true" aria-labelledby="task-title" onClick={(e) => e.stopPropagation()}><button className="modal-close" aria-label="Lukk" disabled={busy} onClick={closeSubmission}>×</button><span className="eyebrow">{selected.points} POENG</span><h2 id="task-title">{selected.title}</h2><p className="muted">{selected.description}</p><form onSubmit={send} className="form-stack"><p className="photo-instruction">Ta et bilde av at laget har fullført oppgaven. Bildet sendes til arrangøren for godkjenning.</p>{preview && <img className="submission-preview" src={preview} alt="Forhåndsvisning av bildebeviset"/>}<div className="photo-picker"><label className="button outline"><input type="file" accept="image/*" capture="environment" disabled={busy} onChange={(e) => { setPhoto(e.target.files?.[0] ?? null); setSubmissionError(''); e.target.value = '' }}/>📷 Ta bilde</label><label className="button outline"><input type="file" accept="image/*" disabled={busy} onChange={(e) => { setPhoto(e.target.files?.[0] ?? null); setSubmissionError(''); e.target.value = '' }}/>▧ Velg bilde</label></div>{photo && <p className="photo-filename">✓ {photo.name}</p>}{submissionError && <div className="notice danger" role="alert">{submissionError}</div>}<p className="micro">Maks 8 MB. Arrangøren må godkjenne bildet før laget får poeng.</p><button className="button primary full" disabled={busy || !photo}>{busy ? 'Laster opp bilde …' : 'Send bilde til godkjenning →'}</button></form></div></div>}
+    {selected && <div className="modal-backdrop" onClick={closeSubmission}><div className="modal" role="dialog" aria-modal="true" aria-labelledby="task-title" onClick={(e) => e.stopPropagation()}><button className="modal-close" aria-label="Lukk" disabled={busy} onClick={closeSubmission}>×</button><span className="eyebrow">{selected.points} POENG</span><h2 id="task-title">{selected.title}</h2><p className="muted">{selected.description}</p>
+      {sent ? <div className="form-stack"><div className="notice success" role="status">✓ {SENT_MESSAGE}</div><span className="status pending">⏳ Venter på godkjenning</span><button type="button" className="button primary full" onClick={closeSubmission}>Lukk</button></div> : <form onSubmit={send} className="form-stack"><p className="photo-instruction">Ta et bilde av at laget har fullført oppgaven, og skriv et kort notat. Arrangøren må godkjenne før laget får poeng.</p>{preview && <img className="submission-preview" src={preview} alt="Forhåndsvisning av bildebeviset"/>}<div className="photo-picker"><label className="button outline"><input type="file" accept="image/*" capture="environment" disabled={busy} onChange={(e) => { pickPhoto(e.target.files?.[0] ?? null); e.target.value = '' }}/>📷 Ta bilde</label><label className="button outline"><input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={(e) => { pickPhoto(e.target.files?.[0] ?? null); e.target.value = '' }}/>▧ Velg bilde</label></div>{photo && <p className="photo-filename">✓ {photo.name}</p>}
+        <label htmlFor="submission-note">Notat</label><textarea id="submission-note" rows={3} maxLength={NOTE_MAX} value={note} disabled={busy} placeholder="Hva gjorde dere?" aria-describedby="submission-note-hint" onChange={(e) => { setNote(e.target.value); setSubmissionError('') }}/><p id="submission-note-hint" className="micro">{note.trim() && validateNote(note) ? validateNote(note) : `${note.trim().length}/${NOTE_MAX} tegn`}</p>
+        {submissionError && <div className="notice danger" role="alert">{submissionError}</div>}<p className="micro">JPG, PNG eller WebP, maks 15 MB. Bildet komprimeres før det sendes.</p><button className="button primary full" disabled={!canSendSubmission({ photo, note, busy })}>{busy ? <><span className="btn-spinner" aria-hidden="true"/> Sender …</> : 'Send til godkjenning →'}</button></form>}</div></div>}
   </div>
 }
