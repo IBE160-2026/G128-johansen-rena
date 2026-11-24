@@ -17,7 +17,7 @@
 - [x] 2026-11-24 [malrevisjon-arkitektur](996-2026-11-24-19-20-00-malrevisjon-arkitektur.md) — avgjør Playwright eller manuell testprotokoll for Story 7.1 (løst 2026-11-24: manuell protokoll på localhost)
 - [x] 2026-11-24 [malrevisjon-arkitektur](996-2026-11-24-19-20-00-malrevisjon-arkitektur.md) — avklar om `technology.md` (Pytagoras-nettsted) hører hjemme i arkitekturmappen (løst 2026-11-24)
 - [x] 2026-11-24 [malrevisjon-arkitektur](996-2026-11-24-19-20-00-malrevisjon-arkitektur.md) — brief, PRD-addendum og proposal.md nevner fortsatt Tailwind (historiske dokumenter, ikke endret) (løst 2026-11-24)
-- [ ] 2026-11-24 [story-1-1-ta-i-bruk-malen](995-2026-11-24-21-05-00-story-1-1-ta-i-bruk-malen.md) — gå gjennom og merge grenen `story-1-1-ta-i-bruk-malen`; sett Story 1.1 til done
+- [x] 2026-11-24 [story-1-1-ta-i-bruk-malen](995-2026-11-24-21-05-00-story-1-1-ta-i-bruk-malen.md) — gå gjennom og merge grenen `story-1-1-ta-i-bruk-malen`; sett Story 1.1 til done (løst 2026-11-24, merget som PR #1)
 - [ ] 2026-11-24 [story-1-1-ta-i-bruk-malen](995-2026-11-24-21-05-00-story-1-1-ta-i-bruk-malen.md) — test Supabase-modus og flere medlemskap når live-instans finnes (Story 7.4)
 - [ ] 2026-11-24 [story-1-2-validering](994-2026-11-24-22-05-00-story-1-2-validering.md) — push og merge grenen `story-1-2-validering` etter 1.1-grenen
 - [ ] 2026-11-24 [story-1-2-validering](994-2026-11-24-22-05-00-story-1-2-validering.md) — avgjør minimum antall poster og lag før publisering (Story 2.7)
