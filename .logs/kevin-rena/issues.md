@@ -23,3 +23,4 @@
 - [ ] 2026-11-24 [story-1-2-validering](994-2026-11-24-22-05-00-story-1-2-validering.md) — avgjør minimum antall poster og lag før publisering (Story 2.7)
 - [ ] 2026-11-24 [story-1-3-seed-turen](993-2026-11-24-23-05-00-story-1-3-seed-turen.md) — push og merge `story-1-3-seed-turen` etter at 1.2 (PR #2) er merget
 - [ ] 2026-11-24 [story-1-3-seed-turen](993-2026-11-24-23-05-00-story-1-3-seed-turen.md) — `crypto.randomUUID()` i `TripContext` krasjer over http på LAN-IP; løses før mobiltest (Story 7.1)
+- [ ] 2026-11-25 [story-1-4-rollevalg](992-2026-11-25-00-05-00-story-1-4-rollevalg.md) — push og merge `story-1-4-rollevalg` etter 1.2 (#2) og 1.3 (#3)
