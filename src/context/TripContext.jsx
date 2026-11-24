@@ -1,16 +1,16 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { initialDemoData } from '../data/demo.js'
 import { demoMode, supabase } from '../lib/supabase.js'
-import { DEMO_USER_KEY, changeRecord, createRecord, loadDemo, loadTrip, removeRecord, resetDemo as resetDemoStore, saveDemo, uploadPhoto } from '../lib/api.js'
-import { findTripBySlug, standings, tripPath, validateImage } from '../lib/core.js'
+import { changeRecord, clearDemoUser, createRecord, loadDemo, readDemoUser, writeDemoUser, loadTrip, removeRecord, resetDemo as resetDemoStore, saveDemo, uploadPhoto } from '../lib/api.js'
+import { demoOwn, demoUserForRole, findTripBySlug, roleHome, standings, tripPath, validateImage } from '../lib/core.js'
 import { demoImageDataUrl } from '../lib/demoImage.js'
 
 const Context = createContext(null)
+// Turdata ligger i localStorage (delt mellom faner), men rollen ligger per fane i sessionStorage.
 const storage = (() => { try { return window.localStorage } catch { return null } })()
+const userStorage = (() => { try { return window.sessionStorage } catch { return null } })()
 
-function savedDemoUser() {
-  try { return storage?.getItem(DEMO_USER_KEY) ?? null } catch { return null }
-}
+const savedDemoUser = () => readDemoUser(userStorage)
 
 function fileAsDataUrl(file) {
   return new Promise((resolve, reject) => {
@@ -22,7 +22,7 @@ function fileAsDataUrl(file) {
 }
 
 export function TripProvider({ slug, children }) {
-  const [data, setData] = useState(() => demoMode ? loadDemo(storage, initialDemoData) : null)
+  const [data, setData] = useState(() => demoMode ? loadDemo(storage, initialDemoData, userStorage) : null)
   const [session, setSession] = useState(null)
   const [demoUserId, setDemoUserId] = useState(savedDemoUser)
   const [loading, setLoading] = useState(!demoMode)
@@ -78,26 +78,42 @@ export function TripProvider({ slug, children }) {
   const notFound = demoMode && !!data && !findTripBySlug([data.trip], slug)
   const notMember = !demoMode && !loading && !!session?.user && !data
   const path = (sub = '') => tripPath(slug, sub)
-  const own = demoMode
-    ? demoUserId === 'demo-admin'
-      ? { id: 'demo-admin', user_id: 'demo-admin', display_name: 'Arrangør', role: 'organizer', team_id: null }
-      : data?.members.find((m) => m.user_id === demoUserId) ?? null
-    : data?.own ?? null
+  const own = demoMode ? demoOwn(demoUserId, data?.members) : data?.own ?? null
 
   const userId = demoMode ? demoUserId : session?.user?.id
+
+  // En rolle som ikke lenger passer til dataene (for eksempel etter ny seed) glemmes
+  useEffect(() => {
+    if (demoMode && demoUserId && data && !own) { setDemoUserId(null); clearDemoUser(userStorage) }
+  }, [demoUserId, data, own])
   const isOrganizer = own?.role === 'organizer'
   const leaderboard = useMemo(() => data ? standings(data.teams, data.checkpoints, data.submissions) : [], [data])
 
   function demoLogin(id) {
     setDemoUserId(id)
-    try { storage?.setItem(DEMO_USER_KEY, id) } catch { /* lagring utilgjengelig */ }
+    writeDemoUser(userStorage, id)
+  }
+
+  /** Velger demo-rolle på Start-flaten. Returnerer adressen brukeren skal sendes til. */
+  function chooseRole(role) {
+    const id = demoUserForRole(role, data?.members)
+    if (!demoMode) return null
+    if (!id) { setError('Fant ingen deltaker i prøveturen.'); return null }
+    demoLogin(id)
+    return roleHome(role, data.trip.slug)
+  }
+
+  /** Sletter rollen i denne fanen (Bytt rolle i demo-banneret). */
+  function switchRole() {
+    setDemoUserId(null)
+    clearDemoUser(userStorage)
   }
 
   async function signOut() {
     setError('')
     if (demoMode) {
       setDemoUserId(null)
-      try { storage?.removeItem(DEMO_USER_KEY) } catch { /* lagring utilgjengelig */ }
+      clearDemoUser(userStorage)
     } else {
       const { error: signoutError } = await supabase.auth.signOut()
       if (signoutError) throw signoutError
@@ -206,14 +222,14 @@ export function TripProvider({ slug, children }) {
 
   function resetDemo() {
     if (!demoMode) return
-    setData(resetDemoStore(storage, initialDemoData))
+    setData(resetDemoStore(storage, initialDemoData, userStorage))
     setDemoUserId(null)
     setError('')
   }
 
   const value = {
     demoMode, slug, path, notFound, notMember, data, own, userId, isOrganizer, loading, error, setError, leaderboard,
-    demoLogin, signOut, join, organizerEmail, write, destroy, updateTrip, submit, review,
+    demoLogin, chooseRole, switchRole, signOut, join, organizerEmail, write, destroy, updateTrip, submit, review,
     addPhoto, deletePhoto, resetDemo,
   }
   return <Context.Provider value={value}>{children}</Context.Provider>

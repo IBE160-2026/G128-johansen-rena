@@ -1,8 +1,7 @@
 import { Link, Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { TripProvider, useTrip } from './context/TripContext.jsx'
-import { initialDemoData } from './data/demo.js'
+import { seedDraft } from './data/demo.js'
 import { demoMode } from './lib/supabase.js'
-import { tripPath } from './lib/core.js'
 import Shell from './components/Shell.jsx'
 import DemoBanner from './components/DemoBanner.jsx'
 import Welcome from './pages/Welcome.jsx'
@@ -11,20 +10,24 @@ import Program from './pages/Program.jsx'
 import Rebus from './pages/Rebus.jsx'
 import Gallery from './pages/Gallery.jsx'
 import Admin from './pages/Admin.jsx'
+import Start from './pages/Start.jsx'
+import MineTurer from './pages/MineTurer.jsx'
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Start />} />
+      <Route path="/" element={<DemoOnly><Start /></DemoOnly>} />
+      <Route path="/mine-turer" element={<DemoOnly><MineTurer /></DemoOnly>} />
       <Route path="/t/:slug/*" element={<TripRoute />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }
 
-// Start-flaten (rollevalg) kommer i Story 1.4. Inntil da sender demo-modus til prøveturen.
-function Start() {
-  if (demoMode) return <Navigate to={tripPath(initialDemoData().trip.slug)} replace />
+// I demo-modus får Start og Mine turer en provider for prøveturen (banneret og rollene trenger den).
+// Utenfor demo kommer ekte start-flate og Mine turer i Epic 2.
+function DemoOnly({ children }) {
+  if (demoMode) return <TripProvider slug={seedDraft.trip.slug}>{children}</TripProvider>
   return (
     <main className="center-screen">
       <h1>TripBuilder AI</h1>

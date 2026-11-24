@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { DEMO_DATA_KEY, DEMO_USER_KEY, loadDemo, resetDemo, saveDemo } from '../src/lib/demoStore.js'
+import { DEMO_DATA_KEY, DEMO_USER_KEY, clearDemoUser, loadDemo, readDemoUser, resetDemo, saveDemo, writeDemoUser } from '../src/lib/demoStore.js'
 import { initialDemoData } from '../src/data/demo.js'
 
 function fakeStorage(initial = {}) {
@@ -109,4 +109,55 @@ test('tilbakestill fjerner gammel data når seed ikke kan lagres', () => {
   storage.setItem = () => { throw new Error('full') }
   resetDemo(storage, initialDemoData)
   assert.equal(storage.getItem(DEMO_DATA_KEY), null)
+})
+
+test('brukeren ligger i egen lagring (per fane) og fjernes derfra ved tilbakestilling', () => {
+  const storage = fakeStorage()
+  const userStorage = fakeStorage()
+  loadDemo(storage, initialDemoData, userStorage) // første oppstart lagrer seed
+  userStorage.setItem(DEMO_USER_KEY, 'demo-admin')
+  loadDemo(storage, initialDemoData, userStorage)
+  assert.equal(userStorage.getItem(DEMO_USER_KEY), 'demo-admin') // gyldig data beholder rollen
+  resetDemo(storage, initialDemoData, userStorage)
+  assert.equal(userStorage.getItem(DEMO_USER_KEY), null)
+})
+
+test('ny seed fjerner brukeren fra den egne lagringen', () => {
+  const storage = fakeStorage({ [DEMO_DATA_KEY]: JSON.stringify({ ...initialDemoData(), seed_version: 0 }) })
+  const userStorage = fakeStorage({ [DEMO_USER_KEY]: 'demo-admin' })
+  loadDemo(storage, initialDemoData, userStorage)
+  assert.equal(userStorage.getItem(DEMO_USER_KEY), null)
+})
+
+test('tilbakestill rører ikke en annen faneres bruker i datalagringen', () => {
+  const storage = fakeStorage({ [DEMO_USER_KEY]: 'liggende' })
+  resetDemo(storage, initialDemoData, fakeStorage())
+  assert.equal(storage.getItem(DEMO_USER_KEY), 'liggende')
+})
+
+test('rollen er per fane: to lagringer påvirker ikke hverandre', () => {
+  const tabA = fakeStorage()
+  const tabB = fakeStorage()
+  writeDemoUser(tabA, 'demo-admin')
+  assert.equal(tabA.getItem(DEMO_USER_KEY), 'demo-admin')
+  assert.equal(tabB.getItem(DEMO_USER_KEY), null)
+  assert.equal(readDemoUser(tabA), 'demo-admin')
+  clearDemoUser(tabA)
+  assert.equal(readDemoUser(tabA), null)
+})
+
+test('rollen gjelder i minnet når sessionStorage er utilgjengelig', () => {
+  clearDemoUser(null)
+  writeDemoUser(brokenStorage(), 'demo-admin')
+  assert.equal(readDemoUser(brokenStorage()), 'demo-admin')
+  assert.equal(readDemoUser(null), 'demo-admin')
+  clearDemoUser(brokenStorage())
+  assert.equal(readDemoUser(null), null)
+})
+
+test('tilbakestill glemmer rollen, også den i minnet', () => {
+  const userStorage = fakeStorage()
+  writeDemoUser(userStorage, 'demo-admin')
+  resetDemo(fakeStorage(), initialDemoData, userStorage)
+  assert.equal(readDemoUser(userStorage), null)
 })

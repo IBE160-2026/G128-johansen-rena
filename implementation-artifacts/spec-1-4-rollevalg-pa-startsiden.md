@@ -2,7 +2,8 @@
 title: 'Story 1.4: Rollevalg på startsiden'
 type: 'feature'
 created: '2026-11-24'
-status: 'ready-for-dev'
+status: 'done'
+baseline_commit: '5286b0faa402b4df5b8a358976deafbb42257d9f'
 route: 'dispatch'
 review_loop_iteration: 0
 context:
@@ -53,12 +54,12 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `src/lib/core.js` -- `demoUserForRole(role, members)` og `roleHome(role, slug)` -- ren logikk
-- [ ] `src/lib/demoStore.js` -- egen `userStorage` for bruker -- per fane
-- [ ] `src/context/TripContext.jsx` -- demo-bruker i `sessionStorage`, `chooseRole(role)`, `switchRole()` -- AC
-- [ ] `src/pages/Start.jsx`, `src/pages/MineTurer.jsx`, `src/App.jsx` -- start-flate og Mine turer i demo -- AC
-- [ ] `src/components/DemoBanner.jsx`, `src/styles.css` -- «Bytt rolle» og 48 px-knapper -- AC, UX-DR2
-- [ ] `tests/roles.test.js`, `tests/demoStore.test.js` -- matriseradene som kan testes rent -- AC
+- [x] `src/lib/core.js` -- `demoUserForRole(role, members)` og `roleHome(role, slug)` -- ren logikk
+- [x] `src/lib/demoStore.js` -- egen `userStorage` for bruker -- per fane
+- [x] `src/context/TripContext.jsx` -- demo-bruker i `sessionStorage`, `chooseRole(role)`, `switchRole()` -- AC
+- [x] `src/pages/Start.jsx`, `src/pages/MineTurer.jsx`, `src/App.jsx` -- start-flate og Mine turer i demo -- AC
+- [x] `src/components/DemoBanner.jsx`, `src/styles.css` -- «Bytt rolle» og 48 px-knapper -- AC, UX-DR2
+- [x] `tests/roles.test.js`, `tests/demoStore.test.js` -- matriseradene som kan testes rent -- AC
 
 **Acceptance Criteria:**
 - Gitt Start-flaten i demo-modus, når jeg velger «Deltaker», så havner jeg på prøveturen uten innlogging.
@@ -67,9 +68,37 @@ context:
 
 ## Implementation Notes
 
+- Start-flaten (`src/pages/Start.jsx`) og Mine turer (`src/pages/MineTurer.jsx`) er nye. I demo-modus får begge en `TripProvider` for prøveturen (`DemoOnly` i `App.jsx`), siden banneret bruker `useTrip()`. Utenfor demo vises dagens tekstside. Start sender en bruker som allerede har en rolle rett videre (`roleHome`).
+- Rollen er demo-brukeren i `sessionStorage` (per fane). Turdata ligger fortsatt i `localStorage`, så to faner kan ha hver sin rolle mot samme data. `demoStore` tar en egen `userStorage`.
+- Deltaker logges inn som første medlem i seed (Mari, laget Løvene). Arrangør er `demo-admin` (finnes ikke som medlem). Mine turer viser prøveturen med «Åpne» til `/t/provetur`.
+- Banneret har nå «Bytt rolle» og «Tilbakestill demo». Begge sender brukeren til `/`.
+- Rene hjelpere i `core.js`: `demoUserForRole`, `roleHome`, `DEMO_ORGANIZER_ID`. 103 tester grønne etter review (14 nye).
+- Verifisert i headless Chrome på 360 px: knappene er 49 px høye og 328 px brede, begge roller, reload i samme fane, ny fane uten rolle, Bytt rolle, Mine turer uten arrangørrolle sendes til `/`, og fane A beholder sin rolle når fane B velger deltaker.
+- Etter review: rollen har reserve-minne når sessionStorage mangler, `demoOwn` samler hvordan brukeren avgjøres, «Bytt rolle» vises bare med rolle, og Start bruker `replace` mot tilbake-sløyfe.
+- Valgt uten å spørre: deltaker får ikke velge medlem fra Start (den gamle velgeren i `Welcome` finnes fortsatt for direkte lenker til turen). Mine turer er en enkel demo-liste og blir erstattet i Epic 2.
+
 ## Spec Change Log
 
 ## Review Triage Log
+
+| # | Funn (lag) | Verdikt | Rute | Evidens |
+|---|---|---|---|---|
+| 1 | Uten sessionStorage mistes rollen ved navigasjon, siden hver route har egen provider (edge, claim) | medium | patch | Matrisen lover «gjelder i minnet». Nå reserve-minne i `demoStore` (`readDemoUser`, `writeDemoUser`, `clearDemoUser`) delt mellom providere i fanen, med test. |
+| 2 | Per-fane-lagringen i `TripProvider` er ikke festet av tester (verification-gap) | medium | patch | Logikken ligger i de rene hjelperne over, testet med to lagringer, så et bytte til feil lagring ville feilet. |
+| 3 | `'demo-admin'` hardkodet i `TripContext` og `Welcome` (verification-gap, blind) | medium | patch | `demoOwn` i `core.js` og `DEMO_ORGANIZER_ID` brukes begge steder. Test at rollevalget gir en bruker `demoOwn` kjenner igjen. |
+| 4 | «Deltaker» gjør ingenting uten medlemmer (blind, edge) | low | patch | `chooseRole` setter feilmelding. |
+| 5 | Gammel rolle som ikke passer dataene blir stående (edge) | low | patch | Effekt i `TripContext` glemmer en rolle uten treff. |
+| 6 | Deltaker velges som første medlem selv om det er arrangør (edge) | low | patch | Velger første med rolle `participant`. Test. |
+| 7 | Tilbake-knappen havner i omdirigeringssløyfe fra Start (edge) | low | patch | `navigate(..., { replace: true })` i Start. |
+| 8 | «Bytt rolle» vises uten rolle (blind) | low | patch | Vises bare når `own` finnes (verifisert i Chrome). |
+| 9 | `.start` hardkoder bannerhøyde (blind) | low | patch | `min-height:60vh`. |
+| 10 | Routing og Start/Mine turer har ingen kjørende test (verification-gap, blind) | medium | defer | Ingen React-testoppsett. Verifisert i headless Chrome (rolle, reload, ny fane, bytt rolle, vakt på Mine turer). |
+| 11 | Ulike providere kan ha foreldet data, for eksempel Mine turer etter endring i en annen fane (edge, verification-gap) | low | defer | Hører til sanntid/BroadcastChannel i demo-modus (AD-10, Epic 4). |
+| 12 | Gammel `localStorage`-nøkkel for bruker blir liggende (blind, edge) | low | reject | Nøkkelen fantes bare i den ennå ikke merget Story 1.3-grenen. |
+| 13 | `MineTurer` kan krasje uten `data.trip` (edge) | false | reject | Provideren bruker alltid seed-slug i demo, så turen finnes. |
+| 14 | Ny fane via lenke kan arve sessionStorage (edge, claim) | low | reject | Gjelder bare `window.open` uten `noopener`. Appen åpner ingen slike faner. |
+| 15 | Tekst, rollebeskrivelser, aria-live, CSS-formatering, `MineTurer` mangler utlogging (blind) | low | reject | Smak og Epic 2. Spec definerer Mine turer som enkel demo-liste. |
+| 16 | Banneret krever provider og Router (blind) | false | reject | Alle bruksteder ligger under Router og `TripProvider`. |
 
 ## Verification
 
