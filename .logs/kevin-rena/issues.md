@@ -19,8 +19,8 @@
 - [x] 2026-11-24 [malrevisjon-arkitektur](996-2026-11-24-19-20-00-malrevisjon-arkitektur.md) — brief, PRD-addendum og proposal.md nevner fortsatt Tailwind (historiske dokumenter, ikke endret) (løst 2026-11-24)
 - [x] 2026-11-24 [story-1-1-ta-i-bruk-malen](995-2026-11-24-21-05-00-story-1-1-ta-i-bruk-malen.md) — gå gjennom og merge grenen `story-1-1-ta-i-bruk-malen`; sett Story 1.1 til done (løst 2026-11-24, merget som PR #1)
 - [ ] 2026-11-24 [story-1-1-ta-i-bruk-malen](995-2026-11-24-21-05-00-story-1-1-ta-i-bruk-malen.md) — test Supabase-modus og flere medlemskap når live-instans finnes (Story 7.4)
-- [ ] 2026-11-24 [story-1-2-validering](994-2026-11-24-22-05-00-story-1-2-validering.md) — push og merge grenen `story-1-2-validering` etter 1.1-grenen
+- [x] 2026-11-24 [story-1-2-validering](994-2026-11-24-22-05-00-story-1-2-validering.md) — push og merge grenen `story-1-2-validering` etter 1.1-grenen (løst 2026-11-24, merget som PR #2, #3 og #4)
 - [ ] 2026-11-24 [story-1-2-validering](994-2026-11-24-22-05-00-story-1-2-validering.md) — avgjør minimum antall poster og lag før publisering (Story 2.7)
-- [ ] 2026-11-24 [story-1-3-seed-turen](993-2026-11-24-23-05-00-story-1-3-seed-turen.md) — push og merge `story-1-3-seed-turen` etter at 1.2 (PR #2) er merget
+- [x] 2026-11-24 [story-1-3-seed-turen](993-2026-11-24-23-05-00-story-1-3-seed-turen.md) — push og merge `story-1-3-seed-turen` etter at 1.2 (PR #2) er merget (løst 2026-11-24, merget som PR #2, #3 og #4)
 - [ ] 2026-11-24 [story-1-3-seed-turen](993-2026-11-24-23-05-00-story-1-3-seed-turen.md) — `crypto.randomUUID()` i `TripContext` krasjer over http på LAN-IP; løses før mobiltest (Story 7.1)
-- [ ] 2026-11-25 [story-1-4-rollevalg](992-2026-11-25-00-05-00-story-1-4-rollevalg.md) — push og merge `story-1-4-rollevalg` etter 1.2 (#2) og 1.3 (#3)
+- [x] 2026-11-25 [story-1-4-rollevalg](992-2026-11-25-00-05-00-story-1-4-rollevalg.md) — push og merge `story-1-4-rollevalg` etter 1.2 (#2) og 1.3 (#3) (løst 2026-11-24, merget som PR #2, #3 og #4)
