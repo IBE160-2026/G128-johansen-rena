@@ -1,9 +1,17 @@
 import seed from '../seed/demo-trip.json' with { type: 'json' }
+import { daysBetween, localDate, shiftDate } from '../lib/core.js'
 
-/** Bygger appens demo-data fra seed-turen (src/seed/demo-trip.json, en TripDraft med fiktive deltakere). */
-export function initialDemoData() {
+/**
+ * Bygger appens demo-data fra seed-turen (src/seed/demo-trip.json, en TripDraft med fiktive deltakere).
+ * Datoene flyttes slik at turen er i gang og `now` er dag 2 (seed-filen er uendret).
+ */
+export function initialDemoData(now = new Date()) {
   const draft = structuredClone(seed) // kopi, så endringer i appen aldri rører seed-modulen
   const { trip } = draft
+  const offset = daysBetween(trip.start_date, shiftDate(localDate(now), -1))
+  trip.start_date = shiftDate(trip.start_date, offset)
+  trip.end_date = shiftDate(trip.end_date, offset)
+  for (const item of draft.program_items) item.event_date = shiftDate(item.event_date, offset)
   const tripId = trip.id
   return {
     seed_version: draft.seed_version,

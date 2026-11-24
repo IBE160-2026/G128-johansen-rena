@@ -161,3 +161,15 @@ test('tilbakestill glemmer rollen, også den i minnet', () => {
   resetDemo(fakeStorage(), initialDemoData, userStorage)
   assert.equal(readDemoUser(userStorage), null)
 })
+
+test('lagret demo flyttes på nytt slik at turen er i gang i dag', () => {
+  const storage = fakeStorage()
+  const old = initialDemoData(new Date(2030, 0, 10, 12, 0))
+  saveDemo(storage, old)
+  const loaded = loadDemo(storage, initialDemoData)
+  const today = new Date()
+  const y = today.getFullYear(), m = String(today.getMonth() + 1).padStart(2, '0'), d = String(today.getDate()).padStart(2, '0')
+  const days = [...new Set(loaded.program.map((item) => item.event_date))].sort()
+  assert.equal(days[1], `${y}-${m}-${d}`)
+  assert.equal(JSON.parse(storage.getItem(DEMO_DATA_KEY)).trip.start_date, loaded.trip.start_date) // lagres på nytt
+})
