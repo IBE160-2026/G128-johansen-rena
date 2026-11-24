@@ -1,6 +1,6 @@
 # Oppsett av appen
 
-TripBuilder AI bygger på Blåtur-malen. Appen har *Hjem, Program, Rebus med bildebevis/lag/poeng, Bilder* og et lite *Admin*-område. Turer åpnes på `/t/<slug>`, og demo-turen ligger på `/t/blatur-2026` (kun i seed-data). Generator og flere turer per bruker bygges i Epic 2.
+TripBuilder AI bygger på Blåtur-malen. Appen har *Hjem, Program, Rebus med bildebevis/lag/poeng, Bilder* og et lite *Admin*-område. Turer åpnes på `/t/<slug>`, og demo-turen ligger på `/t/provetur` (seed i `src/seed/demo-trip.json`). Generator og flere turer per bruker bygges i Epic 2.
 
 ## Kom i gang (uten konto eller nøkler)
 

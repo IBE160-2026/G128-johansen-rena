@@ -1,6 +1,9 @@
 import { supabase } from './supabase.js'
 import { validateImage } from './core.js'
 
+// Demo-implementasjonen (lagring av seed-turen i nettleseren) ligger i demoStore.js, men går via api.js (AD-4).
+export { DEMO_DATA_KEY, DEMO_USER_KEY, loadDemo, resetDemo, saveDemo } from './demoStore.js'
+
 function unwrap({ data, error }) {
   if (error) throw error
   return data

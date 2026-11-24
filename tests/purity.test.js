@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
 // AD-1: rene filer importerer bare hverandre. Nye rene filer i src/lib/ legges til her.
-const PURE = ['core.js', 'geo.js', 'validate.js']
+const PURE = ['core.js', 'geo.js', 'validate.js', 'demoStore.js']
 
 const PATTERNS = [
   /\b(?:import|export)\b[^;'"]*?\bfrom\s*['"]([^'"]+)['"]/g, // også flerlinjede

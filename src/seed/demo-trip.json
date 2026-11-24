@@ -1,0 +1,268 @@
+{
+  "seed_version": 1,
+  "trip": {
+    "id": "df9b0407-e97f-56bb-ab17-4f05432586b4",
+    "slug": "provetur",
+    "name": "Prøvetur Budapest",
+    "destination": "Budapest",
+    "destination_revealed": true,
+    "description": "Fire dager, åtte venner og en rebus gjennom byen.",
+    "announcement": "Velkommen til prøveturen! 🎉",
+    "start_date": "2026-04-24",
+    "end_date": "2026-04-27",
+    "area": {
+      "center": {
+        "lat": 47.4979,
+        "lng": 19.0402
+      },
+      "radius_m": 6000
+    },
+    "theme": {
+      "accent": "kobber",
+      "icon": "kompass"
+    }
+  },
+  "program_items": [
+    {
+      "id": "b9c0e8cc-616a-57d0-8aa9-012d839e1d0e",
+      "event_date": "2026-04-24",
+      "start_time": "07:20",
+      "title": "Oppmøte på flyplassen ✈️",
+      "description": "Møt opp i god tid før avgang"
+    },
+    {
+      "id": "058f53fb-5f48-5a9c-b0da-d2f33a63c907",
+      "event_date": "2026-04-24",
+      "start_time": "10:00",
+      "title": "Avreise og ankomst",
+      "description": "Eventyret starter"
+    },
+    {
+      "id": "e9e95b4e-265d-5c92-8502-6efc56ddcb88",
+      "event_date": "2026-04-24",
+      "start_time": "18:00",
+      "title": "Felles samling",
+      "description": "Første kveld sammen"
+    },
+    {
+      "id": "e1bc05be-c367-5f81-a080-f332ce232ed8",
+      "event_date": "2026-04-25",
+      "start_time": "09:00",
+      "title": "Frokost 🍳",
+      "description": "Start dagen med mat i magen"
+    },
+    {
+      "id": "525de92f-3fd3-5d57-9058-ba1ee2a5576f",
+      "event_date": "2026-04-25",
+      "start_time": "11:00",
+      "title": "Rebus starter 🗺️",
+      "description": "Finn laget og gjør dere klare"
+    },
+    {
+      "id": "b5b4a59d-b50c-5d8f-a50c-b889c7c009b9",
+      "event_date": "2026-04-25",
+      "start_time": "14:00",
+      "title": "Lunsj",
+      "description": "En velfortjent pause"
+    },
+    {
+      "id": "f1db545c-7722-5d68-8fa2-6d4cd2f095bc",
+      "event_date": "2026-04-25",
+      "start_time": "17:00",
+      "title": "Elvecruise 🛥️",
+      "description": "Cruise på elven"
+    },
+    {
+      "id": "84c311c7-af35-529b-bc15-32c31fa7d572",
+      "event_date": "2026-04-25",
+      "start_time": "20:00",
+      "title": "Gallamiddag 🌟",
+      "description": "Middag og premieutdeling"
+    },
+    {
+      "id": "e204a2a0-13fa-5776-aafd-30ce48c624b0",
+      "event_date": "2026-04-26",
+      "start_time": "09:00",
+      "title": "Frokost 🍳",
+      "description": "Rolig start på dagen"
+    },
+    {
+      "id": "9f25888a-67ba-50fb-8316-371075fc9ddf",
+      "event_date": "2026-04-26",
+      "start_time": "12:00",
+      "title": "Byvandring 🏛️",
+      "description": "Utforsk byen sammen"
+    },
+    {
+      "id": "2a125860-d4c4-5968-95fc-13fcb010ffa7",
+      "event_date": "2026-04-26",
+      "start_time": "19:00",
+      "title": "Middag 🍽️",
+      "description": "Siste kveld"
+    },
+    {
+      "id": "465016d8-e7e2-57b2-853d-d43eb909dcbd",
+      "event_date": "2026-04-27",
+      "start_time": "09:00",
+      "title": "Frokost og utsjekk ☕",
+      "description": "Pakk og gjør klart"
+    },
+    {
+      "id": "dbdf838f-ac85-544c-abe0-db26bf754038",
+      "event_date": "2026-04-27",
+      "start_time": "14:00",
+      "title": "Mot flyplassen 🛫",
+      "description": "Takk for turen!"
+    }
+  ],
+  "checkpoints": [
+    {
+      "id": "c2f9408a-63fb-5f40-9c96-f076d610d23b",
+      "title": "Palasset",
+      "description": "Syng en sang sammen som lag",
+      "points": 10,
+      "latitude": 47.4969,
+      "longitude": 19.0398,
+      "radius_m": 60,
+      "requires_location": true,
+      "status": "active",
+      "position": 1
+    },
+    {
+      "id": "b5baf4c7-16a9-5a89-b3ef-5b560b9b39ff",
+      "title": "Donau",
+      "description": "Ta et kreativt lagbilde ved elven",
+      "points": 15,
+      "latitude": 47.4983,
+      "longitude": 19.0453,
+      "radius_m": 60,
+      "requires_location": true,
+      "status": "active",
+      "position": 2
+    },
+    {
+      "id": "4498d2eb-8ffd-5615-9183-e9754024f784",
+      "title": "Badet",
+      "description": "Ta et morsomt gruppebilde utenfor badet",
+      "points": 15,
+      "latitude": 47.5188,
+      "longitude": 19.0802,
+      "radius_m": 60,
+      "requires_location": true,
+      "status": "active",
+      "position": 3
+    },
+    {
+      "id": "12f8aa6d-fef8-5e32-a71c-a1ac42e8479e",
+      "title": "Ruinbar",
+      "description": "Finn et morsomt skilt og ta et lagbilde",
+      "points": 10,
+      "latitude": 47.4985,
+      "longitude": 19.0654,
+      "radius_m": 60,
+      "requires_location": true,
+      "status": "active",
+      "position": 4
+    },
+    {
+      "id": "4655ff01-36b0-5064-8af4-f5c2d82d8b74",
+      "title": "Broen",
+      "description": "Lag en menneskepyramide eller et kreativt alternativ",
+      "points": 20,
+      "latitude": 47.4979,
+      "longitude": 19.045,
+      "radius_m": 60,
+      "requires_location": false,
+      "status": "active",
+      "position": 5
+    },
+    {
+      "id": "45761e24-58c6-59f8-8554-9a53dc2a47dd",
+      "title": "Markedet",
+      "description": "Finn noe nytt og ta et bilde av det",
+      "points": 10,
+      "latitude": 47.4866,
+      "longitude": 19.0575,
+      "radius_m": 60,
+      "requires_location": false,
+      "status": "active",
+      "position": 6
+    }
+  ],
+  "teams": [
+    {
+      "id": "215ad11e-365e-52d0-994d-6ab9bdb511e9",
+      "name": "Løvene",
+      "emoji": "🦁",
+      "color": "team-1"
+    },
+    {
+      "id": "837ab4bb-a532-500a-b359-ab5462d4c03b",
+      "name": "Tigrene",
+      "emoji": "🐯",
+      "color": "team-2"
+    },
+    {
+      "id": "120e1f24-a344-5e63-a766-b4af6256b497",
+      "name": "Ørnene",
+      "emoji": "🦅",
+      "color": "team-3"
+    },
+    {
+      "id": "e4c06e79-68d0-59f8-90bc-9e15bafb76dd",
+      "name": "Revene",
+      "emoji": "🦊",
+      "color": "team-5"
+    }
+  ],
+  "members": [
+    {
+      "id": "c2c32f1c-02e8-5531-bef2-cae570dbd56c",
+      "user_id": "59b6a93b-ffd8-580c-b7f9-00f5ac0ec673",
+      "display_name": "Mari",
+      "team_id": "215ad11e-365e-52d0-994d-6ab9bdb511e9"
+    },
+    {
+      "id": "823070ec-8e38-57d2-b903-0c385a151fcb",
+      "user_id": "51ad9447-84fc-5c80-9720-e010c228b9cc",
+      "display_name": "Ola",
+      "team_id": "837ab4bb-a532-500a-b359-ab5462d4c03b"
+    },
+    {
+      "id": "5711b20f-c94c-56ad-a022-55393bd7324d",
+      "user_id": "1419e0f8-443c-54a0-98fd-520417368088",
+      "display_name": "Ida",
+      "team_id": "120e1f24-a344-5e63-a766-b4af6256b497"
+    },
+    {
+      "id": "bf72d447-fa65-52d7-985b-ed63e2c1aa30",
+      "user_id": "2c4c76f2-2375-5716-b512-cd3555782074",
+      "display_name": "Per",
+      "team_id": "e4c06e79-68d0-59f8-90bc-9e15bafb76dd"
+    },
+    {
+      "id": "a24fd459-797f-5317-9398-1f875da7974d",
+      "user_id": "9c1b122c-5fa0-56ed-93ed-d72a25cf7695",
+      "display_name": "Sofie",
+      "team_id": "215ad11e-365e-52d0-994d-6ab9bdb511e9"
+    },
+    {
+      "id": "b53d10b7-2132-5e7a-ac84-009ce3296bb9",
+      "user_id": "9d34057d-20e2-5f3a-9a41-4585eb0043ff",
+      "display_name": "Jonas",
+      "team_id": "837ab4bb-a532-500a-b359-ab5462d4c03b"
+    },
+    {
+      "id": "9524065b-0a6d-5bfd-8325-b7bf6d534419",
+      "user_id": "412a0347-3405-5461-a4b3-a2922d144f0e",
+      "display_name": "Nora",
+      "team_id": "120e1f24-a344-5e63-a766-b4af6256b497"
+    },
+    {
+      "id": "a96ca5e3-3ea0-50f1-8fda-7b0915e2f317",
+      "user_id": "0f3126ce-e496-5512-967c-aff3bfb50195",
+      "display_name": "Anders",
+      "team_id": "e4c06e79-68d0-59f8-90bc-9e15bafb76dd"
+    }
+  ]
+}
