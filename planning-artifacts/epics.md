@@ -127,7 +127,7 @@ NFR1–NFR10: verifiseres i Epic 7 (og løpende i hver epic)
 ## Liste over epics
 
 ### Epic 1: Prøvetur i demo-modus på mobil
-Sensor eller deltaker starter appen lokalt uten nøkler, velger rolle og ser prøveturen: programmet per dag og kartet med poster, i riktig stil. Epicen setter opp prosjektet fra blåtur-malen, med domenekjerne, seed-tur, porter med demo-adaptere og designtokens.
+Sensor eller deltaker starter appen lokalt uten nøkler, velger rolle og ser prøveturen: programmet per dag og kartet med poster, i riktig stil. Epicen setter opp prosjektet fra blåtur-malen, med rene valideringsfunksjoner, seed-tur, demo-implementasjon i `api.js` og designtokens.
 **FR dekket:** FR5, FR11, FR12
 
 ### Epic 2: Arrangøren lager og publiserer en tur med KI
