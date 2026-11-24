@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTrip } from '../context/TripContext.jsx'
-import { formatDate } from '../lib/core.js'
+import { DEMO_ORGANIZER_ID, formatDate } from '../lib/core.js'
 import DemoBanner from '../components/DemoBanner.jsx'
 
 export default function Welcome() {
@@ -41,7 +41,7 @@ export default function Welcome() {
               <label htmlFor="demo-member">Velg deltaker</label>
               <select id="demo-member" value={name} onChange={(e) => setName(e.target.value)}><option value="">Velg navn …</option>{(data?.members ?? []).map((member) => <option key={member.id} value={member.user_id}>{member.display_name}</option>)}</select>
               <button className="button primary full" disabled={!name} onClick={() => demoLogin(name)}>Gå inn på turen →</button>
-              <button className="button ghost full" onClick={() => demoLogin('demo-admin')}>Se som arrangør</button>
+              <button className="button ghost full" onClick={() => demoLogin(DEMO_ORGANIZER_ID)}>Se som arrangør</button>
               <p className="micro">Demomodus: ingen ekte kontoer eller data brukes.</p>
             </>
           ) : (

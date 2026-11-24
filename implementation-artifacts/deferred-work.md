@@ -25,3 +25,9 @@
 - source_spec: `implementation-artifacts/spec-1-3-provturen-lastes-fra-seed-data.md`
   summary: `crypto.randomUUID()` brukes i `TripContext` (opprettelse av poster og bilder) og krasjer i ikke-sikker kontekst, for eksempel over http på LAN-IP fra mobil.
   evidence: Finnes fra malen. Gjelder testing på mobil uten https, så løses før Story 7.1 (mobiltest) med en reserve-ID-funksjon i `core.js`.
+- source_spec: `implementation-artifacts/spec-1-4-rollevalg-pa-startsiden.md`
+  summary: Rolleflyten (Start, Mine turer, Bytt rolle) har ingen automatisk kjørende test.
+  evidence: Repoet mangler React-testoppsett. Verifisert manuelt i headless Chrome. Dekkes av flyttesten i Story 7.1.
+- source_spec: `implementation-artifacts/spec-1-4-rollevalg-pa-startsiden.md`
+  summary: Hver demo-route har egen `TripProvider` som leser data ved montering, så en annen fane kan gi foreldet visning til siden lastes på nytt.
+  evidence: Hører til sanntid i demo-modus (`BroadcastChannel`, AD-10) i Epic 4.

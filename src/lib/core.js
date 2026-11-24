@@ -57,3 +57,24 @@ export function slugFromPath(pathname) {
 export function findTripBySlug(trips, slug) {
   return trips.find((trip) => trip.slug === slug) ?? null
 }
+
+/** Demo-roller (Start-flaten i demo-modus). */
+export const DEMO_ORGANIZER_ID = 'demo-admin'
+
+/** Bruker-id for en demo-rolle: arrangøren er `demo-admin`, deltakeren er første medlem i turen. */
+export function demoUserForRole(role, members) {
+  if (role === 'organizer') return DEMO_ORGANIZER_ID
+  if (role === 'participant') return (members?.find((m) => m.role === 'participant') ?? members?.[0])?.user_id ?? null
+  return null
+}
+
+/** Hvor en rolle havner etter valget: arrangør på Mine turer, deltaker på turen. */
+export function roleHome(role, slug) {
+  return role === 'organizer' ? '/mine-turer' : tripPath(slug)
+}
+
+/** Hvem demo-brukeren er: den syntetiske arrangøren, ellers medlemmet med denne bruker-id-en. */
+export function demoOwn(userId, members) {
+  if (userId === DEMO_ORGANIZER_ID) return { id: DEMO_ORGANIZER_ID, user_id: DEMO_ORGANIZER_ID, display_name: 'Arrangør', role: 'organizer', team_id: null }
+  return members?.find((member) => member.user_id === userId) ?? null
+}

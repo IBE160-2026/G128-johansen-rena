@@ -13,15 +13,39 @@ const looksValid = (item, seedVersion) => item && typeof item === 'object' && it
   && ['teams', 'program', 'checkpoints', 'members'].every((key) => Array.isArray(item[key]) && item[key].every(isRecord))
   && Array.isArray(item.submissions) && Array.isArray(item.photos)
 
+// Når sessionStorage ikke finnes eller kaster, gjelder rollen i minnet (delt mellom alle providere i fanen).
+let memoryUser = null
+
+/** Leser demo-brukeren (rollen) for denne fanen. */
+export function readDemoUser(userStorage) {
+  try {
+    const stored = userStorage?.getItem(DEMO_USER_KEY)
+    if (stored) return stored
+  } catch { /* bruk minnet */ }
+  return memoryUser
+}
+
+/** Husker demo-brukeren for denne fanen. */
+export function writeDemoUser(userStorage, id) {
+  memoryUser = id
+  try { userStorage?.setItem(DEMO_USER_KEY, id) } catch { /* minnet holder */ }
+}
+
+/** Glemmer demo-brukeren for denne fanen. */
+export function clearDemoUser(userStorage) {
+  memoryUser = null
+  removeKeys(userStorage, [DEMO_USER_KEY])
+}
+
 /** Gir lagret demo-data hvis de er gyldige og har riktig seed-versjon, ellers seed-turen (som lagres). */
-export function loadDemo(storage, makeSeed) {
+export function loadDemo(storage, makeSeed, userStorage = storage) {
   const seed = makeSeed()
   removeKeys(storage, LEGACY_KEYS) // frigjør plass fra eldre demo-lagring
   try {
     const stored = JSON.parse(storage.getItem(DEMO_DATA_KEY))
     if (looksValid(stored, seed.seed_version)) return stored
   } catch { /* ødelagt eller utilgjengelig lagring: bruk seed */ }
-  removeKeys(storage, [DEMO_USER_KEY]) // en gammel bruker passer ikke til ny seed
+  clearDemoUser(userStorage) // en gammel bruker passer ikke til ny seed
   saveDemo(storage, seed)
   return seed
 }
@@ -31,9 +55,9 @@ export function saveDemo(storage, data) {
   try { storage.setItem(DEMO_DATA_KEY, JSON.stringify(data)); return true } catch { return false }
 }
 
-/** Nullstiller demoen: sletter innlogget demo-bruker og laster seed-turen på nytt. */
-export function resetDemo(storage, makeSeed) {
-  removeKeys(storage, [DEMO_USER_KEY])
+/** Nullstiller demoen (brukeren ligger per fane i `userStorage`): sletter innlogget demo-bruker og laster seed-turen på nytt. */
+export function resetDemo(storage, makeSeed, userStorage = storage) {
+  clearDemoUser(userStorage)
   const seed = makeSeed()
   // Får vi ikke lagret seed, fjernes gammel data så den ikke dukker opp igjen ved neste lasting
   if (!saveDemo(storage, seed)) removeKeys(storage, [DEMO_DATA_KEY])
