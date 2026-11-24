@@ -16,7 +16,7 @@ sources:
 ## Foundation
 
 - **Form-faktor:** Webapp. Deltakeren bruker mobil i felt, og den flaten er viktigst. Arrangøren bruker responsiv web, med PC som hovedflate når turen lages og mobil når innsendinger godkjennes underveis. Det lages ingen native app (PRD §5).
-- **UI-system:** Tailwind uten komponentbibliotek, og react-leaflet for kart. Tokenene i DESIGN.md mappes til Tailwind-konfigurasjonen.
+- **UI-system:** Vanlig CSS uten komponentbibliotek (malens `styles.css`), og react-leaflet for kart. Tokenene i DESIGN.md mappes til CSS-variabler.
 - **Språk:** Bare norsk bokmål i V1.
 - **Roller:** Arrangøren har konto (FR-13). Deltakeren blir med via turkode og navn (FR-14). Demo-modus har ingen innlogging, bare valg av rolle (FR-11, FR-12).
 
@@ -50,7 +50,7 @@ sources:
 | I dag (fane) | Standard etter innlogging | Dagens program med den aktiviteten som pågår nå uthevet, og en snarvei til nærmeste post | UJ-3 |
 | Kart (fane) | Hovednavigasjon | Poster med status og egen posisjon. Et postkort vises nederst når en post velges | FR-5, FR-6 |
 | Post | Kart eller I dag | Låst: avstand og hint. Opplåst: oppgaven, med knappen «Løs oppgaven» | FR-6 |
-| Send inn | Post → «Løs oppgaven» | Tekstsvar og/eller foto, og knappen Send | FR-7 |
+| Send inn | Post → «Løs oppgaven» | Foto (påkrevd), kort notat og knappen Send | FR-7 |
 | Ledertavle (fane) | Hovednavigasjon | Lag rangert etter poeng, med eget lag uthevet | FR-10 |
 | Laget (fane) | Hovednavigasjon | Lagmedlemmer og lagets innsendinger med status (Venter, Godkjent eller Avvist) | FR-15 |
 

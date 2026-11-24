@@ -186,11 +186,12 @@ Når deltakeren er innenfor definert radius på en geolåst post, skal oppgave �
 - Oppgaver som ikke er innenfor radius skal forbli låst.
 - Opplåsing skal kunne testes med simulert posisjon.
 
-#### FR-7: Deltaker kan sende svar eller bilde
-Deltaker skal kunne sende tekst, foto eller annen definert respons til systemet som inngår i poengutregning. Realiserer UJ-4.
+#### FR-7: Deltaker kan sende bilde som svar
+Deltaker skal kunne sende et bilde med et kort notat som svar på en post. Bildet er påkrevd (besluttet 2026-11-24, jf. blåtur-malen). Innsendingen inngår i poengutregning etter godkjenning. Realiserer UJ-4.
 
 **Testbare konsekvenser:**
 - Bildefil skal kunne lastes opp og lagres i riktig kontekst.
+- En innsending uten bilde avvises.
 - Systemet skal kunne motta respons uten at appen krasjer.
 - Deltakeren får umiddelbar kvittering med status «venter på godkjenning».
 
@@ -327,7 +328,7 @@ Agentflyten skal kunne kjøres med mock- eller stub-data når eksterne API-er ik
 
 **Besluttet (2026-10-28):**
 
-1. *Minimumsdatamodell:* Besluttet i arkitekturen (ARCHITECTURE-SPINE.md, Structural Seed og AD-2, AD-5 og AD-17).
+1. *Minimumsdatamodell:* Besluttet i arkitekturen (ARCHITECTURE-SPINE.md, Structural Seed og AD-2 og AD-5).
 2. *Autentisering:* Arrangøren har konto (e-post med magisk lenke). Deltakeren blir med via turkode og navn én gang, og sesjonen huskes. Demo-modus har ingen innlogging, bare valg av rolle. Se FR-13 og FR-14.
 3. *Ugyldige bilder og svar:* Arrangøren godkjenner eller avviser hver innsending, og poeng gis først ved godkjenning. Se FR-15.
 5. *AI-QA:* V1 bruker kun regelbasert validering (skjema og regler). Feiler valideringen, får KI-en ett nytt forsøk med feilene. KI-QA kan komme i et senere trinn.

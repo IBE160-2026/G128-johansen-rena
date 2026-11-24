@@ -38,8 +38,8 @@ Planen bryter product brief og PRD ned i små steg som kan tas ett om gangen. Hv
 
 | # | Steg | Ferdig når |
 |---|---|---|
-| 1.1 | Sett opp prosjektet med Vite, React, Tailwind, lint/format og testrammeverk (Vitest) | `npm run dev` og `npm test` kjører |
-| 1.2 | Datamodellen som TypeScript-typer og JSON-skjema (f.eks. Zod) | Skjemaet avviser ugyldige turer i tester |
+| 1.1 | Ta i bruk blåtur-malen (Vite, React, vanlig CSS, `node:test`), lint/format | `npm run dev` og `npm test` kjører |
+| 1.2 | Datamodellen som JSDoc-typer og `validateTrip()` i ren JavaScript | Skjemaet avviser ugyldige turer i tester |
 | 1.3 | Regelbasert validator: påkrevde felt, koordinater innenfor turens område, nøyaktig én dag per dato med minst én programpost, og antall poster lik oppgitt antall | Tester dekker tom dag, duplisert og ekstra dato, og SM-2 og SM-3 |
 | 1.4 | Seed-data: én ferdig prøvetur, f.eks. basert på blåturen | Prøveturen validerer 100 % |
 | 1.5 | Datalag med to implementasjoner: lokal (minne/localStorage) og Supabase. En miljøvariabel velger hvilken | Appen starter uten Supabase-nøkler |
