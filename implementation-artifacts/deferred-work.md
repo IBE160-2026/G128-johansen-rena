@@ -34,3 +34,9 @@
 - source_spec: `implementation-artifacts/spec-1-5-deltakeren-ser-dagens-program.md`
   summary: Mellomlageret uten nett (hent, fallback, `online`-hendelsen), nye ruter og Home-visningen har ingen kjørende test, og mellomlageret er ikke prøvd mot en ekte Supabase-instans.
   evidence: Ingen React-testoppsett og ingen live-instans. Beslutningene ligger i rene testede funksjoner (`isNetworkError`, `clearTripCache`, `loadTripCache`). Dekkes av flyttesten og live-oppsettet i Story 7.1 og 7.4.
+- source_spec: `implementation-artifacts/spec-1-6-deltakeren-ser-postene-pa-kartet.md`
+  summary: `PostMap`, `PostList` og `?post=`-flyten har ingen kjørende komponenttest.
+  evidence: Ingen React-testoppsett. Reglene ligger i `core.js` med tester, og flyten er verifisert i headless Chrome. Dekkes av flyttesten i Story 7.1.
+- source_spec: `implementation-artifacts/spec-1-6-deltakeren-ser-postene-pa-kartet.md`
+  summary: Databasen har ingen kolonne `requires_location` på `checkpoints`, så live-poster er åpne til en migrasjon legger den til.
+  evidence: Malens migrasjon mangler kolonnen (og `radius_m`, `status`). Tilføyes i en ny migrasjon senest i Story 3.2.

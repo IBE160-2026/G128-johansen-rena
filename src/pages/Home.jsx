@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import PostList from '../components/PostList.jsx'
 import { useTrip } from '../context/TripContext.jsx'
-import { currentEventId, currentTripDay, formatDate, localDate, sortEvents } from '../lib/core.js'
+import { activeCheckpoints, currentEventId, currentTripDay, formatDate, localDate, sortEvents } from '../lib/core.js'
 
 export default function Home() {
   const { data, own, leaderboard, path } = useTrip()
@@ -12,7 +13,7 @@ export default function Home() {
     document.addEventListener('visibilitychange', tick) // ny klokke når fanen våkner
     return () => { clearInterval(timer); document.removeEventListener('visibilitychange', tick) }
   }, [])
-  const { trip, program, teams, members, checkpoints } = data
+  const { trip, program, teams, members, checkpoints, submissions } = data
   const date = currentTripDay(trip.start_date, trip.end_date, now)
   const today = sortEvents(program.filter((event) => event.event_date === date))
   const nowId = date === localDate(now) ? currentEventId(program, now) : null
@@ -34,8 +35,9 @@ export default function Home() {
     <div className="stat-grid">
       <div className="stat-card"><span className="eyebrow">DELTAGERE</span><strong>{members.length}</strong><span>på turen</span></div>
       <div className="stat-card"><span className="eyebrow">LAG</span><strong>{teams.length}</strong><span>klare til kamp</span></div>
-      <div className="stat-card"><span className="eyebrow">REBUSPOSTER</span><strong>{checkpoints.length}</strong><span>venter på dere</span></div>
+      <div className="stat-card"><span className="eyebrow">REBUSPOSTER</span><strong>{activeCheckpoints(checkpoints).length}</strong><span>venter på dere</span></div>
     </div>
+    {trip.destination_revealed && <section className="surface"><div className="section-title"><div><span className="eyebrow">POSTER</span><h3>Rebusposter</h3></div><Link to={path('kart')} className="text-link">Se kartet ↗</Link></div><PostList checkpoints={checkpoints} submissions={submissions} teamId={own.team_id} path={path} /></section>}
     <div className="split-grid">
       <section className="surface team-home"><span className="eyebrow">DITT LAG</span><h3>{myTeam ? `${myTeam.emoji} ${myTeam.name}` : 'Ikke fordelt'}</h3><p>{myTeam ? `${members.filter((m) => m.team_id === myTeam.id).length} medlemmer · ${rank + 1}. plass` : 'Arrangøren kan sette deg på et lag.'}</p><Link to={path('ledertavle')} className="text-link">Ledertavle og poeng ↗</Link></section>
       <section className="surface team-home"><span className="eyebrow">MINNER</span><h3>📸 Bildegalleri</h3><p>Del øyeblikkene fra turen med resten av gjengen.</p><Link to={path('bilder')} className="text-link">Se bildene ↗</Link></section>
