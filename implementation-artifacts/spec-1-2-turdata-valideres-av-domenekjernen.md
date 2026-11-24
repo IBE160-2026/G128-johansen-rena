@@ -2,7 +2,8 @@
 title: 'Story 1.2: Turdata valideres av domenekjernen'
 type: 'feature'
 created: '2026-11-24'
-status: 'ready-for-dev'
+status: 'done'
+baseline_commit: '9c526b5963082d81e405cf96e07237cc97f0a6eb'
 route: 'dispatch'
 review_loop_iteration: 0
 context:
@@ -52,11 +53,11 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `src/lib/geo.js` -- flytt `distanceMeters`, re-eksporter fra `core.js` -- AD-1
-- [ ] `src/lib/validate.js` -- `validateTrip(draft)` med reglene i matrisen -- AD-2
-- [ ] `tests/geo.test.js` -- fasit innenfor 1 % (én breddegrad, én lengdegrad, pol til pol) -- AC
-- [ ] `tests/validate.test.js` -- gyldig tur og én test per rad i matrisen -- AC, FR2, FR5
-- [ ] `tests/purity.test.js` -- de rene filene i `src/lib/` importerer ingen biblioteker -- AD-1
+- [x] `src/lib/geo.js` -- flytt `distanceMeters`, re-eksporter fra `core.js` -- AD-1
+- [x] `src/lib/validate.js` -- `validateTrip(draft)` med reglene i matrisen -- AD-2
+- [x] `tests/geo.test.js` -- fasit innenfor 1 % (én breddegrad, én lengdegrad, pol til pol) -- AC
+- [x] `tests/validate.test.js` -- gyldig tur og én test per rad i matrisen -- AC, FR2, FR5
+- [x] `tests/purity.test.js` -- de rene filene i `src/lib/` importerer ingen biblioteker -- AD-1
 
 **Acceptance Criteria:**
 - Gitt en gyldig `TripDraft`, når `validateTrip()` kjøres, så returneres `{ ok: true }`.
@@ -65,9 +66,37 @@ context:
 
 ## Implementation Notes
 
+- `distanceMeters` flyttet til `src/lib/geo.js` og re-eksporteres fra `core.js`, så `TripContext` og eksisterende tester virker uendret.
+- `validateTrip(draft)` i `src/lib/validate.js`, uten biblioteker. Eksporterer også `MAX_POINTS` (500). `req`-sjekken (AD-15) og enum-lister for tema ligger utenfor (Story 2.2 og 2.6). Temaet valideres bare som to ikke-tomme tekstfelt hvis det finnes.
+- Valgt uten å spørre: poeng 1 til 500 (databasens `CHECK` tillater 0 til 500, kravet er positivt), turen kan vare maks 366 dager (hindrer uendelig løkke), `status` er valgfri, men må være `active` eller `deactivated` hvis satt.
+- Tester: 63 grønne etter review (54 nye): `geo.test.js`, `validate.test.js` (én test per matriserad, flere verdier for radius og poeng, ugyldig input uten krasj) og `purity.test.js` (relative imports).
+- `npm run build` lykkes.
+- Etter review: `id` er påkrevd og unik, lagnavn er unike, område og koordinater sjekkes feltvis, perioden regnes aritmetisk, og `distanceMeters` klemmer x til [0, 1] (rundingsfeil ga NaN).
+
 ## Spec Change Log
 
 ## Review Triage Log
+
+| # | Funn (lag) | Verdikt | Rute | Evidens |
+|---|---|---|---|---|
+| 1 | Haversine gir NaN nær motpunktet, og `> radius` blir usant (edge) | medium | patch | Verifisert: for (19.73, -161.03) mot motpunktet er x = 1.0000000000000002. Klemt i `geo.js`. Test med akkurat disse punktene feiler uten klemmingen. |
+| 2 | Perioden bygger hele datolisten bare for å telle (alle tre) | medium | patch | 0100–9999 bygde millioner av strenger. Nå aritmetikk, med test på 366/367 dager og tidsgrense. |
+| 3 | Ugyldig midtpunkt skjuler ugyldig radius (else-if) (blind, edge) | medium | patch | Sjekkes nå hver for seg, med tabelltest. |
+| 4 | Ugyldig lengdegrad rapporteres på `.latitude` (blind, edge) | low | patch | Egen `.longitude`-sti, med test. |
+| 5 | `id` mangler eller er duplisert (blind, edge) | medium | patch | `id` er felt i kontrakten (spec). Duplikate id-er kan overskrive innsendinger. Sjekk og test for programposter, poster og lag. |
+| 6 | Lag med samme navn (blind) | medium | patch | Databasen har `unique (trip_id, name)`. Sjekk og test. |
+| 7 | Kant-testen tester ikke kanten (verification-gap) | medium | patch | Testet avstand 0 mot 112 km. Nå radius lik beregnet avstand (gyldig) og én meter mindre (avvist). |
+| 8 | Flere regler uten test (MAX_TRIP_DAYS, område, koordinater, requires_location) (verification-gap, blind) | medium | patch | Tabelltester for hver, inkludert at ugyldig område eller periode bare gir egne feil. |
+| 9 | Deaktivert post utenfor området er ikke testet (blind) | low | patch | Test lagt til. |
+| 10 | Purity-testen er skjør (blind, edge, verification-gap) | low | patch | Dekker nå flerlinjede imports, `import 'x'`, `import()`, `require`, kun tillatte rene filer, og at den finner importene (ikke tom). |
+| 11 | `{}`-testen sjekker ikke antallet feil (edge) | low | patch | Eksakte stier og antall. |
+| 12 | Dokumentere synk mot databasen (blind) | low | patch | Docblock i `validate.js`. |
+| 13 | Programpost utenfor perioden gir også «mangler programpost» (edge, claim) | false | reject | To ulike brudd: en post på feil dato, og en dato uten poster. Begge er sanne for brukeren. |
+| 14 | `isObject` godtar Date/Map (edge) | low | reject | Inndata er JSON. Ingen kjent vei inn. |
+| 15 | `requires_location: false` krever fortsatt koordinater (blind) | false | reject | Åpne poster har markør på kartet (UX-DR23), så koordinater trengs. |
+| 16 | Ingen minimum antall poster eller lag (blind) | low | defer | Kravet er ikke fastsatt. Avgjøres i Story 2.x (publisering). |
+| 17 | Globale sideeffekter, geo-toleranser, `distanceMeters` med ugyldig input (blind) | low | reject | Valideringen vokter inndata før `distanceMeters`. Toleransen 1 % er kravet. |
+| 18 | Ingen test med ekte seed (blind) | low | defer | Seed kommer i Story 1.3. |
 
 ## Verification
 
