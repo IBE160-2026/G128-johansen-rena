@@ -24,7 +24,7 @@
 - [x] 2026-11-24 [story-1-3-seed-turen](993-2026-11-24-23-05-00-story-1-3-seed-turen.md) — push og merge `story-1-3-seed-turen` etter at 1.2 (PR #2) er merget (løst 2026-11-24, merget som PR #2, #3 og #4)
 - [ ] 2026-11-24 [story-1-3-seed-turen](993-2026-11-24-23-05-00-story-1-3-seed-turen.md) — `crypto.randomUUID()` i `TripContext` krasjer over http på LAN-IP; løses før mobiltest (Story 7.1)
 - [x] 2026-11-25 [story-1-4-rollevalg](992-2026-11-25-00-05-00-story-1-4-rollevalg.md) — push og merge `story-1-4-rollevalg` etter 1.2 (#2) og 1.3 (#3) (løst 2026-11-24, merget som PR #2, #3 og #4)
-- [ ] 2026-11-25 [story-1-5-dagens-program](990-2026-11-25-01-05-00-story-1-5-dagens-program.md) — merge `story-1-5-dagens-program` (PR) og sett Story 1.5 til done
+- [x] 2026-11-25 [story-1-5-dagens-program](990-2026-11-25-01-05-00-story-1-5-dagens-program.md) — merge `story-1-5-dagens-program` (PR) og sett Story 1.5 til done (løst 2026-11-25, merget som PR #6)
 - [ ] 2026-11-25 [story-1-5-dagens-program](990-2026-11-25-01-05-00-story-1-5-dagens-program.md) — mellomlager uten nett er ikke prøvd mot ekte Supabase, og appen lastes ikke uten nett (ingen service worker)
-- [ ] 2026-11-25 [story-1-6-poster-pa-kartet](989-2026-11-25-02-05-00-story-1-6-poster-pa-kartet.md) — merge `story-1-6-poster-pa-kartet`, sett 1.5 og 1.6 til done og vurder retrospektiv for Epic 1
+- [x] 2026-11-25 [story-1-6-poster-pa-kartet](989-2026-11-25-02-05-00-story-1-6-poster-pa-kartet.md) — merge `story-1-6-poster-pa-kartet`, sett 1.5 og 1.6 til done og vurder retrospektiv for Epic 1 (løst 2026-11-25, merget som PR #7, 1.5 og 1.6 og Epic 1 satt til done; retrospektiv er valgfritt og ikke kjørt)
 - [ ] 2026-11-25 [story-1-6-poster-pa-kartet](989-2026-11-25-02-05-00-story-1-6-poster-pa-kartet.md) — migrasjon for `requires_location`, `radius_m` og `status` på `checkpoints` (senest Story 3.2)
