@@ -16,9 +16,7 @@ Ukommitterte endringer i `planning-artifacts/`:
 - `LOSNINGSBESKRIVELSE.md`, `EXPERIENCE.md`, `gjennomforingsplan.md`, `prd.md` (én AD-referanse): stakk og AD-17.
 - Ingen kode i `template_trip/` er endret.
 
+Oppfølging samme dag: gruppen godkjente revisjonen. Bilde er påkrevd på alle innsendinger (ingen svartyper): PRD FR-7, EXPERIENCE, epics (Story 3.4 tar over bildeopplasting, 4.4 er nå galleri) og spinen er oppdatert. `technology.md` er referansemateriale fra foreleser og beholdes. Tailwind-omtale i brief/addendum/proposal beholdes som historikk.
+
 ### Åpne punkter
-- Gruppen må godkjenne revisjonen (spinen var `final`).
-- Svartyper mot malens påkrevde bilde.
 - Playwright eller manuell testprotokoll (Story 7.1).
-- `technology.md` handler om et annet nettsted.
-- Brief, PRD-addendum og `proposal.md` nevner fortsatt Tailwind.
