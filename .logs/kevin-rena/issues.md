@@ -14,6 +14,6 @@
 - [ ] 2026-10-28 [gjennomforingsplan](999-2026-10-28-19-19-10-gjennomforingsplan.md) — installer Docker og Supabase CLI før live-modus (Epic 2)
 - [x] 2026-11-24 [malrevisjon-arkitektur](996-2026-11-24-19-20-00-malrevisjon-arkitektur.md) — gruppen må godkjenne revisjonen av arkitekturspinen (AD-17 erstattet, malens stakk, én app) og de endrede epics; endringene er ikke committet (løst 2026-11-24)
 - [x] 2026-11-24 [malrevisjon-arkitektur](996-2026-11-24-19-20-00-malrevisjon-arkitektur.md) — avklar svartyper (PRD FR-7, Story 3.4/4.4) mot malens krav om bilde på alle innsendinger (løst 2026-11-24)
-- [ ] 2026-11-24 [malrevisjon-arkitektur](996-2026-11-24-19-20-00-malrevisjon-arkitektur.md) — avgjør Playwright eller manuell testprotokoll for Story 7.1
+- [x] 2026-11-24 [malrevisjon-arkitektur](996-2026-11-24-19-20-00-malrevisjon-arkitektur.md) — avgjør Playwright eller manuell testprotokoll for Story 7.1 (løst 2026-11-24: manuell protokoll på localhost)
 - [x] 2026-11-24 [malrevisjon-arkitektur](996-2026-11-24-19-20-00-malrevisjon-arkitektur.md) — avklar om `technology.md` (Pytagoras-nettsted) hører hjemme i arkitekturmappen (løst 2026-11-24)
 - [x] 2026-11-24 [malrevisjon-arkitektur](996-2026-11-24-19-20-00-malrevisjon-arkitektur.md) — brief, PRD-addendum og proposal.md nevner fortsatt Tailwind (historiske dokumenter, ikke endret) (løst 2026-11-24)

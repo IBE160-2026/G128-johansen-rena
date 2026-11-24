@@ -18,5 +18,6 @@ Ukommitterte endringer i `planning-artifacts/`:
 
 Oppfølging samme dag: gruppen godkjente revisjonen. Bilde er påkrevd på alle innsendinger (ingen svartyper): PRD FR-7, EXPERIENCE, epics (Story 3.4 tar over bildeopplasting, 4.4 er nå galleri) og spinen er oppdatert. `technology.md` er referansemateriale fra foreleser og beholdes. Tailwind-omtale i brief/addendum/proposal beholdes som historikk.
 
+Playwright droppet: flyten testes manuelt på localhost i demo-modus (Story 7.1, spinen, løsningsbeskrivelsen oppdatert). Dokumentendringene er committet.
+
 ### Åpne punkter
-- Playwright eller manuell testprotokoll (Story 7.1).
