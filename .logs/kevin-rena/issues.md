@@ -28,3 +28,5 @@
 - [ ] 2026-11-25 [story-1-5-dagens-program](990-2026-11-25-01-05-00-story-1-5-dagens-program.md) — mellomlager uten nett er ikke prøvd mot ekte Supabase, og appen lastes ikke uten nett (ingen service worker)
 - [x] 2026-11-25 [story-1-6-poster-pa-kartet](989-2026-11-25-02-05-00-story-1-6-poster-pa-kartet.md) — merge `story-1-6-poster-pa-kartet`, sett 1.5 og 1.6 til done og vurder retrospektiv for Epic 1 (løst 2026-11-25, merget som PR #7, 1.5 og 1.6 og Epic 1 satt til done; retrospektiv er valgfritt og ikke kjørt)
 - [ ] 2026-11-25 [story-1-6-poster-pa-kartet](989-2026-11-25-02-05-00-story-1-6-poster-pa-kartet.md) — migrasjon for `requires_location`, `radius_m` og `status` på `checkpoints` (senest Story 3.2)
+- [ ] 2026-11-25 [story-3-2-opplasing-ved-posisjon](988-2026-11-25-03-05-00-story-3-2-opplasing-ved-posisjon.md) — merge `story-3-2-opplasing-ved-posisjon` og sett Story 3.2 til done
+- [ ] 2026-11-25 [story-3-2-opplasing-ved-posisjon](988-2026-11-25-03-05-00-story-3-2-opplasing-ved-posisjon.md) — feltprøve med ekte GPS (SM-4) avgjør om GPS-margin eller hysterese trengs
