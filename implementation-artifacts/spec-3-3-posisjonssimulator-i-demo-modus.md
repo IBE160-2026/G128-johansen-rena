@@ -2,7 +2,8 @@
 title: 'Story 3.3: Posisjonssimulator i demo-modus'
 type: 'feature'
 created: '2026-11-25'
-status: 'ready-for-dev'
+status: 'done'
+baseline_commit: 'bdaa40b0b3b929feb6881cab017c00483b29c71f'
 route: 'dispatch'
 review_loop_iteration: 0
 context:
@@ -55,11 +56,11 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `src/lib/geo.js` -- `positionAtPost(checkpoint)`, `normalizePosition(latlng)` -- ren logikk
-- [ ] `src/components/PositionSimulator.jsx`, `src/styles.css` -- panel med «Gå til post N», fjern posisjon og status -- UX-DR10
-- [ ] `src/components/PostMap.jsx` -- `onMapClick` med `useMapEvents` og peker som viser at kartet kan trykkes -- AC
-- [ ] `src/pages/Rebus.jsx` -- simulert posisjon i demo, ingen ekte geolokasjon i demo -- beslutning 1 og 3
-- [ ] `tests/simulator.test.js` -- fasit-tabell med uavhengig beregning, og hjelperne -- NFR4
+- [x] `src/lib/geo.js` -- `positionAtPost(checkpoint)`, `normalizePosition(latlng)` -- ren logikk
+- [x] `src/components/PositionSimulator.jsx`, `src/styles.css` -- panel med «Gå til post N», fjern posisjon og status -- UX-DR10
+- [x] `src/components/PostMap.jsx` -- `onMapClick` med `useMapEvents` og peker som viser at kartet kan trykkes -- AC
+- [x] `src/pages/Rebus.jsx` -- simulert posisjon i demo, ingen ekte geolokasjon i demo -- beslutning 1 og 3
+- [x] `tests/simulator.test.js` -- fasit-tabell med uavhengig beregning, og hjelperne -- NFR4
 
 **Acceptance Criteria:**
 - Gitt demo-modus og Kart, når jeg trykker på kartet eller velger «Gå til post N», så settes den simulerte posisjonen dit, og opplåsingen reagerer som med ekte GPS.
@@ -67,9 +68,31 @@ context:
 
 ## Implementation Notes
 
+- `positionAtPost` og `normalizePosition` i `geo.js`. `normalizePosition` pakker lengdegrad rundt til [-180, 180) og gir null for ugyldig punkt.
+- `src/components/PositionSimulator.jsx` (panel med «Gå til post N», «Fjern posisjon» og status, knapper 48 px) og `onMapClick` i `PostMap` (`useMapEvents`, `latlng.wrap()`, peker som viser at kartet kan trykkes). I `Rebus.jsx` er simulert posisjon kilden i demo, og `usePosition` er av i demo, så nettleseren ber aldri om posisjon.
+- Fasit-testen (`tests/simulator.test.js`): 320 tilfeller (5 breddegrader, 4 radier, 8 retninger, 0,5 m innenfor og 0,5 m utenfor). Posisjonene bygges med en egen direkte formel for punkt ved avstand og retning, uavhengig av `distanceMeters`. I tillegg midt på posten, langt unna, «Gå til post N», og normalisering. 538 tester grønne etter review.
+- Verifisert i headless Chrome (demo, 390 px): simulatoren vises med syv knapper (48 px), ingen posisjon gir låst og «Venter på posisjon …», «Gå til post 1» låser opp og markøren blir opplåst, trykk på kartet 3,3 km unna gir «Du er 3297 m unna …», «Fjern posisjon» låser igjen, åpne poster virker uten posisjon, ingen kall til `watchPosition`, og posisjonen er borte når Kart forlates og åpnes på nytt.
+- Etter review: `moveBy` og flyttknapper (100 m i fire retninger), `resolvePosition` og `shouldTrackReal` som rene funksjoner, statuslinje med koordinater, tabell for «nøyaktig på radius», og et ugyldig kartpunkt endrer ikke posisjonen.
+- Valgt uten å spørre: ekte GPS brukes ikke i demo, simulatoren vises for både arrangør og deltaker, og simulert posisjon huskes ikke mellom besøk.
+
 ## Spec Change Log
 
 ## Review Triage Log
+
+| # | Funn (lag) | Verdikt | Rute | Evidens |
+|---|---|---|---|---|
+| 1 | Et ugyldig kartpunkt nuller den simulerte posisjonen (edge) | medium | patch | Kartpunktet settes bare når `normalizePosition` gir en posisjon. |
+| 2 | Valget av posisjonskilde og kartklikk-koblingen er ikke testet (verification-gap, blind) | medium | patch | `resolvePosition` og `shouldTrackReal` er rene funksjoner i `geo.js`, brukt i Rebus, med tester (demo bruker aldri ekte posisjon, ingen sporing i demo). |
+| 3 | «Nøyaktig på radius» er bare dekket med ±0,5 m, så `<` i stedet for `<=` ville passert (edge, claim) | medium | patch | Tabell for fem breddegrader og fire retninger der radius settes til den beregnede avstanden (opplåst) og en hårsmål mindre (låst). |
+| 4 | Fri plassering finnes bare med musetrykk, ikke tastatur (blind) | medium | patch | Fire knapper «100 m nord/sør/øst/vest» (`moveBy`) som gjør det mulig å teste «like utenfor» uten mus. Tester og verifisert i Chrome (101 m unna). |
+| 5 | To ulike validatorer og dobbel normalisering (blind) | low | patch | `normalizePosition` bruker `validPosition`, og `wrap()` i kartklikk er fjernet. Tester for ±90 og tekst. |
+| 6 | Ingen tilbakemelding om hvor posisjonen ligger (blind) | low | patch | Statuslinjen viser koordinatene. |
+| 7 | Knappenummer og markørnummer kan komme ut av takt for poster uten koordinater (edge, blind) | false | reject | Begge teller i samme liste av aktive poster (`numberOf` i `PostMap`), og disabled knapper beholder nummeret. |
+| 8 | Trykk på markør eller kontroll flytter også posisjonen (edge) | false | reject | Verifisert i Chrome: trykk på markør velger posten uten å flytte posisjonen (Leaflet stopper boblingen), og postkortet ligger utenfor kartbeholderen. |
+| 9 | Simulatoren er en snarvei forbi opplåsingen (blind) | false | reject | Simulatoren finnes bare i demo-modus (ingen Supabase-variabler). Live bruker ekte posisjon. |
+| 10 | Komponentene har ingen kjørende test (verification-gap, blind) | medium | defer | Ingen React-testoppsett. Valgene ligger i rene testede funksjoner, og flyten er verifisert i Chrome. |
+| 11 | Inline klikk-handler, `retry` i demo, magiske tall i Rebus (edge, blind) | low | reject | Ingen kjent skade. Ubrukt `retry` i demo er harmløs. |
+| 12 | Paritet mellom simulert og ekte posisjon ser bare på `lock` (claim, blind) | low | reject | `checkpointStatus` bruker ikke usikkerheten, så lås og tekst er det som skal være likt. |
 
 ## Verification
 

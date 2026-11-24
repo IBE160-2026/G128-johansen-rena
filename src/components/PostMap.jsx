@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import L from 'leaflet'
-import { Circle, CircleMarker, MapContainer, Marker, TileLayer, useMap } from 'react-leaflet'
+import { Circle, CircleMarker, MapContainer, Marker, TileLayer, useMap, useMapEvents } from 'react-leaflet'
 import { LOCKED_HINT, activeCheckpoints, checkpointBounds, checkpointStatus, hasCoordinates } from '../lib/core.js'
 
 const pad = (n) => String(n).padStart(2, '0')
@@ -11,6 +11,12 @@ function FitBounds({ bounds }) {
   useEffect(() => {
     if (bounds) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 16 })
   }, [map, key]) // eslint-disable-line react-hooks/exhaustive-deps
+  return null
+}
+
+/** Trykk på kartet (bare når simulatoren er på). */
+function MapClick({ onMapClick }) {
+  useMapEvents({ click: (e) => onMapClick(e.latlng) }) // normaliseres av mottakeren
   return null
 }
 
@@ -36,7 +42,7 @@ function markerIcon(number, status, selected) {
 }
 
 /** Kart over postene med nummererte markører (låst eller åpen), og et postkort nederst for valgt post. */
-export default function PostMap({ checkpoints, submissions, teamId, position, positionStatus, selectedId, onSelect, onSolve }) {
+export default function PostMap({ checkpoints, submissions, teamId, position, positionStatus, selectedId, onSelect, onSolve, onMapClick }) {
   const allPosts = useMemo(() => activeCheckpoints(checkpoints), [checkpoints])
   const posts = useMemo(() => allPosts.filter(hasCoordinates), [allPosts]) // en post uten posisjon kan ikke tegnes
   const bounds = useMemo(() => checkpointBounds(posts), [posts])
@@ -51,9 +57,10 @@ export default function PostMap({ checkpoints, submissions, teamId, position, po
 
   return (
     <div className="map-wrap">
-      <MapContainer bounds={bounds} boundsOptions={{ padding: [40, 40], maxZoom: 16 }} scrollWheelZoom={false} className="map" aria-label="Kart over postene">
+      <MapContainer bounds={bounds} boundsOptions={{ padding: [40, 40], maxZoom: 16 }} scrollWheelZoom={false} className={`map${onMapClick ? ' simulating' : ''}`} aria-label="Kart over postene">
         <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <FitBounds bounds={bounds} />
+        {onMapClick && <MapClick onMapClick={onMapClick} />}
         <PanToSelected post={posts[selectedIndex]} />
         {position && <>
           {Number.isFinite(position.accuracy) && position.accuracy > 0 && <Circle center={[position.lat, position.lng]} radius={position.accuracy} pathOptions={{ color: '#2563eb', weight: 1, fillOpacity: 0.08 }} interactive={false} />}

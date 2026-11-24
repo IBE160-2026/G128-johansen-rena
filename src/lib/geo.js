@@ -34,3 +34,39 @@ export function distanceHint(distance) {
   if (!Number.isFinite(distance)) return 'Venter på posisjon …'
   return `Du er ${Math.ceil(distance)} m unna. Gå nærmere for å låse opp.`
 }
+
+/** Simulert posisjon nøyaktig på en post (demo-simulatoren, Story 3.3), eller null når posten mangler koordinater. */
+export function positionAtPost(checkpoint) {
+  const lat = checkpoint?.latitude
+  const lng = checkpoint?.longitude
+  if (!validPosition({ lat, lng })) return null
+  return { lat, lng, accuracy: null }
+}
+
+/** Gjør et kartpunkt (`{ lat, lng }`) om til en gyldig posisjon. Lengdegrad utenfor ±180 (panorert forbi datolinjen) pakkes rundt. */
+export function normalizePosition(point) {
+  if (!point || !Number.isFinite(point.lat) || !Number.isFinite(point.lng)) return null
+  const lng = ((((point.lng + 180) % 360) + 360) % 360) - 180
+  const position = { lat: point.lat, lng, accuracy: null }
+  return validPosition(position) ? position : null
+}
+
+const METERS_PER_DEGREE = 111194.9266 // 6 371 000 m * pi / 180
+
+/** Flytter en posisjon et antall meter mot nord og øst (liten avstand, flat tilnærming). Brukes av «Flytt»-knappene i simulatoren. */
+export function moveBy(position, northMeters, eastMeters) {
+  if (!validPosition(position)) return null
+  const cos = Math.cos((position.lat * Math.PI) / 180)
+  if (Math.abs(cos) < 1e-9) return null // ved polene finnes ingen øst
+  return normalizePosition({ lat: position.lat + northMeters / METERS_PER_DEGREE, lng: position.lng + eastMeters / (METERS_PER_DEGREE * cos) })
+}
+
+/** Skal ekte geolokasjon følges? Aldri i demo-modus (simulatoren er kilden), og bare når kartet vises og en post er geolåst. */
+export function shouldTrackReal({ demoMode, revealed, posts }) {
+  return !demoMode && Boolean(revealed) && (posts ?? []).some((post) => post.requires_location === true)
+}
+
+/** Posisjonen som gjelder: simulert i demo-modus (aldri ekte), ellers den ekte. */
+export function resolvePosition({ demoMode, simulated, real }) {
+  return (demoMode ? simulated : real) ?? null
+}
