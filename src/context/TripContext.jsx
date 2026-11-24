@@ -1,20 +1,15 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { initialDemoData } from '../data/demo.js'
 import { demoMode, supabase } from '../lib/supabase.js'
-import { changeRecord, createRecord, loadTrip, removeRecord, uploadPhoto } from '../lib/api.js'
+import { DEMO_USER_KEY, changeRecord, createRecord, loadDemo, loadTrip, removeRecord, resetDemo as resetDemoStore, saveDemo, uploadPhoto } from '../lib/api.js'
 import { findTripBySlug, standings, tripPath, validateImage } from '../lib/core.js'
 import { demoImageDataUrl } from '../lib/demoImage.js'
 
 const Context = createContext(null)
-const DEMO_DATA_KEY = 'tripbuilder-demo-v1'
-const DEMO_USER_KEY = 'tripbuilder-user-v1'
+const storage = (() => { try { return window.localStorage } catch { return null } })()
 
-function savedDemo() {
-  try {
-    const item = JSON.parse(localStorage.getItem(DEMO_DATA_KEY))
-    if (item?.trip && Array.isArray(item?.teams) && Array.isArray(item?.program)) return item
-  } catch { /* ignore corrupt local demo data */ }
-  return initialDemoData()
+function savedDemoUser() {
+  try { return storage?.getItem(DEMO_USER_KEY) ?? null } catch { return null }
 }
 
 function fileAsDataUrl(file) {
@@ -27,9 +22,9 @@ function fileAsDataUrl(file) {
 }
 
 export function TripProvider({ slug, children }) {
-  const [data, setData] = useState(() => demoMode ? savedDemo() : null)
+  const [data, setData] = useState(() => demoMode ? loadDemo(storage, initialDemoData) : null)
   const [session, setSession] = useState(null)
-  const [demoUserId, setDemoUserId] = useState(() => localStorage.getItem(DEMO_USER_KEY))
+  const [demoUserId, setDemoUserId] = useState(savedDemoUser)
   const [loading, setLoading] = useState(!demoMode)
   const [error, setError] = useState('')
 
@@ -65,8 +60,7 @@ export function TripProvider({ slug, children }) {
 
   useEffect(() => {
     if (!demoMode || !data) return
-    try { localStorage.setItem(DEMO_DATA_KEY, JSON.stringify(data)) }
-    catch { setError('Demolagringen er full. Fjern noen bilder eller nullstill demoen.') }
+    if (!saveDemo(storage, data)) setError('Demolagringen er full. Fjern noen bilder eller nullstill demoen.')
   }, [data])
 
   useEffect(() => {
@@ -96,14 +90,14 @@ export function TripProvider({ slug, children }) {
 
   function demoLogin(id) {
     setDemoUserId(id)
-    localStorage.setItem(DEMO_USER_KEY, id)
+    try { storage?.setItem(DEMO_USER_KEY, id) } catch { /* lagring utilgjengelig */ }
   }
 
   async function signOut() {
     setError('')
     if (demoMode) {
       setDemoUserId(null)
-      localStorage.removeItem(DEMO_USER_KEY)
+      try { storage?.removeItem(DEMO_USER_KEY) } catch { /* lagring utilgjengelig */ }
     } else {
       const { error: signoutError } = await supabase.auth.signOut()
       if (signoutError) throw signoutError
@@ -170,8 +164,7 @@ export function TripProvider({ slug, children }) {
     if (demoMode) {
       const url = await demoImageDataUrl(file)
       const updated = { ...data, submissions: [{ ...entry, url, id: crypto.randomUUID(), created_at: new Date().toISOString() }, ...data.submissions] }
-      try { localStorage.setItem(DEMO_DATA_KEY, JSON.stringify(updated)) }
-      catch { throw new Error('Demolagringen er full. Slett noen bilder eller nullstill demoen.') }
+      if (!saveDemo(storage, updated)) throw new Error('Demolagringen er full. Slett noen bilder eller nullstill demoen.')
       setData(updated)
     } else {
       const path = await uploadPhoto(data.trip.id, userId, file)
@@ -212,8 +205,9 @@ export function TripProvider({ slug, children }) {
   }
 
   function resetDemo() {
-    if (!demoMode || !isOrganizer) return
-    setData(initialDemoData())
+    if (!demoMode) return
+    setData(resetDemoStore(storage, initialDemoData))
+    setDemoUserId(null)
     setError('')
   }
 
