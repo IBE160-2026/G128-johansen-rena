@@ -35,3 +35,5 @@
 - [ ] 2026-11-25 [story-3-4-bilde-som-svar](986-2026-11-25-05-05-00-story-3-4-bilde-som-svar.md) — migrasjon `202611250001_story_3_4_submissions.sql` er ukjørt; test mot Supabase (Story 7.4)
 - [ ] 2026-11-25 [story-3-5-godkjenning](985-2026-11-25-06-05-00-story-3-5-godkjenning.md) — merge `story-3-5-godkjenning` og sett Story 3.5 til done
 - [ ] 2026-11-25 [story-3-5-godkjenning](985-2026-11-25-06-05-00-story-3-5-godkjenning.md) — migrasjon `202611250002_story_3_5_review.sql` og RLS for godkjenning er ukjørt; test mot Supabase (Story 7.4)
+- [ ] 2026-11-25 [story-3-6-poeng](984-2026-11-25-07-05-00-story-3-6-poeng.md) — merge `story-3-6-poeng` og sett Story 3.6 til done
+- [ ] 2026-11-25 [story-3-6-poeng](984-2026-11-25-07-05-00-story-3-6-poeng.md) — `team_scores` og fasiten er ikke kjørt mot en database (Story 7.4)
