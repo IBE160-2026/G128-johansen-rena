@@ -124,3 +124,48 @@ export function rebaseDemoDates(data, now = new Date()) {
     program: data.program.map((item) => ({ ...item, event_date: shiftDate(item.event_date, offset) })),
   }
 }
+
+/** Aktive poster (ikke deaktivert), sortert på `position`. */
+export function activeCheckpoints(checkpoints) {
+  return [...(checkpoints ?? [])]
+    .filter((checkpoint) => checkpoint.status !== 'deactivated')
+    .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+}
+
+/** Teksten for en låst post (kortet og listen sier det samme). */
+export const LOCKED_HINT = 'Posten er låst. Oppgaven vises når du er på stedet.'
+
+const SUBMISSION_STATUSES = ['approved', 'pending', 'rejected']
+
+/**
+ * Tilstanden til en post for et lag.
+ * - `lock`: låst bare når `requires_location` er true. Mangler feltet (eldre data), er posten åpen.
+ * - `submission`: lagets siste innsending avgjør (`latest`), ukjent status regnes som ingen.
+ * - `canSubmit`: laget kan levere en åpen post uten innsending, eller levere på nytt etter avvisning (laget var da på stedet).
+ * - `canSeeTask`: oppgaveteksten vises for åpne poster og for poster laget har levert på.
+ * - `action`: hva knappen skal si (solve, locked, sent, noteam). Tekst og ikon brukes sammen, aldri bare farge.
+ */
+export function checkpointStatus(checkpoint, submissions, teamId) {
+  const mine = (submissions ?? []).filter((s) => s.checkpoint_id === checkpoint.id && s.team_id === teamId)
+  const latest = mine.length ? mine.reduce((a, b) => ((b.created_at ?? '') >= (a.created_at ?? '') ? b : a)) : null
+  const lock = checkpoint.requires_location === true ? 'locked' : 'open'
+  const submission = SUBMISSION_STATUSES.includes(latest?.status) ? latest.status : 'none'
+  const canSubmit = Boolean(teamId) && (submission === 'rejected' || (lock === 'open' && submission === 'none'))
+  const canSeeTask = lock === 'open' || submission !== 'none'
+  const label = { approved: 'Godkjent', pending: 'Venter på godkjenning', rejected: 'Avvist, prøv igjen' }[submission] ?? (lock === 'open' ? 'Åpen' : 'Låst')
+  const icon = { approved: '✓', pending: '⏳', rejected: '↺' }[submission] ?? (lock === 'open' ? '○' : '🔒')
+  const action = canSubmit ? 'solve' : !teamId ? 'noteam' : submission === 'none' ? 'locked' : 'sent'
+  return { lock, submission, latest, canSubmit, canSeeTask, action, label, icon }
+}
+
+/** Har posten koordinater som kan tegnes på kartet? */
+export const hasCoordinates = (checkpoint) => Number.isFinite(checkpoint?.latitude) && Number.isFinite(checkpoint?.longitude)
+
+/** Grenser som rommer alle poster, ellers null. Gyldige koordinater er endelige tall. */
+export function checkpointBounds(checkpoints) {
+  const points = (checkpoints ?? []).filter(hasCoordinates)
+  if (!points.length) return null
+  const lats = points.map((c) => c.latitude)
+  const lngs = points.map((c) => c.longitude)
+  return [[Math.min(...lats), Math.min(...lngs)], [Math.max(...lats), Math.max(...lngs)]]
+}

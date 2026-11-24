@@ -2,7 +2,8 @@
 title: 'Story 1.6: Deltakeren ser postene på kartet'
 type: 'feature'
 created: '2026-11-25'
-status: 'ready-for-dev'
+status: 'done'
+baseline_commit: 'e197eb40b80aa96898a918532f1973e7aadfc168'
 route: 'dispatch'
 review_loop_iteration: 0
 context:
@@ -55,11 +56,11 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `src/lib/core.js` -- `activeCheckpoints`, `checkpointStatus`, `checkpointBounds` -- ren logikk
-- [ ] `src/components/PostMap.jsx`, `src/styles.css` -- nummererte markører med ikon, `FitBounds`, postkort -- UX-DR4, UX-DR5, UX-DR23
-- [ ] `src/pages/Rebus.jsx` -- bruk PostMap, `?post=`, låste poster kan ikke leveres -- beslutning 3
-- [ ] `src/components/PostList.jsx`, `src/pages/Home.jsx` -- postliste på I dag -- UX-DR17
-- [ ] `tests/posts.test.js` -- matriseradene som kan testes rent -- AC
+- [x] `src/lib/core.js` -- `activeCheckpoints`, `checkpointStatus`, `checkpointBounds` -- ren logikk
+- [x] `src/components/PostMap.jsx`, `src/styles.css` -- nummererte markører med ikon, `FitBounds`, postkort -- UX-DR4, UX-DR5, UX-DR23
+- [x] `src/pages/Rebus.jsx` -- bruk PostMap, `?post=`, låste poster kan ikke leveres -- beslutning 3
+- [x] `src/components/PostList.jsx`, `src/pages/Home.jsx` -- postliste på I dag -- UX-DR17
+- [x] `tests/posts.test.js` -- matriseradene som kan testes rent -- AC
 
 **Acceptance Criteria:**
 - Gitt Kart-fanen, når den åpnes, så ser jeg postene som nummererte markører i tilstanden låst eller åpen, og kartet er zoomet så alle synes.
@@ -68,9 +69,38 @@ context:
 
 ## Implementation Notes
 
+- Nye rene funksjoner i `core.js`: `activeCheckpoints`, `checkpointStatus` (låst/åpen, siste innsending avgjør, `canSubmit`, tekst og ikon) og `checkpointBounds`. 154 tester grønne etter review (26 nye i `tests/posts.test.js`).
+- `src/components/PostMap.jsx`: `L.divIcon`-markører med nummer og ikon (🔒 låst, ○ åpen), `FitBounds` (padding 40, maks zoom 16), postkort som flyter nederst på kartet. Markørene har `title`/`alt` («Post 1: Palasset, låst») og tabindex 0. `keydown` for Enter og mellomrom er lagt til eksplisitt, siden Leaflets egen Enter-håndtering ikke åpnet kortet i Chrome.
+- `src/components/PostList.jsx` på I dag, nederst: nummer, navn og status med ikon og tekst, lenke til `/kart?post=<id>`. `Rebus.jsx` leser `?post=` (ukjent id gir ingen valgt).
+- Låste poster kan ikke leveres før Story 3.2 låser dem opp: «Løs oppgaven» og «Send bilde» er deaktivert, og oppgaveteksten er skjult (også i kortgriden). I demoen kan altså bare de to åpne postene (Broen og Markedet) leveres inntil videre.
+- Etter review: avvist innsending kan leveres på nytt også for låste poster (matrisen), posten er åpen når `requires_location` mangler (eldre data), `checkpointStatus` gir også `canSeeTask`, `action` og `latest`, poster uten posisjon tegnes ikke, og listen følger vakten `destination_revealed`.
+- «Dagens poster» er alle aktive poster, siden datamodellen ikke har dag på poster. Avstand og retning på postkortet kommer med posisjon (Story 3.2 og 3.3).
+- Verifisert i headless Chrome på 390 px: seks markører (1 til 6, fire låst og to åpne), alle innenfor kartet, postkort for låst og åpen post, «Løs oppgaven» åpner innsendingsvinduet, postlisten på I dag med lenke som åpner riktig postkort, `?post=` med ukjent id, og tastatur (ekte Enter via CDP). Kartfliser hentes fra OpenStreetMap og krever nett.
+
 ## Spec Change Log
 
 ## Review Triage Log
+
+| # | Funn (lag) | Verdikt | Rute | Evidens |
+|---|---|---|---|---|
+| 1 | Låst post med avvist innsending kan ikke leveres på nytt, i strid med matrisen (edge, claim) | high | patch | `canSubmit` er nå sant ved avvist (laget var på stedet). Test. |
+| 2 | Post med ugyldige koordinater krasjer kartet (blind, edge) | high | patch | `PostMap` tegner bare poster med `hasCoordinates`. Nummeret følger hele listen. Test for `hasCoordinates`. |
+| 3 | Regelen om skjult oppgavetekst er skrevet to ganger i JSX og ikke testet (verification-gap, blind) | medium | patch | `canSeeTask` i `checkpointStatus`, brukt begge steder, med tabelltest. |
+| 4 | Manglende `requires_location` (eldre data uten kolonnen) gjør alt låst (blind) | medium | patch | Låst bare når feltet er `true`. Test. |
+| 5 | Knappen sier «Sendt inn» uten at noe er sendt (uten lag, låst og avvist) (edge, claim) | medium | patch | `action` (solve, locked, sent, noteam) styrer teksten. Test. |
+| 6 | Bildebevis hentes fra første ikke-avviste innsending, status fra siste (verification-gap, blind, edge) | medium | patch | `latest` brukes begge steder. Test. |
+| 7 | Postlisten på I dag vises før destinasjonen er avslørt (blind, edge) | medium | patch | Samme `destination_revealed`-vakt som kartet. |
+| 8 | REBUSPOSTER teller deaktiverte poster (alle tre) | medium | patch | `activeCheckpoints(...).length`. |
+| 9 | Ukjent innsendingsstatus gir feil tekst (edge) | low | patch | Regnes som ingen innsending. Test. |
+| 10 | Tom-melding to ganger og feil melding når ingen har posisjon (blind, edge) | low | patch | Kartseksjonen vises bare med poster, og egen melding uten posisjon. |
+| 11 | `selectPost` fjerner andre søkeparametere og kjører to ganger ved Enter (edge) | low | patch | Bevarer parametere og hopper over samme id. |
+| 12 | Markør uten alt-tekst for `divIcon`, postkortet dekker valgt markør (blind) | low | patch | `aria-label` settes på markørelementet, og kartet flyttes så valgt post havner øverst. |
+| 13 | Ulik tekst for låst post i kort og grid (blind) | low | patch | Felles `LOCKED_HINT`. |
+| 14 | Låste poster kan ikke leveres, ingen vei til å låse opp (blind) | low | reject | Bevisst (spec, grense 3): opplåsing kommer i Story 3.2. Teksten kan leses i klienten, og det er ikke ment som hemmelighet. |
+| 15 | CSS-tokens udefinerte, magiske avstander i markør (blind) | false | reject | Tokenene er definert i `:root`. Plasseringen er verifisert visuelt. |
+| 16 | `FitBounds` nullstiller panorering, `bounds` dobbelt (blind) | low | reject | Nøkkelen endres bare når postene flyttes. Dobbelt oppsett er harmløst. |
+| 17 | Komponentene `PostMap`, `PostList` og `?post=`-flyten har ingen kjørende test (verification-gap, blind) | medium | defer | Ingen React-testoppsett. Beslutningene ligger i rene testede funksjoner, og flyten er verifisert i Chrome. |
+| 18 | Koordinater som tekst fra backend (edge) | low | reject | `double precision` leveres som tall av PostgREST. |
 
 ## Verification
 

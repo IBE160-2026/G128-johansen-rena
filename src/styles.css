@@ -38,3 +38,22 @@ h1,h2,h3,.sidebar-brand strong{font-family:'Cormorant Garamond',Georgia,serif}h1
 .page-content.narrow{max-width:480px;margin-left:auto;margin-right:auto}
 .program-cards{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}.program-card{display:grid;grid-template-columns:56px 1fr;gap:12px;padding:12px 14px;border:1px solid var(--border);border-left:4px solid transparent;border-radius:var(--radius-md);background:var(--surface-base)}.program-card.now{border-left-color:var(--primary);background:var(--surface-muted)}.program-card time{font-weight:800;color:var(--primary)}.program-card p{margin:2px 0 0;color:var(--muted);font-size:13px}.now-chip{margin-left:8px;background:var(--primary);color:var(--on-primary);border-radius:99px;padding:2px 8px;font-size:11px;font-weight:800}
 .notice.offline{margin:12px 16px 0}
+.map-wrap{position:relative}
+.map{height:min(62vh,480px);min-height:360px}
+.post-marker{background:transparent;border:0}
+.post-marker-icon,.post-marker-number{position:absolute;display:flex;align-items:center;justify-content:center}
+.post-marker:before{content:'';position:absolute;inset:0;border-radius:50%;background:var(--locked);border:3px solid #fff;box-shadow:0 2px 8px #0005}
+.post-marker.open:before{background:var(--primary)}
+.post-marker.selected:before{outline:3px solid var(--accent-on-dark);outline-offset:2px}
+.post-marker-number{inset:0;color:#fff;font-weight:800;font-size:16px;padding-top:14px}
+.post-marker-icon{top:4px;left:0;right:0;font-size:11px;line-height:1;color:#fff}
+.post-marker:focus-visible:before{outline:3px solid var(--ink-primary);outline-offset:3px}
+.post-card{position:absolute;left:8px;right:8px;bottom:8px;z-index:5;background:var(--surface-base);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 14px;max-height:55%;overflow:auto;box-shadow:0 10px 30px #28170d40;display:flex;flex-direction:column;gap:8px}
+.post-card h3{margin:0}.post-card p{margin:0;font-size:13px}
+.post-card-close{position:absolute;top:6px;right:8px;width:var(--tap-min);height:var(--tap-min);border:0;background:transparent;font-size:26px;line-height:1}
+.post-card .button{min-height:var(--tap-min)}
+.post-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.post-list-item{display:grid;grid-template-columns:32px 1fr auto;align-items:center;gap:12px;min-height:var(--tap-min);padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface-base)}
+.post-list-item:focus-visible{outline:3px solid var(--ink-primary);outline-offset:2px}
+.post-list-number{width:32px;height:32px;border-radius:50%;background:var(--primary);color:var(--on-primary);display:flex;align-items:center;justify-content:center;font-weight:800}
+.post-list-text small{display:block;color:var(--muted)}
