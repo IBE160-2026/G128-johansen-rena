@@ -2,7 +2,8 @@
 title: 'Story 3.6: Poeng beregnes fra godkjente innsendinger'
 type: 'feature'
 created: '2026-11-25'
-status: 'ready-for-dev'
+status: 'done'
+baseline_commit: '8e9f0a05dc2d918498a73cde4a70022f12020fa1'
 route: 'dispatch'
 review_loop_iteration: 0
 context:
@@ -55,11 +56,11 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `src/lib/scoring.js`, `src/lib/core.js` -- `teamScores`, `standings`, re-eksport -- AD-5
-- [ ] `tests/fixtures/scoring-cases.json`, `tests/scoring.test.js` -- delt fasit og regler fra matrisen -- AC
-- [ ] `src/lib/validate.js`, `src/pages/Admin.jsx` -- `pointsError` i validering og postskjema -- beslutning 6
-- [ ] `supabase/migrations/202611250003_story_3_6_team_scores.sql` -- indeks, visning og tilgang, merket ukjørt -- AD-5, AD-8
-- [ ] `tests/purity.test.js` -- legg `scoring.js` i listen over rene filer
+- [x] `src/lib/scoring.js`, `src/lib/core.js` -- `teamScores`, `standings`, re-eksport -- AD-5
+- [x] `tests/fixtures/scoring-cases.json`, `tests/scoring.test.js` -- delt fasit og regler fra matrisen -- AC
+- [x] `src/lib/validate.js`, `src/pages/Admin.jsx` -- `pointsError` i validering og postskjema -- beslutning 6
+- [x] `supabase/migrations/202611250003_story_3_6_team_scores.sql` -- indeks, visning og tilgang, merket ukjørt -- AD-5, AD-8
+- [x] `tests/purity.test.js` -- legg `scoring.js` i listen over rene filer
 
 **Acceptance Criteria:**
 - Gitt godkjente, ventende og avviste innsendinger, også flere godkjente på samme post, når poengene beregnes, så teller bare postens poeng for godkjente innsendinger, maks én gang per lag og post, med samme svar på de delte testtilfellene.
@@ -69,9 +70,36 @@ context:
 
 ## Implementation Notes
 
+- `src/lib/scoring.js` (ren): `pointsOf` (ugyldige poeng er 0), `teamScores` (Map lag til poeng og antall løste poster) og `standings` (sortert på poeng, så norsk lagnavn). Regelen: bare godkjente, maks én gang per lag og post, postens gjeldende poeng, deaktiverte poster teller, ukjent post og ukjent lag gir ingenting. `core.js` re-eksporterer `standings`. `completed` teller nå ulike poster, ikke rader.
+- Delt fasit i `tests/fixtures/scoring-cases.json` (11 tilfeller) som JS-testene kjører, og som `team_scores` skal gi samme svar på i Story 7.4.
+- `pointsError` i `validate.js` er felles regel (heltall 1 til 500) for `validateTrip` og for postskjemaet i Admin. Skjemaets `min` er 1. Tester for tomme, negative, 0, desimaler, tekst og over 500.
+- Migrasjon `202611250003_story_3_6_team_scores.sql` (**UKJØRT**): unik delindeks for godkjente per lag og post, visningen `team_scores` med `security_invoker = true` (en deltaker ser bare egen tur via RLS) og lesetilgang bare for innloggede.
+- 617 tester grønne etter review (36 nye i `tests/scoring.test.js`). Verifisert i headless Chrome med to faner: godkjent innsending gir 20 poeng i ledertavle og Laget-fanen, endring av postens poeng fra 20 til 35 gir 35 begge steder, og Admin avviser -5 og tomt (med nettleserens egen sperre av og på).
+- Etter review: `pointsFromInput` (bare siffer), en eldre post med 0 poeng kan redigeres uten å endre poengene, poster med innsendinger kan ikke slettes, `scoring.js` tåler tomme og doble oppføringer, og fasiten merker tilfeller som bare finnes i JS (`jsOnly`).
+- Ikke prøvd: visningen og tilgangen mot en database (ingen Supabase-instans).
+
 ## Spec Change Log
 
 ## Review Triage Log
+
+| # | Funn (lag) | Verdikt | Rute | Evidens |
+|---|---|---|---|---|
+| 1 | En eldre post med 0 poeng kan ikke lagres for andre endringer, siden `min` er 1 (alle tre) | medium | patch | Admin hopper over poengsjekken når poengene ikke er endret. Databasen tillater fortsatt 0 til 500. |
+| 2 | Poeng fra tekstfeltet godtar `0x10`, `1e2` og mellomrom via `Number()` (edge) | medium | patch | `pointsFromInput` (ren) godtar bare siffer. Tester. |
+| 3 | Delt fasit inneholder tilfeller som ikke kan finnes i databasen (blind, edge) | medium | patch | Tilfellene er merket `jsOnly`, og migrasjonen sier at bare de øvrige kjøres mot viewet i Story 7.4. Test på at det finnes delte tilfeller. |
+| 4 | Sletting av en post med innsendinger får poengene til å forsvinne i demo (blind) | medium | patch | `hasSubmissions` stopper slettingen med forklaring (AD-13). Test. |
+| 5 | Null i listene, dobbel lag-id og dobbel post-id gir krasj eller dobbeltrader (edge) | medium | patch | Tomme oppføringer hoppes over, og første oppføring gjelder. Tester. |
+| 6 | Uavgjort mellom flere lag, og skjøre testsjekker på `issues[0]` (blind) | low | patch | Test for sortering med fire lag, og testene bruker `some` i stedet for første feil. |
+| 7 | Redundant `known`-sett, og fasiten er uleselig (blind) | low | patch | Forenklet, og fasiten har ett tilfelle per linje. |
+| 8 | `core.js` har ikke lenger lokal binding til `standings` (edge) | false | reject | `core.js` bruker ikke `standings` selv (sjekket). Eksporten virker for alle som importerer. |
+| 9 | Poeng over 500 eller desimaler telles i JS, men ikke i databasen (edge) | low | reject | Databasen kan ikke inneholde slike verdier, så avviket kan ikke oppstå. |
+| 10 | Kryss-tur-data i `scoring.js` (edge) | low | reject | Funksjonene får data for én tur. Visningen filtrerer på tur. |
+| 11 | Den nye unike indeksen er overflødig og kan feile på eksisterende data (blind, edge, claim) | low | reject | Den eksisterende indeksen for ventende og godkjente gjør to godkjente umulige, så den nye kan ikke feile. Den er en bevisst, billig gjentakelse (spec-beslutning 5), og kommentaren i migrasjonen sier det. |
+| 12 | `security_invoker` kan skjule andre lags poeng (blind, edge) | false | reject | `submissions_read` er turbred (`is_member(trip_id)`), ikke lagvis (initial-migrasjonen). Verifiseres likevel i Story 7.4. |
+| 13 | `completed` endrer betydning til ulike poster (edge) | low | reject | Bevisst (spec). Laget og ledertavlen viser «godkjente», som nå er riktig. |
+| 14 | Admin-feilsti og Laget-fane er ikke testet automatisk (verification-gap, edge, claim) | medium | defer | Ingen React-testoppsett. Reglene er rene og testet, og stien er verifisert i Chrome (feilmelding og 20 til 35 poeng). |
+| 15 | Visningen og indeksen er ikke kjørt mot en database (verification-gap, blind) | medium | defer | Ingen Supabase-instans. Fasiten kjøres mot `team_scores` i Story 7.4. |
+| 16 | Feil antall i notatene (27 mot 28) (claim) | low | patch | Rettet. |
 
 ## Verification
 

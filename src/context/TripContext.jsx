@@ -5,6 +5,7 @@ import { clearTripCache, isNetworkError, loadTripCache, saveTripCache } from '..
 import { compressImage } from '../lib/image.js'
 import { buildSubmissionEntry, validateNote, validationError } from '../lib/submission.js'
 import { applyReview, buildReviewUpdate } from '../lib/review.js'
+import { hasSubmissions } from '../lib/scoring.js'
 import { changeRecord, clearDemoUser, createRecord, loadDemo, readDemoUser, writeDemoUser, loadTrip, removeRecord, resetDemo as resetDemoStore, saveDemo, uploadPhoto } from '../lib/api.js'
 import { demoOwn, demoUserForRole, findTripBySlug, roleHome, standings, tripPath, validateImage } from '../lib/core.js'
 import { demoImageDataUrl } from '../lib/demoImage.js'
@@ -193,6 +194,7 @@ export function TripProvider({ slug, children }) {
 
   async function destroy(collection, id) {
     if (!isOrganizer) throw new Error('Bare arrangører kan slette dette.')
+    if (collection === 'checkpoints' && hasSubmissions(id, data.submissions)) throw new Error('Posten har innsendinger og kan ikke slettes, fordi poengene ville forsvunnet.')
     if (demoMode) setData((previous) => ({ ...previous, [collection]: previous[collection].filter((item) => item.id !== id) }))
     else {
       await removeRecord(collection === 'program' ? 'program_items' : collection === 'members' ? 'trip_members' : collection, id)
