@@ -4,7 +4,7 @@
 
 ## Goal
 
-Sensor eller deltaker starter appen lokalt uten nøkler, velger rolle og ser en ferdig prøvetur: programmet per dag og kartet med poster, i riktig stil. Epicen tar blåtur-malen (`template_trip/`) i bruk som grunnlag for én app (generator, arrangør, deltaker), gjør den datadrevet og legger inn rene valideringsfunksjoner, seed-tur og designtokens.
+Sensor eller deltaker starter appen lokalt uten nøkler, velger rolle og ser en ferdig prøvetur: programmet per dag og kartet med poster, i riktig stil. Epicen har tatt blåtur-malen i bruk (flyttet til repo-roten i Story 1.1) som grunnlag for én app (generator, arrangør, deltaker), gjør den datadrevet og legger inn rene valideringsfunksjoner, seed-tur og designtokens.
 
 ## Stories
 
@@ -31,17 +31,18 @@ Sensor eller deltaker starter appen lokalt uten nøkler, velger rolle og ser en 
 - Tur hentes fra slug i adressen, ikke første medlemskap og ikke hardkodet `blatur-2026`. Tittel og datoer kommer fra turdata.
 - Tabeller følger malen (`trips`, `teams`, `trip_members`, `program_items`, `checkpoints`, `submissions`, `photos`). Dag er alle `program_items` med samme `event_date`. Nye kolonner kommer i nye migrasjoner, aldri ved å endre kjørte.
 - Posisjon sendes eller lagres aldri på serveren. Opplåsing: avstand ≤ `radius_m`, eller alltid åpen når `requires_location = false`.
+- `core.js` har allerede `distanceMeters` (haversine), `standings`, `sortEvents`, `currentTripDay`, `validateImage` og slug-hjelperne. Nye rene filer legges ved siden av.
 - `.env.example` har bare offentlige `VITE_`-variabler. Malens README og `AGENTS.md` må rettes (ikke «én tur», ingen serververifisert GPS).
 
 ## UX & Interaction Patterns
 
-- Tokens fra DESIGN.md som CSS-variabler: farger (surface, ink, primary, success, warning, danger, locked, team-1 til team-6), typografi (display, title, body, meta, score), radius og spacing. Aksentfarger må være variabler (tema per tur).
+- Malens varme utseende er beholdt (mørk brun, kobber, krem, DM Sans). Tokens fra DESIGN.md ligger som CSS-variabler i `src/styles.css` (primary er mørknet til 4.5:1): farger (surface, ink, primary, success, warning, danger, locked, team-1 til team-6), typografi (display, title, body, meta, score), radius og spacing. Aksentfarger må være variabler (tema per tur).
 - Primær- og sekundærknapp, minst 48 px, full bredde på mobil.
 - Programkort med aktiv aktivitet uthevet med venstrekant i primary. Kartmarkører i tilstandene låst, åpen og (senere) fullført, med nummer og ikon.
 - Navigasjon for deltakeren (I dag, Kart, Ledertavle, Laget): mønsteret avgjøres ut fra malens skall, og bunnfaner er foreløpig valgt bort.
 
 ## Cross-Story Dependencies
 
-- 1.1 (oppsett, tokens, datadrevet mal) er forutsetning for alle andre stories.
+- 1.1 (oppsett, tokens, datadrevet mal) er ferdig: appen ligger i repo-roten, og turer ligger på `/t/:slug`.
 - 1.2 (`validate.js`, `geo.js`) brukes av 1.3 (seed-test) og senere av Epic 2 og 3.
 - 1.3 (seed og demo-implementasjon i `api.js`) er forutsetning for 1.4 til 1.6.
