@@ -1,14 +1,17 @@
 import { useState } from 'react'
 import { useTrip } from '../context/TripContext.jsx'
+import { formatDate } from '../lib/core.js'
+import DemoBanner from '../components/DemoBanner.jsx'
 
 export default function Welcome() {
-  const { data, demoMode, demoLogin, join, organizerEmail, error, setError } = useTrip()
+  const { data, demoMode, demoLogin, join, organizerEmail, error, setError, notMember } = useTrip()
   const [mode, setMode] = useState('participant')
   const [name, setName] = useState('')
   const [code, setCode] = useState('')
   const [email, setEmail] = useState('')
   const [busy, setBusy] = useState(false)
   const [sent, setSent] = useState(false)
+  const trip = data?.trip
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -22,18 +25,21 @@ export default function Welcome() {
   }
 
   return (
+    <>
+    <DemoBanner />
     <div className="welcome">
       <div className="welcome-panel">
-        <div className="welcome-art"><div className="orbit orbit-one"/><div className="orbit orbit-two"/><p className="eyebrow">ET LITE EVENTYR</p><h1>BLÅTUR<br/><em>2026.</em></h1><p>Gode venner. Nye minner.<br/>En tur å snakke om.</p><div className="welcome-foot">24 — 27 APRIL · 2026</div></div>
+        <div className="welcome-art"><div className="orbit orbit-one"/><div className="orbit orbit-two"/>{trip ? <><p className="eyebrow">TURAPP</p><h1>{trip.name}</h1><p>{trip.description}</p><div className="welcome-foot">{formatDate(trip.start_date, { day: 'numeric', month: 'long' }).toUpperCase()} — {formatDate(trip.end_date, { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase()}</div></> : <><p className="eyebrow">DU ER INVITERT</p><h1>Bli med på turen.</h1><p>Skriv inn navnet ditt og koden du fikk av arrangøren.</p></>}</div>
         <div className="welcome-form">
           <span className="eyebrow">VELKOMMEN</span>
           <h2>Din tur starter her.</h2>
           <p className="muted">Alt du trenger for turen, samlet på ett sted.</p>
           {error && <div className="notice danger" role="alert">{error}</div>}
+          {notMember && !error && <div className="notice" role="status">Du er ikke med på denne turen. Skriv inn navn og kode for å bli med.</div>}
           {demoMode ? (
             <>
               <label htmlFor="demo-member">Velg deltaker</label>
-              <select id="demo-member" value={name} onChange={(e) => setName(e.target.value)}><option value="">Velg navn …</option>{data.members.map((member) => <option key={member.id} value={member.user_id}>{member.display_name}</option>)}</select>
+              <select id="demo-member" value={name} onChange={(e) => setName(e.target.value)}><option value="">Velg navn …</option>{(data?.members ?? []).map((member) => <option key={member.id} value={member.user_id}>{member.display_name}</option>)}</select>
               <button className="button primary full" disabled={!name} onClick={() => demoLogin(name)}>Gå inn på turen →</button>
               <button className="button ghost full" onClick={() => demoLogin('demo-admin')}>Se som arrangør</button>
               <p className="micro">Demomodus: ingen ekte kontoer eller data brukes.</p>
@@ -52,5 +58,6 @@ export default function Welcome() {
         </div>
       </div>
     </div>
+    </>
   )
 }

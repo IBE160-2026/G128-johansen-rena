@@ -53,7 +53,7 @@ NFR10: Personvern: posisjon lagres aldri som historikk, og bilder er bare tilgje
 
 ### Tilleggskrav (arkitektur)
 
-- **Startmal:** Blåtur-malen (`template_trip/`, React, Vite, Supabase, Leaflet) er lastet opp og er grunnlaget. Gruppen har besluttet (2026-11-24) å beholde malens stakk: JavaScript, vanlig CSS og `node:test`. Det er én app med områdene generator, arrangør og deltaker. Epic 1, Story 1 tar i bruk malen og utvider den. Stories beskriver oppførsel og er ikke bundet til kode i malen. Versjonene verifiseres ved oppsett, og `package-lock.json` committes.
+- **Startmal:** Blåtur-malen (flyttet fra `template_trip/` til repo-roten, React, Vite, Supabase, Leaflet) er lastet opp og er grunnlaget. Gruppen har besluttet (2026-11-24) å beholde malens stakk: JavaScript, vanlig CSS og `node:test`. Det er én app med områdene generator, arrangør og deltaker. Epic 1, Story 1 tar i bruk malen og utvider den. Stories beskriver oppførsel og er ikke bundet til kode i malen. Versjonene verifiseres ved oppsett, og `package-lock.json` committes.
 - AD-14: Temaet er data (enum-verdier for aksent og ikon), ikke CSS.
 - AD-15: `TripRequest` (nøkkelfelt og beskrivelse) er input til `api.generateTrip`. `validateTrip(draft, req)` sjekker at periode og antall lag stemmer.
 - AD-1: Rene JavaScript-moduler (`core.js`, `validate.js`, `geo.js`, `scoring.js` i `src/lib/`) uten avhengigheter, testet med `node:test`.
@@ -171,7 +171,7 @@ slik at jeg kan prøve løsningen uten gruppens nøkler.
 **Så** starter appen i demo-modus og viser demo-banneret (UX-DR10)
 **Og** `npm test` kjører `node:test` grønt
 
-**Gitt** blåtur-malen i `template_trip/`
+**Gitt** blåtur-malen (nå i repo-roten)
 **Når** prosjektet settes opp
 **Så** bygger det på malen med JavaScript og vanlig CSS, og tokenene fra DESIGN.md ligger som CSS-variabler (UX-DR1)
 **Og** malens `README.md` og `AGENTS.md` er oppdatert: appen er ikke lenger «én tur», og setningen om serververifisert GPS er fjernet (AD-6)

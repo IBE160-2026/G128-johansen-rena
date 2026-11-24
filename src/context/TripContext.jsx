@@ -2,12 +2,12 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { initialDemoData } from '../data/demo.js'
 import { demoMode, supabase } from '../lib/supabase.js'
 import { changeRecord, createRecord, loadTrip, removeRecord, uploadPhoto } from '../lib/api.js'
-import { standings, validateImage } from '../lib/core.js'
+import { findTripBySlug, standings, tripPath, validateImage } from '../lib/core.js'
 import { demoImageDataUrl } from '../lib/demoImage.js'
 
 const Context = createContext(null)
-const DEMO_DATA_KEY = 'blatur-ren-demo-v1'
-const DEMO_USER_KEY = 'blatur-ren-user-v1'
+const DEMO_DATA_KEY = 'tripbuilder-demo-v1'
+const DEMO_USER_KEY = 'tripbuilder-user-v1'
 
 function savedDemo() {
   try {
@@ -26,7 +26,7 @@ function fileAsDataUrl(file) {
   })
 }
 
-export function TripProvider({ children }) {
+export function TripProvider({ slug, children }) {
   const [data, setData] = useState(() => demoMode ? savedDemo() : null)
   const [session, setSession] = useState(null)
   const [demoUserId, setDemoUserId] = useState(() => localStorage.getItem(DEMO_USER_KEY))
@@ -36,13 +36,13 @@ export function TripProvider({ children }) {
   const refresh = useCallback(async (userId) => {
     if (demoMode || !userId) return
     try {
-      const next = await loadTrip(userId)
+      const next = await loadTrip(userId, slug)
       setData(next)
       setError('')
     } catch (e) {
       setError(e.message || 'Kunne ikke hente turen.')
     }
-  }, [])
+  }, [slug])
 
   useEffect(() => {
     if (demoMode) return undefined
@@ -81,6 +81,9 @@ export function TripProvider({ children }) {
     return () => { supabase.removeChannel(channel) }
   }, [data?.trip?.id, session?.user?.id, refresh])
 
+  const notFound = demoMode && !!data && !findTripBySlug([data.trip], slug)
+  const notMember = !demoMode && !loading && !!session?.user && !data
+  const path = (sub = '') => tripPath(slug, sub)
   const own = demoMode
     ? demoUserId === 'demo-admin'
       ? { id: 'demo-admin', user_id: 'demo-admin', display_name: 'Arrangør', role: 'organizer', team_id: null }
@@ -117,13 +120,13 @@ export function TripProvider({ children }) {
       if (authError) throw authError
       id = authData.user.id
     }
-    const { error: joinError } = await supabase.rpc('join_trip', { p_slug: 'blatur-2026', p_code: code, p_name: name.trim() })
+    const { error: joinError } = await supabase.rpc('join_trip', { p_slug: slug, p_code: code, p_name: name.trim() })
     if (joinError) throw joinError
     await refresh(id)
   }
 
   async function organizerEmail(email) {
-    const { error: otpError } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: true } })
+    const { error: otpError } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: true, emailRedirectTo: `${window.location.origin}${tripPath(slug)}` } })
     if (otpError) throw otpError
   }
 
@@ -215,7 +218,7 @@ export function TripProvider({ children }) {
   }
 
   const value = {
-    demoMode, data, own, userId, isOrganizer, loading, error, setError, leaderboard,
+    demoMode, slug, path, notFound, notMember, data, own, userId, isOrganizer, loading, error, setError, leaderboard,
     demoLogin, signOut, join, organizerEmail, write, destroy, updateTrip, submit, review,
     addPhoto, deletePhoto, resetDemo,
   }

@@ -1,1 +1,0 @@
-See [AGENTS.md](./AGENTS.md) for the shared project conventions, architecture and definition of done. Treat the existing React demo as the baseline and coordinate database/schema changes before modifying UI data contracts.

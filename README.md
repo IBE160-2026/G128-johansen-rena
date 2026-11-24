@@ -4,9 +4,9 @@ Gruppeprosjekt i **IBE160 Programmering med KI** ved Høgskolen i Molde, høsten
 
 Repoet inneholder gruppens applikasjon og dokumentasjon av utvikling, testing og kvalitetssikring med KI.
 
-## Status (28. oktober 2026)
+## Status (24. november 2026)
 
-- **Fase:** Planleggingen (fase 0) er ferdig, og sprint-status ligger i [implementation-artifacts/sprint-status.yaml](implementation-artifacts/sprint-status.yaml). Applikasjonen er ikke implementert ennå.
+- **Fase:** Planleggingen (fase 0) er ferdig, og sprint-status ligger i [implementation-artifacts/sprint-status.yaml](implementation-artifacts/sprint-status.yaml). Applikasjonen bygges på blåtur-malen (Story 1.1). Kjør den lokalt uten nøkler: `npm install && npm run dev`, og åpne adressen Vite viser. Se [docs/app-oppsett.md](docs/app-oppsett.md) for oppsett, tester og Supabase.
 - **Plan:** [planning-artifacts/gjennomforingsplan.md](planning-artifacts/gjennomforingsplan.md)
 - **Leveranser:** [Leveranser/product-brief.md](Leveranser/product-brief.md) er den gjeldende briefen. Kopien i `planning-artifacts/briefs/` er BMAD-arbeidskopien.
 - **Planleggingsdokumenter:** PRD, UX, arkitektur og epics/stories ligger i [planning-artifacts/](planning-artifacts/).

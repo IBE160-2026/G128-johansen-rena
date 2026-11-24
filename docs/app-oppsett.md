@@ -1,6 +1,6 @@
-# Blåtur – ren V1
+# Oppsett av appen
 
-En enklere og mer vedlikeholdbar utgave av Blåtur 2026, basert på den opprinnelige React-appen. Beholder *Hjem, Program, Rebus med bildebevis/lag/poeng, Bilder* og et lite *Admin*-område. Appen er foreløpig for **én tur**. Den er ikke TripBuilder AI-generatoren.
+TripBuilder AI bygger på Blåtur-malen. Appen har *Hjem, Program, Rebus med bildebevis/lag/poeng, Bilder* og et lite *Admin*-område. Turer åpnes på `/t/<slug>`, og demo-turen ligger på `/t/blatur-2026` (kun i seed-data). Generator og flere turer per bruker bygges i Epic 2.
 
 ## Kom i gang (uten konto eller nøkler)
 
@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-Åpne adressen Vite viser. Velg en deltaker eller «Se som arrangør». Uten Supabase-miljøvariabler er appen i **demomodus**. Endringer i program, lag, rebus og bilder lagres lokalt i nettleseren. Galleribilder er begrenset til 450 KB; **rebusbilder komprimeres automatisk** før de lagres i `localStorage`. Ved mange bilder kan lagringsplassen fortsatt fylles opp. Arrangøren kan nullstille demoen.
+Kjør kommandoene i repo-roten. Åpne adressen Vite viser (vanligvis `http://localhost:5173`). Velg en deltaker eller «Se som arrangør». Uten Supabase-miljøvariabler er appen i **demomodus**. Endringer i program, lag, rebus og bilder lagres lokalt i nettleseren. Galleribilder er begrenset til 450 KB; **rebusbilder komprimeres automatisk** før de lagres i `localStorage`. Ved mange bilder kan lagringsplassen fortsatt fylles opp. Arrangøren kan nullstille demoen.
 
 ### Test bildebevis fra ende til ende
 
@@ -65,14 +65,13 @@ For lokal seed er tur-UUID-en som vist. For hostet miljø må du bruke faktisk U
 
 ## Ikke implementert ennå
 
-- **GPS-låst opplåsing** er fortsatt utsatt. Bildebevis er påkrevd, men fysisk oppmøte verifiseres ikke ennå. GPS må senere valideres på serveren.
-- AI-generering av nye turer og visuelle temaer; dette er neste prosjektfase.
+- **GPS-låst opplåsing** er ikke implementert ennå (Story 3.2). Den skjer i klienten, og posisjonen sendes aldri til serveren (AD-6). Arrangørens godkjenning er kontrollen.
+- KI-generering av nye turer og tema (Epic 2).
 - Automatisk migrering fra dagens produksjonsdatabase.
 - Manuell gjennomgang og test mot en faktisk Supabase-instans må gjøres før dette kan kalles produksjonsklart.
 
 ## Foreslått samarbeid i repoet
 
-- Legg denne kodebasen på en egen gren eller som erstatning i et nytt repo, uten `node_modules`, `.env` eller `dist`.
 - Kjør `npm test` og `npm run build` etter endringer.
 - Claude kan arbeide med visuell komponentdesign, mens Codex tar datamodell, sikkerhet og integrasjonstester.
 - Bevar dagens Blåtur-app og database inntil den nye er testet med flere deltakere på to telefoner.
