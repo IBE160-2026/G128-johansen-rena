@@ -30,3 +30,4 @@
 - [ ] 2026-11-25 [story-1-6-poster-pa-kartet](989-2026-11-25-02-05-00-story-1-6-poster-pa-kartet.md) — migrasjon for `requires_location`, `radius_m` og `status` på `checkpoints` (senest Story 3.2)
 - [ ] 2026-11-25 [story-3-2-opplasing-ved-posisjon](988-2026-11-25-03-05-00-story-3-2-opplasing-ved-posisjon.md) — merge `story-3-2-opplasing-ved-posisjon` og sett Story 3.2 til done
 - [ ] 2026-11-25 [story-3-2-opplasing-ved-posisjon](988-2026-11-25-03-05-00-story-3-2-opplasing-ved-posisjon.md) — feltprøve med ekte GPS (SM-4) avgjør om GPS-margin eller hysterese trengs
+- [ ] 2026-11-25 [story-3-3-posisjonssimulator](987-2026-11-25-04-05-00-story-3-3-posisjonssimulator.md) — merge `story-3-3-posisjonssimulator` og sett Story 3.3 til done
