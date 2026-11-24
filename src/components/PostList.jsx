@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import { activeCheckpoints, checkpointStatus } from '../lib/core.js'
 
-/** Postlisten (alternativ til kartet): nummer, navn og status med ikon og tekst, lenke til Kart med posten valgt. */
+/** Postlisten (alternativ til kartet). Den følger ikke posisjonen: sporingen kjører bare på Kart, så geolåste poster står som låst her.
+ * nummer, navn og status med ikon og tekst, lenke til Kart med posten valgt. */
 export default function PostList({ checkpoints, submissions, teamId, path }) {
   const posts = activeCheckpoints(checkpoints)
   if (!posts.length) return <p className="muted">Ingen poster lagt inn ennå.</p>
