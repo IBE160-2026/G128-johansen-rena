@@ -61,3 +61,9 @@
 - source_spec: `implementation-artifacts/spec-3-5-arrangoren-godkjenner-eller-avviser.md`
   summary: Godkjenningskøen (`ReviewQueue`), `TripContext.review` og Admin-fanene har ingen kjørende komponenttest, og en beslutning kan gå tapt hvis nettleseren lukkes i de 5 sekundene (`pagehide` er best effort).
   evidence: Ingen React-testoppsett. Køen og reglene er rene og testet med falsk tid, og flyten er verifisert i headless Chrome med to faner. Dekkes av flyttesten i Story 7.1.
+- source_spec: `implementation-artifacts/spec-3-6-poeng-beregnes-fra-godkjente-innsendinger.md`
+  summary: Visningen `team_scores`, den unike indeksen og lesetilgangen (`security_invoker`) er ikke kjørt, og `tests/fixtures/scoring-cases.json` er ikke kjørt mot databasen.
+  evidence: Ingen Supabase-instans. Kjøres i Story 7.4: alle tilfeller uten `jsOnly` skal gi samme poeng og antall løste poster, og en deltaker skal bare se rader for egen tur. Appen bruker fortsatt `standings` i JS og leser ikke `team_scores` ennå.
+- source_spec: `implementation-artifacts/spec-3-6-poeng-beregnes-fra-godkjente-innsendinger.md`
+  summary: Admin-postskjemaet (`saveTask`) og Laget-fanen har ingen kjørende komponenttest.
+  evidence: Ingen React-testoppsett. Verifisert i headless Chrome. Dekkes av flyttesten i Story 7.1.

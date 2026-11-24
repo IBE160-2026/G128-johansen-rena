@@ -22,18 +22,7 @@ export function sortEvents(events) {
   return [...events].sort((a, b) => `${a.event_date} ${a.start_time}`.localeCompare(`${b.event_date} ${b.start_time}`))
 }
 
-export function standings(teams, checkpoints, submissions) {
-  const approved = submissions.filter((submission) => submission.status === 'approved')
-  return teams.map((team) => ({
-    ...team,
-    points: approved.reduce((sum, submission) => {
-      if (submission.team_id !== team.id) return sum
-      const checkpoint = checkpoints.find((entry) => entry.id === submission.checkpoint_id)
-      return sum + (checkpoint?.points ?? 0)
-    }, 0),
-    completed: approved.filter((submission) => submission.team_id === team.id).length,
-  })).sort((a, b) => b.points - a.points || a.name.localeCompare(b.name, 'nb'))
-}
+export { standings } from './scoring.js'
 
 export { distanceMeters } from './geo.js'
 

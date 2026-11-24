@@ -19,6 +19,17 @@ import { distanceMeters } from './geo.js'
 export const MAX_POINTS = 500
 const MAX_TRIP_DAYS = 366
 
+/** Felles regel for poeng på en post: heltall fra 1 til 500. Gir en feilmelding, ellers null. */
+export function pointsError(points) {
+  return Number.isInteger(points) && points >= 1 && points <= MAX_POINTS ? null : `Poeng må være et helt tall fra 1 til ${MAX_POINTS}.`
+}
+
+/** Poeng fra et tekstfelt: bare hele tall (siffer). Gir NaN for tomt, mellomrom, desimaler, 0x10 og 1e2. */
+export function pointsFromInput(text) {
+  const trimmed = typeof text === 'string' ? text.trim() : String(text ?? '')
+  return /^\d+$/.test(trimmed) ? Number(trimmed) : NaN
+}
+
 const isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value)
 const isText = (value) => typeof value === 'string' && value.trim().length > 0
 const isNumber = (value) => typeof value === 'number' && Number.isFinite(value)
@@ -122,7 +133,8 @@ export function validateTrip(draft) {
       if (typeof cp.requires_location !== 'boolean') add(`${at}.requires_location`, 'Posten må si om den krever at man er på stedet.')
       if (cp.status !== undefined && cp.status !== 'active' && cp.status !== 'deactivated') add(`${at}.status`, 'Status må være aktiv eller deaktivert.')
       if (!isNumber(cp.radius_m) || cp.radius_m <= 0) add(`${at}.radius_m`, 'Radius må være større enn 0 meter.')
-      if (!Number.isInteger(cp.points) || cp.points < 1 || cp.points > MAX_POINTS) add(`${at}.points`, `Poeng må være et helt tall fra 1 til ${MAX_POINTS}.`)
+      const pointsProblem = pointsError(cp.points)
+      if (pointsProblem) add(`${at}.points`, pointsProblem)
       const latOk = isNumber(cp.latitude) && Math.abs(cp.latitude) <= 90
       const lngOk = isNumber(cp.longitude) && Math.abs(cp.longitude) <= 180
       if (!latOk) add(`${at}.latitude`, 'Posten må ha en gyldig breddegrad.')

@@ -1,0 +1,13 @@
+[
+  {"name": "ingen innsendinger gir 0", "teams": ["A", "B"], "checkpoints": {"p1": 10, "p2": 20}, "submissions": [], "expected": {"A": [0, 0], "B": [0, 0]}},
+  {"name": "bare godkjente teller", "teams": ["A"], "checkpoints": {"p1": 10, "p2": 20, "p3": 30}, "submissions": [["A", "p1", "approved"], ["A", "p2", "pending"], ["A", "p3", "rejected"]], "expected": {"A": [10, 1]}},
+  {"name": "to godkjente på samme post teller én gang", "teams": ["A"], "checkpoints": {"p1": 10}, "submissions": [["A", "p1", "approved"], ["A", "p1", "approved"]], "expected": {"A": [10, 1]}, "jsOnly": true},
+  {"name": "avvist og så godkjent på samme post", "teams": ["A"], "checkpoints": {"p1": 10}, "submissions": [["A", "p1", "rejected"], ["A", "p1", "approved"]], "expected": {"A": [10, 1]}},
+  {"name": "flere poster og flere lag", "teams": ["A", "B", "C"], "checkpoints": {"p1": 10, "p2": 20, "p3": 5}, "submissions": [["A", "p1", "approved"], ["A", "p2", "approved"], ["B", "p2", "approved"], ["B", "p3", "pending"]], "expected": {"A": [30, 2], "B": [20, 1], "C": [0, 0]}},
+  {"name": "nye poeng gjelder alle som har løst posten", "teams": ["A", "B"], "checkpoints": {"p1": 25}, "submissions": [["A", "p1", "approved"], ["B", "p1", "approved"]], "expected": {"A": [25, 1], "B": [25, 1]}, "note": "p1 var 10 da innsendingene ble godkjent og er endret til 25"},
+  {"name": "deaktivert post teller fortsatt", "teams": ["A"], "checkpoints": {"p1": 10}, "deactivated": ["p1"], "submissions": [["A", "p1", "approved"]], "expected": {"A": [10, 1]}},
+  {"name": "innsending til ukjent post gir 0", "teams": ["A"], "checkpoints": {"p1": 10}, "submissions": [["A", "finnes-ikke", "approved"]], "expected": {"A": [0, 0]}, "jsOnly": true},
+  {"name": "innsending fra lag som ikke finnes ignoreres", "teams": ["A"], "checkpoints": {"p1": 10}, "submissions": [["Z", "p1", "approved"]], "expected": {"A": [0, 0]}, "jsOnly": true},
+  {"name": "post med 0 poeng teller som løst, men gir ingenting", "teams": ["A"], "checkpoints": {"p1": 0, "p2": 10}, "submissions": [["A", "p1", "approved"], ["A", "p2", "approved"]], "expected": {"A": [10, 2]}},
+  {"name": "ugyldige poeng på post regnes som 0", "teams": ["A"], "checkpoints": {"p1": -5, "p2": null, "p3": "10", "p4": 15}, "submissions": [["A", "p1", "approved"], ["A", "p2", "approved"], ["A", "p3", "approved"], ["A", "p4", "approved"]], "expected": {"A": [15, 4]}, "jsOnly": true}
+]
