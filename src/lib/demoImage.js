@@ -2,7 +2,7 @@ import { validateImage } from './core.js'
 
 /**
  * Demo images live in localStorage, so resize camera photos before saving.
- * Real Supabase uploads keep the original file (up to 8 MB).
+ * Live-modus komprimerer med compressImage (maks 1600 px, JPEG).
  */
 export async function demoImageDataUrl(file) {
   validateImage(file)

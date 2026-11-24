@@ -37,11 +37,18 @@ export function standings(teams, checkpoints, submissions) {
 
 export { distanceMeters } from './geo.js'
 
+export const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+export const MAX_IMAGE_BYTES = 15 * 1024 * 1024
+
+/** Bare JPEG, PNG og WebP, og maks 15 MB før komprimering (Story 3.4). */
 export function validateImage(file) {
-  if (!file || !['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/heic', 'image/heif'].includes(file.type)) {
-    throw new Error('Velg et bilde i JPG, PNG, WebP, GIF eller HEIC-format.')
+  if (!file) throw new Error('Velg et bilde i JPG-, PNG- eller WebP-format.')
+  if (file.type === 'image/heic' || file.type === 'image/heif') {
+    throw new Error('HEIC-bilder støttes ikke ennå. Velg et JPG-, PNG- eller WebP-bilde (på iPhone: Innstillinger › Kamera › Formater › Mest kompatibel).')
   }
-  if (file.size > 8 * 1024 * 1024) throw new Error('Bildet er for stort (maks 8 MB).')
+  if (!file.type) throw new Error('Kunne ikke lese filtypen. Velg et JPG-, PNG- eller WebP-bilde.')
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) throw new Error('Velg et bilde i JPG-, PNG- eller WebP-format.')
+  if (!(file.size >= 0 && file.size <= MAX_IMAGE_BYTES)) throw new Error('Bildet er for stort (maks 15 MB).')
 }
 
 /** Adresser: alle turer ligger under /t/<slug>. */

@@ -49,3 +49,9 @@
 - source_spec: `implementation-artifacts/spec-3-3-posisjonssimulator-i-demo-modus.md`
   summary: Simulatorpanelet, kartklikk og kobling til Kart-siden har ingen kjørende komponenttest.
   evidence: Ingen React-testoppsett. Posisjonskilden, flytting og normalisering er rene testede funksjoner, og flyten er verifisert i headless Chrome. Dekkes av flyttesten i Story 7.1.
+- source_spec: `implementation-artifacts/spec-3-4-deltakeren-sender-bilde-som-svar.md`
+  summary: Migrasjonen `202611250001_story_3_4_submissions.sql` er ikke kjørt, og innsettingsregelen, bucket-grensene og live-opplasting er ikke prøvd.
+  evidence: Ingen Supabase-instans. Kjøres og testes med to arrangører og to turer i Story 7.4. Bucketen har fortsatt `file_size_limit` på 8 MB, noe komprimeringen holder seg godt under.
+- source_spec: `implementation-artifacts/spec-3-4-deltakeren-sender-bilde-som-svar.md`
+  summary: `TripContext.submit`, send-flyten i Kart og nettfeilstien har ingen kjørende test.
+  evidence: Ingen React-testoppsett. Reglene er rene og testet, og flyten er verifisert i headless Chrome (demo). Dekkes av flyttesten i Story 7.1.
