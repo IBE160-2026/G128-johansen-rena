@@ -28,12 +28,12 @@
 - [ ] 2026-11-25 [story-1-5-dagens-program](990-2026-11-25-01-05-00-story-1-5-dagens-program.md) — mellomlager uten nett er ikke prøvd mot ekte Supabase, og appen lastes ikke uten nett (ingen service worker)
 - [x] 2026-11-25 [story-1-6-poster-pa-kartet](989-2026-11-25-02-05-00-story-1-6-poster-pa-kartet.md) — merge `story-1-6-poster-pa-kartet`, sett 1.5 og 1.6 til done og vurder retrospektiv for Epic 1 (løst 2026-11-25, merget som PR #7, 1.5 og 1.6 og Epic 1 satt til done; retrospektiv er valgfritt og ikke kjørt)
 - [ ] 2026-11-25 [story-1-6-poster-pa-kartet](989-2026-11-25-02-05-00-story-1-6-poster-pa-kartet.md) — migrasjon for `requires_location`, `radius_m` og `status` på `checkpoints` (senest Story 3.2)
-- [ ] 2026-11-25 [story-3-2-opplasing-ved-posisjon](988-2026-11-25-03-05-00-story-3-2-opplasing-ved-posisjon.md) — merge `story-3-2-opplasing-ved-posisjon` og sett Story 3.2 til done
+- [x] 2026-11-25 [story-3-2-opplasing-ved-posisjon](988-2026-11-25-03-05-00-story-3-2-opplasing-ved-posisjon.md) — merge `story-3-2-opplasing-ved-posisjon` og sett Story 3.2 til done (løst 2026-11-25, merget i PR, Story 3.- er done)
 - [ ] 2026-11-25 [story-3-2-opplasing-ved-posisjon](988-2026-11-25-03-05-00-story-3-2-opplasing-ved-posisjon.md) — feltprøve med ekte GPS (SM-4) avgjør om GPS-margin eller hysterese trengs
-- [ ] 2026-11-25 [story-3-3-posisjonssimulator](987-2026-11-25-04-05-00-story-3-3-posisjonssimulator.md) — merge `story-3-3-posisjonssimulator` og sett Story 3.3 til done
-- [ ] 2026-11-25 [story-3-4-bilde-som-svar](986-2026-11-25-05-05-00-story-3-4-bilde-som-svar.md) — merge `story-3-4-bilde-som-svar` og sett Story 3.4 til done
+- [x] 2026-11-25 [story-3-3-posisjonssimulator](987-2026-11-25-04-05-00-story-3-3-posisjonssimulator.md) — merge `story-3-3-posisjonssimulator` og sett Story 3.3 til done (løst 2026-11-25, merget i PR, Story 3.- er done)
+- [x] 2026-11-25 [story-3-4-bilde-som-svar](986-2026-11-25-05-05-00-story-3-4-bilde-som-svar.md) — merge `story-3-4-bilde-som-svar` og sett Story 3.4 til done (løst 2026-11-25, merget i PR, Story 3.- er done)
 - [ ] 2026-11-25 [story-3-4-bilde-som-svar](986-2026-11-25-05-05-00-story-3-4-bilde-som-svar.md) — migrasjon `202611250001_story_3_4_submissions.sql` er ukjørt; test mot Supabase (Story 7.4)
-- [ ] 2026-11-25 [story-3-5-godkjenning](985-2026-11-25-06-05-00-story-3-5-godkjenning.md) — merge `story-3-5-godkjenning` og sett Story 3.5 til done
+- [x] 2026-11-25 [story-3-5-godkjenning](985-2026-11-25-06-05-00-story-3-5-godkjenning.md) — merge `story-3-5-godkjenning` og sett Story 3.5 til done (løst 2026-11-25, merget i PR, Story 3.- er done)
 - [ ] 2026-11-25 [story-3-5-godkjenning](985-2026-11-25-06-05-00-story-3-5-godkjenning.md) — migrasjon `202611250002_story_3_5_review.sql` og RLS for godkjenning er ukjørt; test mot Supabase (Story 7.4)
-- [ ] 2026-11-25 [story-3-6-poeng](984-2026-11-25-07-05-00-story-3-6-poeng.md) — merge `story-3-6-poeng` og sett Story 3.6 til done
+- [x] 2026-11-25 [story-3-6-poeng](984-2026-11-25-07-05-00-story-3-6-poeng.md) — merge `story-3-6-poeng` og sett Story 3.6 til done (løst 2026-11-25, merget i PR, Story 3.- er done)
 - [ ] 2026-11-25 [story-3-6-poeng](984-2026-11-25-07-05-00-story-3-6-poeng.md) — `team_scores` og fasiten er ikke kjørt mot en database (Story 7.4)
