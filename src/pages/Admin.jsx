@@ -6,7 +6,7 @@ import { formatDate, sortEvents } from '../lib/core.js'
 const tabs = [['overview', 'Oversikt'], ['program', 'Program'], ['checkpoints', 'Rebusposter'], ['teams', 'Lag'], ['inbox', 'Innsendinger']]
 
 export default function Admin() {
-  const { data, isOrganizer, leaderboard, updateTrip, write, destroy, review, resetDemo, demoMode, setError } = useTrip()
+  const { data, isOrganizer, leaderboard, updateTrip, write, destroy, review, resetDemo, demoMode, setError, path } = useTrip()
   const [tab, setTab] = useState('overview')
   const [working, setWorking] = useState(false)
   const [editingProgram, setEditingProgram] = useState(null)
@@ -16,7 +16,7 @@ export default function Admin() {
   const [taskForm, setTaskForm] = useState({ title: '', description: '', points: '10', latitude: '', longitude: '' })
   const [announcement, setAnnouncement] = useState(data.trip.announcement ?? '')
 
-  if (!isOrganizer) return <div className="page-stack"><h1>Ingen tilgang</h1><p>Dette området er kun for arrangøren.</p><Link to="/">Gå tilbake</Link></div>
+  if (!isOrganizer) return <div className="page-stack"><h1>Ingen tilgang</h1><p>Dette området er kun for arrangøren.</p><Link to={path()}>Gå tilbake</Link></div>
 
   async function perform(action) {
     setWorking(true)

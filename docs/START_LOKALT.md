@@ -1,11 +1,10 @@
 # Blåtur – start appen lokalt
 
-Dette er det **komplette Blatur-ren-v1-prosjektet** med endringene fra
-`Blatur-bildeinnsending-oppdatering.zip` lagt inn over originalfilene.
+Dette er oppsettet for appen i repo-roten (opprinnelig Blåtur ren V1, nå TripBuilder AI).
 
 ## Start demomodus først
 
-1. Pakk ut ZIP-en og åpne Terminal i mappen `blatur-ren` (mappen som inneholder `package.json`).
+1. Åpne Terminal i repo-roten (mappen som inneholder `package.json`).
 2. Kjør:
 
    ```bash
@@ -18,7 +17,7 @@ Dette er det **komplette Blatur-ren-v1-prosjektet** med endringene fra
 
 ## Viktig om eksisterende Supabase
 
-Vi har allerede opprettet Blåtur 2027 (Budapest, 24.–27. april 2027) i
+Gruppen har allerede opprettet Blåtur 2027 (Budapest, 24.–27. april 2027) i
 Supabase-prosjektet CharterFeber AI. **Ikke kjør migrasjonene i denne pakken
 på nytt**. De er utgangspunktet for den opprinnelige appen, mens den
 opprettede Supabase-databasen er basert på en senere tilpasning.

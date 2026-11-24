@@ -2,19 +2,22 @@
 title: "DESIGN: TripBuilder AI"
 status: draft
 created: 2026-10-28
-updated: 2026-10-28
+updated: 2026-11-24
 name: TripBuilder AI
 description: Mobilvennlig turside for uformelle grupper. Leken, men ryddig. Den skal kunne leses i sollys og brukes med én hånd.
 colors:
   surface-base: '#FFFFFF'
-  surface-muted: '#F3F5F4'
-  ink-primary: '#111827'
-  ink-secondary: '#4B5563'
-  border: '#D1D5DB'
-  primary: '#0F766E'
-  primary-pressed: '#115E59'
+  surface-muted: '#F5F0E8'
+  surface-page: '#FBF8F2'
+  surface-dark: '#1C1208'
+  ink-primary: '#30251A'
+  ink-secondary: '#7A6A58'
+  border: '#E8DCCB'
+  primary: '#8A5216'
+  primary-pressed: '#6E4111'
   on-primary: '#FFFFFF'
-  success: '#15803D'
+  accent-on-dark: '#C9924B'
+  success: '#267449'
   warning: '#B45309'
   danger: '#B91C1C'
   locked: '#6B7280'
@@ -26,27 +29,27 @@ colors:
   team-6: '#0891B2'
 typography:
   display:
-    fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif'
+    fontFamily: 'DM Sans, system-ui, sans-serif'
     fontSize: 28px
     fontWeight: 700
     lineHeight: 1.2
   title:
-    fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif'
+    fontFamily: 'DM Sans, system-ui, sans-serif'
     fontSize: 20px
     fontWeight: 600
     lineHeight: 1.3
   body:
-    fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif'
+    fontFamily: 'DM Sans, system-ui, sans-serif'
     fontSize: 16px
     fontWeight: 400
     lineHeight: 1.5
   meta:
-    fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif'
+    fontFamily: 'DM Sans, system-ui, sans-serif'
     fontSize: 14px
     fontWeight: 500
     lineHeight: 1.4
   score:
-    fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif'
+    fontFamily: 'DM Sans, system-ui, sans-serif'
     fontSize: 24px
     fontWeight: 700
     lineHeight: 1
@@ -107,6 +110,7 @@ components:
 
 # DESIGN: TripBuilder AI
 
+> **Revidert 2026-11-24 (Story 1.1):** Fargene og fonten følger nå blåtur-malens varme utseende (mørk brun, kobber, krem, DM Sans med serif-overskrifter). `primary` er mørknet fra malens kobber (`#B8732A`, 3,6:1) til `#8A5216` (6,0:1 mot krem). Tokenene ligger som CSS-variabler i `src/styles.css`.
 > Utkast laget med rask vei. Alt merket `[ASSUMPTION]` er gjettet og må bekreftes av gruppen. Ved konflikt gjelder dette dokumentet foran mockups.
 
 ## Brand & Style

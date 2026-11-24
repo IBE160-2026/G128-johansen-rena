@@ -49,3 +49,18 @@ export function validateImage(file) {
   }
   if (file.size > 8 * 1024 * 1024) throw new Error('Bildet er for stort (maks 8 MB).')
 }
+
+/** Adresser: alle turer ligger under /t/<slug>. */
+export function tripPath(slug, sub = '') {
+  return `/t/${encodeURIComponent(slug)}${sub ? `/${sub.replace(/^\/+/, '')}` : ''}`
+}
+
+export function slugFromPath(pathname) {
+  const match = /^\/t\/([^/]+)/.exec(pathname || '')
+  if (!match) return null
+  try { return decodeURIComponent(match[1]) } catch { return null }
+}
+
+export function findTripBySlug(trips, slug) {
+  return trips.find((trip) => trip.slug === slug) ?? null
+}

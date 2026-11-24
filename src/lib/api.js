@@ -6,10 +6,13 @@ function unwrap({ data, error }) {
   return data
 }
 
-export async function loadTrip(userId) {
-  const own = unwrap(await supabase.from('trip_members').select('*').eq('user_id', userId).limit(1).maybeSingle())
+/** Henter turen med gitt slug. Returnerer null når turen ikke finnes eller brukeren ikke er medlem (RLS). */
+export async function loadTrip(userId, slug) {
+  const tripRow = unwrap(await supabase.from('trips').select('id').eq('slug', slug).maybeSingle())
+  if (!tripRow) return null
+  const own = unwrap(await supabase.from('trip_members').select('*').eq('trip_id', tripRow.id).eq('user_id', userId).maybeSingle())
   if (!own) return null
-  const tripId = own.trip_id
+  const tripId = tripRow.id
   const [trip, members, teams, program, checkpoints, submissions, photos] = await Promise.all([
     supabase.from('trips').select('id,slug,name,description,start_date,end_date,announcement,destination_revealed,created_at').eq('id', tripId).single(),
     supabase.from('trip_members').select('*').eq('trip_id', tripId),

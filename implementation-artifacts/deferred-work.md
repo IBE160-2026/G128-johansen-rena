@@ -1,0 +1,15 @@
+- source_spec: `implementation-artifacts/spec-1-1-appen-starter-i-demo-modus-fra-malen.md`
+  summary: Live-modus på `/` er en blindgate: ingen innlogging, turliste eller omdirigering til brukerens tur.
+  evidence: `Start` i `src/App.jsx` viser bare en tekst utenfor demo-modus. Start-flaten kommer i Story 1.4 og Epic 2 og 3.
+- source_spec: `implementation-artifacts/spec-1-1-appen-starter-i-demo-modus-fra-malen.md`
+  summary: `join()` i `TripContext.jsx` etterlater en anonym Supabase-sesjon når `join_trip` feiler.
+  evidence: Finnes i malen fra før. Skal ryddes i Story 3.1.
+- source_spec: `implementation-artifacts/spec-1-1-appen-starter-i-demo-modus-fra-malen.md`
+  summary: Admin-lenken mangler i bunnmenyen på mobil.
+  evidence: `Shell.jsx` gir `isOrganizer={false}` til bunnmenyen. Avgjøres sammen med navigasjonsmønsteret i Story 1.5.
+- source_spec: `implementation-artifacts/spec-1-1-appen-starter-i-demo-modus-fra-malen.md`
+  summary: Malens CLAUDE.md-regel om å samordne databaseskjema og UI-kontrakter ble borte da `template_trip/CLAUDE.md` ble fjernet.
+  evidence: Rotens `AGENTS.md` har egne regler om migrasjoner og RLS, men ikke setningen om samordning. Endrer agentkontekst, så gruppen bør avgjøre.
+- source_spec: `implementation-artifacts/spec-1-1-appen-starter-i-demo-modus-fra-malen.md`
+  summary: Supabase-modus, brukere med flere medlemskap og utlogging er ikke testet automatisk eller mot en live-instans.
+  evidence: Ingen Supabase-instans ennå. Dekkes av live-integrasjonstesten i Story 7.4.

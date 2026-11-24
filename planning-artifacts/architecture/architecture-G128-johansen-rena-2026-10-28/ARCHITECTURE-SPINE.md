@@ -8,7 +8,7 @@ scope: 'TripBuilder AI V1 (Epic 1–7, trinn A–E i gjennomføringsplanen)'
 status: final
 created: '2026-10-28'
 updated: '2026-11-24'
-revision: 'Revidert 2026-11-24 etter gruppebeslutning: blåtur-malen (template_trip/) er grunnlaget. Beholder malens stakk (JavaScript, vanlig CSS, node:test), godtar RLS som skrivevern (AD-17 erstattet) og bygger én app for generator, arrangør og deltaker.'
+revision: 'Revidert 2026-11-24 etter gruppebeslutning: blåtur-malen er grunnlaget (flyttet fra template_trip/ til repo-roten i Story 1.1). Beholder malens stakk (JavaScript, vanlig CSS, node:test), godtar RLS som skrivevern (AD-17 erstattet) og bygger én app for generator, arrangør og deltaker.'
 binds: [FR-1, FR-2, FR-3, FR-4, FR-5, FR-6, FR-7, FR-8, FR-9, FR-10, FR-11, FR-12, FR-13, FR-14, FR-15, FR-16, FR-17, FR-18]
 sources:
   - planning-artifacts/prds/prd-G128-johansen-rena-2026-10-11/prd.md
@@ -24,7 +24,7 @@ companions:
 
 ## Design Paradigm
 
-**Revidert 2026-11-24.** Appen bygger på blåtur-malen (`template_trip/`) og beholder malens struktur: sidekomponentene i `src/pages/` viser tilstand og kaller handlinger, sentrale handlinger ligger i `src/context/TripContext.jsx`, og alle databasekall ligger i `src/lib/api.js`. Regler som validering, avstand og poeng ligger i rene funksjoner uten avhengigheter til React, Supabase eller nettleser-API-er (`src/lib/core.js` og nye filer ved siden av). Appen er **én app** med tre områder: *generator* (arrangøren beskriver en tur og får et utkast), *arrangør* (redigerer, publiserer, godkjenner) og *deltaker* (program, rebus, ledertavle, bilder). Hvert område har egne ruter, og alle bruker samme database.
+**Revidert 2026-11-24.** Appen bygger på blåtur-malen (flyttet til repo-roten i Story 1.1) og beholder malens struktur: sidekomponentene i `src/pages/` viser tilstand og kaller handlinger, sentrale handlinger ligger i `src/context/TripContext.jsx`, og alle databasekall ligger i `src/lib/api.js`. Regler som validering, avstand og poeng ligger i rene funksjoner uten avhengigheter til React, Supabase eller nettleser-API-er (`src/lib/core.js` og nye filer ved siden av). Appen er **én app** med tre områder: *generator* (arrangøren beskriver en tur og får et utkast), *arrangør* (redigerer, publiserer, godkjenner) og *deltaker* (program, rebus, ledertavle, bilder). Hvert område har egne ruter, og alle bruker samme database.
 
 ```mermaid
 flowchart TD
@@ -159,7 +159,7 @@ Pilene viser hva som får lov å importere hva. Rene filer i `src/lib/` importer
 
 ## Stack
 
-Fra `template_trip/package.json`. Versjonene verifiseres mot npm ved oppsett.
+Fra `package.json`. Versjonene verifiseres mot npm ved oppsett.
 
 | Navn | Versjon |
 | --- | --- |
@@ -181,7 +181,7 @@ Zod, Vitest og Tailwind fra den opprinnelige spinen er tatt ut. Playwright er ik
 
 ### Datamodell (malens tabeller, med tillegg, PRD §8.1)
 
-Malens migrasjoner (`template_trip/supabase/migrations/`) er utgangspunktet. Kolonner merket «nytt» legges til i nye migrasjoner (aldri ved å endre en migrasjon som er kjørt).
+Malens migrasjoner (`supabase/migrations/`) er utgangspunktet. Kolonner merket «nytt» legges til i nye migrasjoner (aldri ved å endre en migrasjon som er kjørt).
 
 ```mermaid
 erDiagram
@@ -306,7 +306,7 @@ supabase/
 
 ## Deferred
 
-- **Blåtur-malen:** Lastet opp som `template_trip/` og innarbeidet i denne revisjonen (2026-11-24). Malens stakk er beholdt, RLS er godtatt (AD-17), og det er én app. Gjenstår: navigasjonsmønster og farger i UX avgjøres ut fra malens skall, og malen må gjøres datadrevet (fjern slug `blatur-2026`, tittel og datoer i `Welcome.jsx` og `Shell.jsx`). Malens egen `AGENTS.md` og README, som sier «én tur» og «ikke generatoren», må oppdateres ved oppstart.
+- **Blåtur-malen:** Lastet opp som `template_trip/` og innarbeidet i denne revisjonen (2026-11-24). Flyttet til repo-roten i Story 1.1 (`src/`, `tests/`, `supabase/`). Malens stakk er beholdt, RLS er godtatt (AD-17), og det er én app. Gjenstår: navigasjonsmønster og farger i UX avgjøres ut fra malens skall, og malen må gjøres datadrevet (fjern slug `blatur-2026`, tittel og datoer i `Welcome.jsx` og `Shell.jsx`). Malens egen `AGENTS.md` og README, som sier «én tur» og «ikke generatoren», må oppdateres ved oppstart.
 - **Eget Supabase-prosjekt:** Malen skal ha et nytt prosjekt. Det eksisterende prosjektet «CharterFeber AI» har et annet skjema (`trips.title`, `private.trip_secrets`) og brukes ikke før skjemaene er samordnet.
 - **Tilgangsgaranti uten server (AD-17):** Publisering og strukturregler valideres bare i klienten. Vurder en databasetrigger som krever gyldige poster og programposter ved `status = published`, hvis tiden tillater det.
 - **Personvern for bilder:** Samtykke, lagringstid og sletting av bilder avklares før Epic 4 (PRD §8.6). AD-11 og AD-8 gir tilgangskontrollen, men ikke svaret på disse spørsmålene.
