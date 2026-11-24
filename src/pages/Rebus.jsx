@@ -3,13 +3,13 @@ import { CircleMarker, MapContainer, Popup, TileLayer } from 'react-leaflet'
 import { useTrip } from '../context/TripContext.jsx'
 
 export default function Rebus() {
-  const { data, own, leaderboard, submit, setError } = useTrip()
+  const { data, own, submit, setError } = useTrip()
   const [selected, setSelected] = useState(null)
   const [photo, setPhoto] = useState(null)
   const [preview, setPreview] = useState(null)
   const [submissionError, setSubmissionError] = useState('')
   const [busy, setBusy] = useState(false)
-  const { checkpoints, teams, members, submissions, trip } = data
+  const { checkpoints, teams, submissions, trip } = data
   const myTeam = teams.find((team) => team.id === own.team_id)
   const center = checkpoints.length ? [checkpoints[0].latitude, checkpoints[0].longitude] : [59.9139, 10.7522]
 
@@ -39,13 +39,7 @@ export default function Rebus() {
     finally { setBusy(false) }
   }
 
-  return <div className="page-stack"><div className="page-heading"><span className="eyebrow">KONKURRANSEN</span><h1>Rebus<span className="copper-dot">.</span></h1><p>Finn postene, løs oppgavene og samle poeng.</p></div>
-    <div className="split-grid">
-      <section className="surface"><div className="section-title"><div><span className="eyebrow">LEDETAVLE</span><h3>Stillingen</h3></div><span className="pill">Oppdateres live</span></div>
-        <div className="leaderboard">{leaderboard.map((team, index) => <div className={`leader-row ${team.id === own.team_id ? 'my-team' : ''}`} key={team.id}><span className="leader-rank">{index === 0 ? '🥇' : `${index + 1}.`}</span><span><strong>{team.emoji} {team.name}</strong><small>{members.filter((m) => m.team_id === team.id).length} medlemmer · {team.completed} godkjente</small></span><b>{team.points} <small>poeng</small></b></div>)}</div>
-      </section>
-      <section className="surface"><span className="eyebrow">MITT LAG</span><h3>{myTeam ? `${myTeam.emoji} ${myTeam.name}` : 'Ikke på lag'}</h3><p className="muted">{myTeam ? members.filter((member) => member.team_id === myTeam.id).map((member) => member.display_name).join(' · ') : 'Arrangøren tildeler lag.'}</p><div className="points-summary"><strong>{leaderboard.find((t) => t.id === myTeam?.id)?.points ?? 0}</strong><span>godkjente poeng</span></div></section>
-    </div>
+  return <div className="page-stack"><div className="page-heading"><span className="eyebrow">KONKURRANSEN</span><h1>Kart<span className="copper-dot">.</span></h1><p>Finn postene, løs oppgavene og samle poeng.</p></div>
     {trip.destination_revealed && checkpoints.length > 0 && <section className="surface map-section"><div className="section-title"><div><span className="eyebrow">UTFORSK</span><h3>Postene på kartet</h3></div></div><MapContainer center={center} zoom={12} scrollWheelZoom={false} className="map" aria-label="Kart over rebusposter"><TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>{checkpoints.map((checkpoint) => <CircleMarker key={checkpoint.id} center={[checkpoint.latitude, checkpoint.longitude]} radius={8} pathOptions={{ color: '#fff', fillColor: '#b8732a', fillOpacity: 1, weight: 2 }}><Popup><strong>{checkpoint.title}</strong><br/>{checkpoint.points} poeng</Popup></CircleMarker>)}</MapContainer></section>}
     <section><div className="section-title"><div><span className="eyebrow">UTFORDRINGENE</span><h3>Alle rebusposter</h3></div><span className="pill">{checkpoints.length} poster</span></div>
       <div className="checkpoint-grid">{checkpoints.map((checkpoint, index) => {

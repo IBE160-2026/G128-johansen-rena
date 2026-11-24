@@ -1,16 +1,18 @@
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useTrip } from '../context/TripContext.jsx'
 import DemoBanner from './DemoBanner.jsx'
 
 const links = [
-  { to: '', label: 'Hjem', icon: '⌂' },
-  { to: 'program', label: 'Program', icon: '▦' },
-  { to: 'rebus', label: 'Rebus', icon: '◇' },
-  { to: 'bilder', label: 'Bilder', icon: '▧' },
+  { to: '', label: 'I dag', icon: '⌂' },
+  { to: 'kart', label: 'Kart', icon: '◇' },
+  { to: 'ledertavle', label: 'Ledertavle', icon: '★' },
+  { to: 'laget', label: 'Laget', icon: '☻' },
 ]
 
 export default function Shell({ children }) {
-  const { data, own, demoMode, isOrganizer, signOut, setError, path } = useTrip()
+  const { data, own, isOrganizer, signOut, setError, path, offline, cachedAt } = useTrip()
+  const { pathname } = useLocation()
+  const wide = /\/admin\/?$/.test(pathname) // Admin er bred, deltakersider er maks 480 px (UX-DR18)
   const navigate = useNavigate()
 
   async function logout() {
@@ -34,7 +36,8 @@ export default function Shell({ children }) {
             <button className="avatar" onClick={logout} title="Logg ut" aria-label="Logg ut">{own.display_name.slice(0, 1).toUpperCase()}</button>
           </div>
         </header>
-        <main className="page-content">{children}</main>
+        {offline && <div className="notice offline" role="status">Ingen dekning. Du ser det som sist ble lastet{cachedAt ? ` (kl. ${new Date(cachedAt).toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit' })})` : ''}. Poeng og innsendinger vises ikke uten nett.</div>}
+        <main className={`page-content${wide ? '' : ' narrow'}`}>{children}</main>
         <nav className="bottom-nav" aria-label="Hovedmeny"><Navigation links={links} isOrganizer={false} path={path} /></nav>
       </div>
     </div>

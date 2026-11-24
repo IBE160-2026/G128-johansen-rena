@@ -8,6 +8,8 @@ import Welcome from './pages/Welcome.jsx'
 import Home from './pages/Home.jsx'
 import Program from './pages/Program.jsx'
 import Rebus from './pages/Rebus.jsx'
+import Leaderboard from './pages/Leaderboard.jsx'
+import Team from './pages/Team.jsx'
 import Gallery from './pages/Gallery.jsx'
 import Admin from './pages/Admin.jsx'
 import Start from './pages/Start.jsx'
@@ -54,7 +56,10 @@ function TripApp() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/program" element={<Program />} />
-        <Route path="/rebus" element={<Rebus />} />
+        <Route path="/kart" element={<Rebus />} />
+        <Route path="/ledertavle" element={<Leaderboard />} />
+        <Route path="/laget" element={<Team />} />
+        <Route path="/rebus" element={<Navigate to={path('kart')} replace />} />
         <Route path="/bilder" element={<Gallery />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="*" element={<Navigate to={path()} replace />} />

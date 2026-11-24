@@ -1,3 +1,5 @@
+import { rebaseDemoDates } from './core.js'
+
 /**
  * Lagring av demo-data (AD-4). Ren modul: lagringen sendes inn (localStorage i appen, en fake i tester).
  * Importerer ingenting, og ingen sideeffekter utover kallene til `storage`.
@@ -43,7 +45,11 @@ export function loadDemo(storage, makeSeed, userStorage = storage) {
   removeKeys(storage, LEGACY_KEYS) // frigjør plass fra eldre demo-lagring
   try {
     const stored = JSON.parse(storage.getItem(DEMO_DATA_KEY))
-    if (looksValid(stored, seed.seed_version)) return stored
+    if (looksValid(stored, seed.seed_version)) {
+      const rebased = rebaseDemoDates(stored) // turen skal alltid være i gang, også dagen etter
+      if (rebased !== stored) saveDemo(storage, rebased)
+      return rebased
+    }
   } catch { /* ødelagt eller utilgjengelig lagring: bruk seed */ }
   clearDemoUser(userStorage) // en gammel bruker passer ikke til ny seed
   saveDemo(storage, seed)

@@ -1,6 +1,7 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { initialDemoData } from '../data/demo.js'
 import { demoMode, supabase } from '../lib/supabase.js'
+import { clearTripCache, isNetworkError, loadTripCache, saveTripCache } from '../lib/tripCache.js'
 import { changeRecord, clearDemoUser, createRecord, loadDemo, readDemoUser, writeDemoUser, loadTrip, removeRecord, resetDemo as resetDemoStore, saveDemo, uploadPhoto } from '../lib/api.js'
 import { demoOwn, demoUserForRole, findTripBySlug, roleHome, standings, tripPath, validateImage } from '../lib/core.js'
 import { demoImageDataUrl } from '../lib/demoImage.js'
@@ -27,15 +28,37 @@ export function TripProvider({ slug, children }) {
   const [demoUserId, setDemoUserId] = useState(savedDemoUser)
   const [loading, setLoading] = useState(!demoMode)
   const [error, setError] = useState('')
+  const [offline, setOffline] = useState(false)
+  const [cachedAt, setCachedAt] = useState(null)
+  const requestRef = useRef(0)
+  const dataRef = useRef(null)
+
+  useEffect(() => { dataRef.current = data }, [data])
 
   const refresh = useCallback(async (userId) => {
     if (demoMode || !userId) return
+    const request = ++requestRef.current // bare det nyeste svaret teller
     try {
       const next = await loadTrip(userId, slug)
+      if (request !== requestRef.current) return
       setData(next)
+      setOffline(false)
+      setCachedAt(null)
       setError('')
+      if (next) saveTripCache(storage, slug, userId, next)
+      else clearTripCache(storage, slug, userId) // ikke lenger medlem
     } catch (e) {
-      setError(e.message || 'Kunne ikke hente turen.')
+      if (request !== requestRef.current) return
+      // Tap av nett: behold det som alt er lastet, ellers vis siste lastede tur (UX-DR19). Andre feil vises som feil.
+      if (isNetworkError(e, navigator.onLine)) {
+        const cached = dataRef.current ? null : loadTripCache(storage, slug, userId)
+        if (cached) setData(cached)
+        if (cached || dataRef.current) {
+          setOffline(true)
+          if (cached) setCachedAt(cached.saved_at)
+          setError('')
+        } else setError(e.message || 'Kunne ikke hente turen.')
+      } else setError(e.message || 'Kunne ikke hente turen.')
     }
   }, [slug])
 
@@ -62,6 +85,14 @@ export function TripProvider({ slug, children }) {
     if (!demoMode || !data) return
     if (!saveDemo(storage, data)) setError('Demolagringen er full. Fjern noen bilder eller nullstill demoen.')
   }, [data])
+
+  // Når nettet kommer tilbake, hentes turen på nytt
+  useEffect(() => {
+    if (demoMode || !session?.user?.id) return undefined
+    const onOnline = () => refresh(session.user.id)
+    window.addEventListener('online', onOnline)
+    return () => window.removeEventListener('online', onOnline)
+  }, [session?.user?.id, refresh])
 
   useEffect(() => {
     if (demoMode || !data?.trip?.id || !session?.user?.id) return undefined
@@ -115,6 +146,7 @@ export function TripProvider({ slug, children }) {
       setDemoUserId(null)
       clearDemoUser(userStorage)
     } else {
+      clearTripCache(storage, slug, session?.user?.id) // mellomlageret skal ikke bli liggende på en delt enhet
       const { error: signoutError } = await supabase.auth.signOut()
       if (signoutError) throw signoutError
       setSession(null)
@@ -228,7 +260,7 @@ export function TripProvider({ slug, children }) {
   }
 
   const value = {
-    demoMode, slug, path, notFound, notMember, data, own, userId, isOrganizer, loading, error, setError, leaderboard,
+    demoMode, slug, path, notFound, notMember, offline, cachedAt, data, own, userId, isOrganizer, loading, error, setError, leaderboard,
     demoLogin, chooseRole, switchRole, signOut, join, organizerEmail, write, destroy, updateTrip, submit, review,
     addPhoto, deletePhoto, resetDemo,
   }

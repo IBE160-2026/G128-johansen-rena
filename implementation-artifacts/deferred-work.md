@@ -31,3 +31,6 @@
 - source_spec: `implementation-artifacts/spec-1-4-rollevalg-pa-startsiden.md`
   summary: Hver demo-route har egen `TripProvider` som leser data ved montering, så en annen fane kan gi foreldet visning til siden lastes på nytt.
   evidence: Hører til sanntid i demo-modus (`BroadcastChannel`, AD-10) i Epic 4.
+- source_spec: `implementation-artifacts/spec-1-5-deltakeren-ser-dagens-program.md`
+  summary: Mellomlageret uten nett (hent, fallback, `online`-hendelsen), nye ruter og Home-visningen har ingen kjørende test, og mellomlageret er ikke prøvd mot en ekte Supabase-instans.
+  evidence: Ingen React-testoppsett og ingen live-instans. Beslutningene ligger i rene testede funksjoner (`isNetworkError`, `clearTripCache`, `loadTripCache`). Dekkes av flyttesten og live-oppsettet i Story 7.1 og 7.4.

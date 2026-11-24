@@ -6,7 +6,7 @@ export function currentTripDay(startDate, endDate, now = new Date()) {
   return current
 }
 
-function localDate(date) {
+export function localDate(date) {
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
@@ -77,4 +77,50 @@ export function roleHome(role, slug) {
 export function demoOwn(userId, members) {
   if (userId === DEMO_ORGANIZER_ID) return { id: DEMO_ORGANIZER_ID, user_id: DEMO_ORGANIZER_ID, display_name: 'Arrangør', role: 'organizer', team_id: null }
   return members?.find((member) => member.user_id === userId) ?? null
+}
+
+const DAY_MS = 24 * 60 * 60 * 1000
+const toUtc = (date) => { const [y, m, d] = date.split('-').map(Number); return Date.UTC(y, m - 1, d) }
+
+/** Flytter en dato (ÅÅÅÅ-MM-DD) et antall dager. */
+export function shiftDate(date, days) {
+  return new Date(toUtc(date) + days * DAY_MS).toISOString().slice(0, 10)
+}
+
+/** Antall dager fra a til b (negativt hvis b er før a). */
+export function daysBetween(a, b) {
+  return Math.round((toUtc(b) - toUtc(a)) / DAY_MS)
+}
+
+const LAST_EVENT_MINUTES = 60
+const minutesOf = (time) => { const [h, m] = String(time).split(':').map(Number); return h * 60 + m }
+
+/**
+ * Id-en til aktiviteten som pågår nå, eller null. Bare for dagens faktiske dato.
+ * En aktivitet pågår fra starttiden til neste aktivitets starttid, og den siste i dagen i 60 minutter.
+ */
+export function currentEventId(events, now = new Date()) {
+  const today = localDate(now)
+  const day = sortEvents(events.filter((event) => event.event_date === today && Number.isFinite(minutesOf(event.start_time))))
+  const minutes = now.getHours() * 60 + now.getMinutes()
+  for (let i = day.length - 1; i >= 0; i -= 1) {
+    const start = minutesOf(day[i].start_time)
+    if (minutes < start) continue
+    // Slutter når en senere aktivitet starter. Ellers 60 minutter, men aldri etter midnatt.
+    const later = day.slice(i + 1).find((event) => minutesOf(event.start_time) > start)
+    const end = later ? minutesOf(later.start_time) : Math.min(start + LAST_EVENT_MINUTES, 24 * 60)
+    return minutes < end ? day[i].id : null
+  }
+  return null
+}
+
+/** Flytter demo-data slik at turen er i gang og `now` er dag 2 (idempotent). Gir samme objekt hvis ingenting må flyttes. */
+export function rebaseDemoDates(data, now = new Date()) {
+  const offset = daysBetween(data.trip.start_date, shiftDate(localDate(now), -1))
+  if (offset === 0) return data
+  return {
+    ...data,
+    trip: { ...data.trip, start_date: shiftDate(data.trip.start_date, offset), end_date: shiftDate(data.trip.end_date, offset) },
+    program: data.program.map((item) => ({ ...item, event_date: shiftDate(item.event_date, offset) })),
+  }
 }
