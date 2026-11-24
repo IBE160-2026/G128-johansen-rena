@@ -5,7 +5,7 @@ import { useTrip } from '../context/TripContext.jsx'
 import { activeCheckpoints, currentEventId, currentTripDay, formatDate, localDate, sortEvents } from '../lib/core.js'
 
 export default function Home() {
-  const { data, own, leaderboard, path } = useTrip()
+  const { data, own, leaderboard, path, isOrganizer } = useTrip()
   const [now, setNow] = useState(() => new Date())
   useEffect(() => {
     const tick = () => setNow(new Date())
@@ -16,12 +16,14 @@ export default function Home() {
   const { trip, program, teams, members, checkpoints, submissions } = data
   const date = currentTripDay(trip.start_date, trip.end_date, now)
   const today = sortEvents(program.filter((event) => event.event_date === date))
+  const pendingCount = (data.submissions ?? []).filter((s) => s.status === 'pending').length
   const nowId = date === localDate(now) ? currentEventId(program, now) : null
   const myTeam = teams.find((t) => t.id === own.team_id)
   const rank = leaderboard.findIndex((t) => t.id === myTeam?.id)
 
   return <div className="page-stack">
     <div className="page-heading"><span className="eyebrow">GODT Å SE DEG, {own.display_name.toUpperCase()}</span><h1>{trip.destination_revealed ? trip.destination : trip.name}<span className="copper-dot">.</span></h1><p>{trip.description}</p></div>
+    {isOrganizer && pendingCount > 0 && <div className="notice" role="status"><span>⏳</span> {pendingCount} venter på godkjenning <Link to={`${path('admin')}?fane=inbox`} className="text-link">Åpne køen ↗</Link></div>}
     {trip.announcement && <div className="notice announcement"><span>✳</span> {trip.announcement}</div>}
     <section className="surface"><div className="section-title"><div><span className="eyebrow">I DAG</span><h3>{formatDate(date)}</h3></div><Link to={path('program')} className="text-link">Hele programmet ↗</Link></div>
       {today.length ? <ul className="program-cards">{today.map((event) => {

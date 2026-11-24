@@ -4,6 +4,7 @@ import { demoMode, supabase } from '../lib/supabase.js'
 import { clearTripCache, isNetworkError, loadTripCache, saveTripCache } from '../lib/tripCache.js'
 import { compressImage } from '../lib/image.js'
 import { buildSubmissionEntry, validateNote, validationError } from '../lib/submission.js'
+import { applyReview, buildReviewUpdate } from '../lib/review.js'
 import { changeRecord, clearDemoUser, createRecord, loadDemo, readDemoUser, writeDemoUser, loadTrip, removeRecord, resetDemo as resetDemoStore, saveDemo, uploadPhoto } from '../lib/api.js'
 import { demoOwn, demoUserForRole, findTripBySlug, roleHome, standings, tripPath, validateImage } from '../lib/core.js'
 import { demoImageDataUrl } from '../lib/demoImage.js'
@@ -230,10 +231,17 @@ export function TripProvider({ slug, children }) {
     }
   }
 
-  async function review(submissionId, status) {
-    if (!isOrganizer || !['approved', 'rejected'].includes(status)) throw new Error('Ugyldig handling.')
-    if (demoMode) setData((previous) => ({ ...previous, submissions: previous.submissions.map((s) => s.id === submissionId ? { ...s, status } : s) }))
-    else { await changeRecord('submissions', submissionId, { status }); await refresh(userId) }
+  /** Arrangøren avgjør en innsending (AD-7). Samme beslutning to ganger endrer ingenting (idempotent). */
+  async function review(submissionId, status, reason = null) {
+    if (!isOrganizer) throw new Error('Bare arrangøren kan godkjenne eller avvise.')
+    const result = applyReview(data.submissions, submissionId, status, reason)
+    if (result.error) throw new Error(result.error)
+    if (!result.changed) return
+    if (demoMode) setData((previous) => ({ ...previous, submissions: applyReview(previous.submissions, submissionId, status, reason).submissions }))
+    else {
+      try { await changeRecord('submissions', submissionId, buildReviewUpdate(status, reason)) }
+      finally { await refresh(userId) } // også etter feil, slik at et gammelt kort ikke blir stående
+    }
   }
 
   async function addPhoto(file) {

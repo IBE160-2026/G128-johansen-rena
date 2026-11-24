@@ -151,6 +151,7 @@ const SUBMISSION_STATUSES = ['approved', 'pending', 'rejected']
  * - `submission`: lagets siste innsending avgjør (`latest`), ukjent status regnes som ingen.
  * - `canSubmit`: laget kan levere en åpen post uten innsending, eller levere på nytt etter avvisning (laget var da på stedet).
  * - `canSeeTask`: oppgaveteksten vises for åpne poster og for poster laget har levert på.
+ * - `done`: laget har en godkjent innsending (posten er fullført). `reason`: arrangørens begrunnelse når siste innsending er avvist.
  * - `action`: hva knappen skal si (solve, locked, sent, noteam). Tekst og ikon brukes sammen, aldri bare farge.
  */
 export function checkpointStatus(checkpoint, submissions, teamId, position = null) {
@@ -166,7 +167,8 @@ export function checkpointStatus(checkpoint, submissions, teamId, position = nul
   const action = canSubmit ? 'solve' : !teamId ? 'noteam' : submission === 'none' ? 'locked' : 'sent'
   const noCoordinates = !hasCoordinates(checkpoint) // posten kan aldri låses opp uten posisjon
   const hint = lock === 'locked' && submission === 'none' ? (noCoordinates ? 'Posten mangler posisjon og kan ikke låses opp ennå.' : distanceHint(unlock.distance)) : null
-  return { lock, submission, latest, canSubmit, canSeeTask, action, label, icon, distance: unlock.distance, hint }
+  const reason = submission === 'rejected' ? latest?.rejection_reason ?? null : null
+  return { lock, submission, latest, canSubmit, canSeeTask, action, label, icon, distance: unlock.distance, hint, reason, done: submission === 'approved' }
 }
 
 /** Har posten koordinater som kan tegnes på kartet? */
