@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { useTrip } from '../context/TripContext.jsx'
 import { LOCKED_HINT, activeCheckpoints, checkpointStatus } from '../lib/core.js'
 import PostMap from '../components/PostMap.jsx'
+import usePosition from '../hooks/usePosition.js'
 
 export default function Rebus() {
   const { data, own, submit, setError } = useTrip()
@@ -14,6 +15,8 @@ export default function Rebus() {
   const { checkpoints, teams, submissions, trip } = data
   const myTeam = teams.find((team) => team.id === own.team_id)
   const posts = activeCheckpoints(checkpoints)
+  // Sporing bare når kartet vises og minst én post er geolåst. Posisjonen holdes i minnet og stopper når Kart forlates.
+  const { position, status: positionStatus, retry } = usePosition({ enabled: Boolean(trip.destination_revealed) && posts.some((post) => post.requires_location === true) })
   const [params, setParams] = useSearchParams()
   const activeId = posts.some((post) => post.id === params.get('post')) ? params.get('post') : null
   const selectPost = (id) => {
@@ -48,12 +51,12 @@ export default function Rebus() {
   }
 
   return <div className="page-stack"><div className="page-heading"><span className="eyebrow">KONKURRANSEN</span><h1>Kart<span className="copper-dot">.</span></h1><p>Finn postene, løs oppgavene og samle poeng.</p></div>
-    {trip.destination_revealed && posts.length > 0 && <section className="surface map-section"><div className="section-title"><div><span className="eyebrow">UTFORSK</span><h3>Postene på kartet</h3></div></div><PostMap checkpoints={checkpoints} submissions={submissions} teamId={myTeam?.id} selectedId={activeId} onSelect={selectPost} onSolve={setSelected} /></section>}
+    {trip.destination_revealed && posts.length > 0 && <section className="surface map-section"><div className="section-title"><div><span className="eyebrow">UTFORSK</span><h3>Postene på kartet</h3></div></div>{positionStatus === 'denied' || positionStatus === 'unavailable' ? <div className="notice position-notice" role="status"><span>{positionStatus === 'denied' ? 'Vi får ikke tilgang til posisjonen din. Tillat posisjon for dette nettstedet i nettleserinnstillingene og prøv igjen. Geolåste poster forblir låst, mens åpne poster virker som vanlig.' : 'Vi finner ikke posisjonen din akkurat nå. Geolåste poster forblir låst, mens åpne poster virker som vanlig.'}</span><button type="button" className="button small outline" onClick={retry}>Prøv igjen</button></div> : positionStatus === 'waiting' ? <p className="micro" role="status">Venter på posisjon …</p> : null}<PostMap checkpoints={checkpoints} submissions={submissions} teamId={myTeam?.id} position={position} positionStatus={positionStatus} selectedId={activeId} onSelect={selectPost} onSolve={setSelected} /></section>}
     <section><div className="section-title"><div><span className="eyebrow">UTFORDRINGENE</span><h3>Alle rebusposter</h3></div><span className="pill">{posts.length} poster</span></div>
       <div className="checkpoint-grid">{posts.map((checkpoint, index) => {
-        const st = checkpointStatus(checkpoint, submissions, myTeam?.id)
+        const st = checkpointStatus(checkpoint, submissions, myTeam?.id, position)
         const entry = st.submission === 'pending' || st.submission === 'approved' ? st.latest : null
-        return <article className="checkpoint-card" key={checkpoint.id}><div className="checkpoint-top"><span className="checkpoint-number">POST {String(index + 1).padStart(2, '0')}</span><span className="points-pill">+{checkpoint.points} P</span></div><h3>{checkpoint.title}</h3><p>{st.canSeeTask ? checkpoint.description : LOCKED_HINT}</p>{entry?.url && <img className="checkpoint-proof" src={entry.url} alt="Lagets innsendte bildebevis" loading="lazy"/>}<div className="checkpoint-bottom"><span className={`status ${st.submission}`}>{st.icon} {st.label}</span><button className="button small outline" disabled={!st.canSubmit} onClick={() => setSelected(checkpoint)}>{{ solve: 'Send bilde →', locked: 'Låst', sent: 'Sendt inn', noteam: 'Ikke på lag' }[st.action]}</button></div></article>
+        return <article className="checkpoint-card" key={checkpoint.id}><div className="checkpoint-top"><span className="checkpoint-number">POST {String(index + 1).padStart(2, '0')}</span><span className="points-pill">+{checkpoint.points} P</span></div><h3>{checkpoint.title}</h3><p>{st.canSeeTask ? checkpoint.description : st.hint ?? LOCKED_HINT}</p>{entry?.url && <img className="checkpoint-proof" src={entry.url} alt="Lagets innsendte bildebevis" loading="lazy"/>}<div className="checkpoint-bottom"><span className={`status ${st.submission}`}>{st.icon} {st.label}</span><button className="button small outline" disabled={!st.canSubmit} onClick={() => setSelected(checkpoint)}>{{ solve: 'Send bilde →', locked: 'Låst', sent: 'Sendt inn', noteam: 'Ikke på lag' }[st.action]}</button></div></article>
       })}</div>
       {!posts.length && <div className="empty-state">Ingen poster lagt inn ennå.</div>}
     </section>

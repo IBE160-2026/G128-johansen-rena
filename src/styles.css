@@ -57,3 +57,6 @@ h1,h2,h3,.sidebar-brand strong{font-family:'Cormorant Garamond',Georgia,serif}h1
 .post-list-item:focus-visible{outline:3px solid var(--ink-primary);outline-offset:2px}
 .post-list-number{width:32px;height:32px;border-radius:50%;background:var(--primary);color:var(--on-primary);display:flex;align-items:center;justify-content:center;font-weight:800}
 .post-list-text small{display:block;color:var(--muted)}
+.post-marker.unlocked:before{background:var(--primary)}
+.position-notice{margin:0 0 12px;justify-content:space-between;flex-wrap:wrap}
+.position-notice .button{min-height:var(--tap-min)}

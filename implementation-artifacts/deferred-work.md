@@ -40,3 +40,9 @@
 - source_spec: `implementation-artifacts/spec-1-6-deltakeren-ser-postene-pa-kartet.md`
   summary: Databasen har ingen kolonne `requires_location` på `checkpoints`, så live-poster er åpne til en migrasjon legger den til.
   evidence: Malens migrasjon mangler kolonnen (og `radius_m`, `status`). Tilføyes i en ny migrasjon senest i Story 3.2.
+- source_spec: `implementation-artifacts/spec-3-2-poster-laases-opp-nar-jeg-er-pa-stedet.md`
+  summary: Opplåsingen bruker ikke GPS-usikkerhet eller hysterese ved radiusen, og innsending sjekker ikke opplåsingen på nytt.
+  evidence: Bevisst (beslutning 3, AD-6). Feltprøve med ekte GPS (SM-4, Story 7.x) avgjør om en margin eller hysterese trengs.
+- source_spec: `implementation-artifacts/spec-3-2-poster-laases-opp-nar-jeg-er-pa-stedet.md`
+  summary: Kart-siden og `PostMap` har ingen kjørende komponenttest for posisjon (opplåst markør, nektet-varsel).
+  evidence: Ingen React-testoppsett. Reglene og sporingen er testet som rene funksjoner, og flyten er verifisert i headless Chrome. Dekkes av flyttesten i Story 7.1.
