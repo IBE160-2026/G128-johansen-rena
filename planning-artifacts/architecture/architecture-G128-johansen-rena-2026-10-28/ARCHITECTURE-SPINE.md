@@ -155,7 +155,7 @@ Pilene viser hva som får lov å importere hva. Rene filer i `src/lib/` importer
 | Feil | `api.js` og Edge Functions returnerer `{ ok: true, data } | { ok: false, error: { code, message, issues? } }`. Koder skrives i `UPPER_SNAKE`. UI oversetter koden til norsk mikrotekst (EXPERIENCE.md) |
 | Tilstand | Serverdata hentes og caches via `TripContext` (`useTrip`) og avledede verdier fra `scoring.js`. Det brukes ingen global store til serverdata |
 | Konfigurasjon | Bare offentlig klientkonfigurasjon har `VITE_`-prefiks (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`). Den er dokumentert i `.env.example` og leses bare i `src/lib/supabase.js` (AD-4). Serverhemmeligheter følger AD-9 |
-| Tester | Rene funksjoner testes med `node:test` (`tests/*.test.js`, kjøres med `npm test`). Flyter testes manuelt etter malens definisjon av ferdig, og automatisk i demo-modus hvis gruppen legger til Playwright (åpent punkt). Tilgangsregler (RLS, RPC-er og Storage) testes med en live-integrasjonstest med to arrangører og to turer mot et eget Supabase-prosjekt |
+| Tester | Rene funksjoner testes med `node:test` (`tests/*.test.js`, kjøres med `npm test`). Flyter testes manuelt i demo-modus på localhost etter en testprotokoll i README (malens definisjon av ferdig). Det er ingen automatisk nettlesertest og ikke Playwright (besluttet 2026-11-24). Tilgangsregler (RLS, RPC-er og Storage) testes med en live-integrasjonstest med to arrangører og to turer mot et eget Supabase-prosjekt |
 
 ## Stack
 
@@ -174,7 +174,7 @@ Fra `template_trip/package.json`. Versjonene verifiseres mot npm ved oppsett.
 | Testing | `node:test` (innebygd i Node) |
 | Hosting | Vercel (statisk frontend) og Supabase (database, Auth, Storage, Realtime, Edge Functions) |
 
-Zod, Vitest og Tailwind fra den opprinnelige spinen er tatt ut. Playwright er ikke med i malen, og er et åpent punkt (Story 7.1).
+Zod, Vitest og Tailwind fra den opprinnelige spinen er tatt ut. Playwright er ikke med (besluttet 2026-11-24): flyten testes manuelt på localhost.
 
 
 ## Structural Seed
@@ -308,7 +308,6 @@ supabase/
 
 - **Blåtur-malen:** Lastet opp som `template_trip/` og innarbeidet i denne revisjonen (2026-11-24). Malens stakk er beholdt, RLS er godtatt (AD-17), og det er én app. Gjenstår: navigasjonsmønster og farger i UX avgjøres ut fra malens skall, og malen må gjøres datadrevet (fjern slug `blatur-2026`, tittel og datoer i `Welcome.jsx` og `Shell.jsx`). Malens egen `AGENTS.md` og README, som sier «én tur» og «ikke generatoren», må oppdateres ved oppstart.
 - **Eget Supabase-prosjekt:** Malen skal ha et nytt prosjekt. Det eksisterende prosjektet «CharterFeber AI» har et annet skjema (`trips.title`, `private.trip_secrets`) og brukes ikke før skjemaene er samordnet.
-- **Playwright for e2e (Story 7.1):** Ikke i malen. Avgjøres før Epic 7: legge til som dev-avhengighet, eller bruke en manuell testprotokoll etter malens definisjon av ferdig.
 - **Tilgangsgaranti uten server (AD-17):** Publisering og strukturregler valideres bare i klienten. Vurder en databasetrigger som krever gyldige poster og programposter ved `status = published`, hvis tiden tillater det.
 - **Personvern for bilder:** Samtykke, lagringstid og sletting av bilder avklares før Epic 4 (PRD §8.6). AD-11 og AD-8 gir tilgangskontrollen, men ikke svaret på disse spørsmålene.
 - **Skjult destinasjon:** Utenfor V1.

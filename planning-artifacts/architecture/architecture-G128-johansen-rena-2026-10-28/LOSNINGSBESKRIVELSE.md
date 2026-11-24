@@ -79,7 +79,7 @@ Når arrangøren godkjenner en innsending, sender systemet ut et signal. Kliente
 | Backend | Supabase (Postgres, Auth, Storage, Realtime, Edge Functions) |
 | KI | Claude API (Anthropic SDK) i Edge Function |
 | Hosting | Vercel (frontend) |
-| Testing | `node:test` (rene funksjoner), manuell flytttest (Playwright er et åpent punkt) |
+| Testing | `node:test` (rene funksjoner), manuell flyttest på localhost |
 
 Teknologivalgene ble gjort av gruppen tidligere (se addendumet til briefen). Versjonene ble sjekket 2026-10-28. Databaseendringer versjoneres som migrasjoner i repoet.
 
@@ -87,7 +87,7 @@ Teknologivalgene ble gjort av gruppen tidligere (se addendumet til briefen). Ver
 
 - **Kjernen** testes med enhetstester: validering mot skjema og regler, avstand med kjente koordinater, og poengregning med godkjente, ventende og avviste innsendinger.
 - **Seed-turen** valideres i en egen test. Den beviser at demo-dataene alltid er gyldige.
-- **Ende-til-ende-flyter** kjøres manuelt etter malens definisjon av ferdig, og automatisk hvis Playwright legges til i demo-modus: prompt, utkast, publisering, deltaker blir med, simulert opplåsing, innsending, godkjenning og ledertavle.
+- **Ende-til-ende-flyter** kjøres manuelt i demo-modus på localhost etter en testprotokoll i README: prompt, utkast, publisering, deltaker blir med, simulert opplåsing, innsending, godkjenning og ledertavle.
 - Disse testene måler suksesskriteriene SM-2, SM-3, SM-4 og SM-8 direkte.
 
 ## 10. Bevisste avgrensninger

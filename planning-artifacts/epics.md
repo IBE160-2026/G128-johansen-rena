@@ -71,7 +71,7 @@ NFR10: Personvern: posisjon lagres aldri som historikk, og bilder er bare tilgje
 - AD-16: Realtime gir et signal om å hente turen på nytt. «Endret» beregnes per element mot lokal sett-status (`seen[element_id]` og `baseline_at`).
 - AD-17: Turstruktur lagres direkte mot databasen med supabase-js, vernet av RLS og `CHECK`-begrensninger (revidert 2026-11-24). Det finnes ingen `save-trip`, `apply_trip_change` eller versjonskontroll. Siste skriving vinner.
 - Databasemigrasjoner ligger i `supabase/migrations/`. Miljøvariabler er dokumentert i `.env.example`. Frontend deployes til Vercel.
-- Tester: `node:test` for rene funksjoner (`npm test`). Flyter testes manuelt etter malens definisjon av ferdig, og automatisk hvis Playwright legges til (åpent punkt, Story 7.1). Tilgangsregler testes med en live-integrasjonstest med to arrangører og to turer mot et eget Supabase-prosjekt.
+- Tester: `node:test` for rene funksjoner (`npm test`). Flyter testes manuelt etter malens definisjon av ferdig, på localhost i demo-modus etter en testprotokoll i README (ingen Playwright). Tilgangsregler testes med en live-integrasjonstest med to arrangører og to turer mot et eget Supabase-prosjekt.
 
 ### UX-designkrav
 
@@ -903,16 +903,16 @@ Sensor kan kjøre og verifisere hele løsningen etter README: ende-til-ende-test
 ### Story 7.1: Kjerneflyten testes ende til ende
 
 Som sensor
-ønsker jeg en automatisk test av hele flyten
+ønsker jeg å kjøre hele flyten selv på min egen maskin
 slik at jeg ser at løsningen virker (NFR8).
 
 **Akseptansekriterier:**
 
 **Gitt** demo-modus
-**Når** den automatiske flyttesten kjører (Playwright hvis gruppen legger det til, ellers en manuell testprotokoll etter malens definisjon av ferdig, se spinens Deferred)
-**Så** går testen gjennom Flyt 4 i EXPERIENCE.md: rollevalg, Lag utkast (mock), publiser, deltaker blir med, simulert opplåsing, bilde som svar, godkjenning i en annen fane, og ledertavlen oppdateres
+**Når** jeg kjører `npm install && npm run dev` og åpner `localhost` i nettleseren, og følger testprotokollen i README
+**Så** går jeg gjennom Flyt 4 i EXPERIENCE.md: rollevalg, Lag utkast (mock), publiser, deltaker blir med, simulert opplåsing, bilde som svar, godkjenning i en annen fane, og ledertavlen oppdateres
 **Og** en endring underveis (bytte av sted på en programpost) vises i deltakerfanen med «Endret»-merke
-**Og** testen er grønn
+**Og** hvert steg i protokollen har et forventet resultat, og gruppen har kjørt protokollen på en mobil og en PC før levering
 
 ### Story 7.2: Tilgjengelighet, tekst og feltkvalitet er kontrollert
 
