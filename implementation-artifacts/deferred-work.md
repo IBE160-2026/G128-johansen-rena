@@ -13,3 +13,9 @@
 - source_spec: `implementation-artifacts/spec-1-1-appen-starter-i-demo-modus-fra-malen.md`
   summary: Supabase-modus, brukere med flere medlemskap og utlogging er ikke testet automatisk eller mot en live-instans.
   evidence: Ingen Supabase-instans ennå. Dekkes av live-integrasjonstesten i Story 7.4.
+- source_spec: `implementation-artifacts/spec-1-2-turdata-valideres-av-domenekjernen.md`
+  summary: Avgjør om en tur må ha minst én post og ett lag før publisering.
+  evidence: `validateTrip` godtar tomme `checkpoints` og `teams`, siden kravet ikke er fastsatt. Avgjøres i Story 2.7.
+- source_spec: `implementation-artifacts/spec-1-2-turdata-valideres-av-domenekjernen.md`
+  summary: Seed-turen skal valideres av `validateTrip` i en test.
+  evidence: Seed-data byttes i Story 1.3, og testen skrives der.
