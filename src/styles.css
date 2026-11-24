@@ -66,3 +66,7 @@ h1,h2,h3,.sidebar-brand strong{font-family:'Cormorant Garamond',Georgia,serif}h1
 .notice.success{background:color-mix(in srgb,var(--success) 12%,#fff);border-color:var(--success);color:var(--ink-primary)}
 .form-stack textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-md);resize:vertical}
 .submission-list{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}.submission-item{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-md)}.submission-item small{display:block;color:var(--muted)}.submission-item p{margin:4px 0 0;font-size:13px}
+.post-marker.done:before{background:var(--success)}
+.submission-decision{display:flex;flex-direction:column;gap:8px;min-width:220px}.submission-decision input{padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-md);font:inherit}.submission-decision .button{min-height:var(--tap-min)}.submission-note{margin:4px 0;font-size:14px}
+.reject-reason{color:var(--danger);font-size:13px;margin:4px 0 0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}

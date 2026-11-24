@@ -120,3 +120,32 @@ test('hasCoordinates godtar bare endelige tall', () => {
 test('den låste teksten er felles og ikke tom', () => {
   assert.ok(LOCKED_HINT.length > 10)
 })
+
+test('fullført og begrunnelse: avvist med begrunnelse', () => {
+  const open = cp({ requires_location: false })
+  const s = checkpointStatus(open, [sub({ status: 'rejected', rejection_reason: 'Uskarpt bilde' })], 't1')
+  assert.deepEqual([s.done, s.reason, s.submission], [false, 'Uskarpt bilde', 'rejected'])
+})
+
+test('fullført og begrunnelse: avvist uten begrunnelse gir null', () => {
+  const s = checkpointStatus(cp({ requires_location: false }), [sub({ status: 'rejected' })], 't1')
+  assert.deepEqual([s.done, s.reason], [false, null])
+})
+
+test('fullført og begrunnelse: godkjent er fullført og uten begrunnelse', () => {
+  const s = checkpointStatus(cp({ requires_location: false }), [sub({ status: 'approved', rejection_reason: 'gammel' })], 't1')
+  assert.deepEqual([s.done, s.reason], [true, null])
+})
+
+test('fullført og begrunnelse: ventende og ingen innsending er ikke fullført', () => {
+  const open = cp({ requires_location: false })
+  assert.deepEqual([checkpointStatus(open, [sub()], 't1').done, checkpointStatus(open, [sub()], 't1').reason], [false, null])
+  assert.deepEqual([checkpointStatus(open, [], 't1').done, checkpointStatus(open, [], 't1').reason], [false, null])
+})
+
+test('ny innsending etter avvisning: begrunnelsen vises ikke på den nye', () => {
+  const open = cp({ requires_location: false })
+  const list = [sub({ id: 'a', status: 'rejected', rejection_reason: 'Uskarpt', created_at: '2030-01-01T10:00:00Z' }), sub({ id: 'b', status: 'pending', created_at: '2030-01-01T11:00:00Z' })]
+  const s = checkpointStatus(open, list, 't1')
+  assert.deepEqual([s.submission, s.reason, s.done], ['pending', null, false])
+})

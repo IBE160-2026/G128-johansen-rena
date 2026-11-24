@@ -34,8 +34,8 @@ function PanToSelected({ post }) {
 
 function markerIcon(number, status, selected) {
   return L.divIcon({
-    className: `post-marker ${status.lock}${selected ? ' selected' : ''}`,
-    html: `<span class="post-marker-icon" aria-hidden="true">${{ locked: '🔒', unlocked: '🔓', open: '○' }[status.lock]}</span><span class="post-marker-number" aria-hidden="true">${number}</span>`,
+    className: `post-marker ${status.done ? 'done' : status.lock}${selected ? ' selected' : ''}`,
+    html: `<span class="post-marker-icon" aria-hidden="true">${status.done ? '✓' : { locked: '🔒', unlocked: '🔓', open: '○' }[status.lock]}</span><span class="post-marker-number" aria-hidden="true">${number}</span>`,
     iconSize: [44, 44],
     iconAnchor: [22, 22],
   })
@@ -95,6 +95,7 @@ export default function PostMap({ checkpoints, submissions, teamId, position, po
           <span className="eyebrow">POST {pad(numberOf(selected))} · +{selected.points} POENG</span>
           <h3>{selected.title}</h3>
           <span className={`status ${status.submission}`}>{status.icon} {status.label}</span>
+          {status.reason && <p className="notice danger">Begrunnelse: {status.reason}</p>}
           {status.canSeeTask ? <p>{selected.description}</p> : <p className="muted">{!position && (positionStatus === 'denied' || positionStatus === 'unavailable') ? 'Vi vet ikke hvor du er, så posten forblir låst. Trykk «Prøv igjen» over kartet.' : status.hint ?? LOCKED_HINT}</p>}
           <button type="button" className="button gold full" disabled={!status.canSubmit} onClick={() => onSolve(selected)}>
             {{ solve: 'Løs oppgaven', locked: 'Låst', sent: 'Sendt inn', noteam: 'Du er ikke på et lag' }[status.action]}

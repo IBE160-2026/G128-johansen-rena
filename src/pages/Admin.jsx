@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
+import ReviewQueue from '../components/ReviewQueue.jsx'
 import { useTrip } from '../context/TripContext.jsx'
 import { formatDate, sortEvents } from '../lib/core.js'
 
@@ -7,7 +8,12 @@ const tabs = [['overview', 'Oversikt'], ['program', 'Program'], ['checkpoints', 
 
 export default function Admin() {
   const { data, isOrganizer, leaderboard, updateTrip, write, destroy, review, resetDemo, demoMode, setError, path } = useTrip()
-  const [tab, setTab] = useState('overview')
+  const [params] = useSearchParams()
+  const [tab, setTab] = useState(() => (tabs.some(([key]) => key === params.get('fane')) ? params.get('fane') : 'overview'))
+  useEffect(() => { // lenken fra I dag skal også virke når Admin allerede er åpen
+    const wanted = params.get('fane')
+    if (tabs.some(([key]) => key === wanted)) setTab(wanted)
+  }, [params])
   const [working, setWorking] = useState(false)
   const [editingProgram, setEditingProgram] = useState(null)
   const [editingTask, setEditingTask] = useState(null)
@@ -79,11 +85,8 @@ export default function Admin() {
 
     {tab === 'teams' && <section className="surface"><span className="eyebrow">DELTAKERFORDELING</span><h3>Lag og medlemmer</h3><p className="muted">Endre lag direkte fra listen. Endringen vises umiddelbart for deltakeren.</p><div className="member-list">{data.members.map((member) => <div className="admin-row" key={member.id}><strong>{member.display_name}</strong><select aria-label={`Lag for ${member.display_name}`} value={member.team_id ?? ''} disabled={working} onChange={(e) => perform(() => write('members', { team_id: e.target.value || null }, member.id))}><option value="">Uten lag</option>{data.teams.map((team) => <option key={team.id} value={team.id}>{team.emoji} {team.name}</option>)}</select></div>)}</div></section>}
 
-    {tab === 'inbox' && <section className="surface"><div className="section-title"><div><span className="eyebrow">GODKJENNING</span><h3>Svar fra lagene</h3></div><span className="pill">{pending.length} venter</span></div>{pending.length ? pending.map((entry) => {
-      const checkpoint = data.checkpoints.find((task) => task.id === entry.checkpoint_id)
-      const team = data.teams.find((t) => t.id === entry.team_id)
-      return <div className="submission-card" key={entry.id}><div className="submission-details"><span className="eyebrow">{team?.emoji} {team?.name} · {checkpoint?.points ?? 0} POENG</span><h3>{checkpoint?.title}</h3>{entry.url ? <button className="submission-thumbnail" onClick={() => setFocusedSubmission(entry)} title="Se innsendt bilde i stort format"><img src={entry.url} alt={`Bildebevis fra ${team?.name ?? 'laget'}`}/><span>Se større bilde ↗</span></button> : <p className="muted">{entry.note || 'Bildebevis mangler fra eldre innsending.'}</p>}</div><div className="row-buttons"><button className="button small primary" disabled={working} onClick={() => perform(() => review(entry.id, 'approved'))}>✓ Godkjenn</button><button className="button small outline" disabled={working} onClick={() => perform(() => review(entry.id, 'rejected'))}>Avvis</button></div></div>
-    }) : <div className="empty-state"><span>✓</span><h3>Alt er ajour</h3><p>Ingen oppgaver venter på godkjenning.</p></div>}</section>}
+    {/* Køen er alltid montert (skjult), så et bytte av fane ikke avbryter Angre-fristen */}
+    <section className="surface" hidden={tab !== 'inbox'}><div className="section-title"><div><span className="eyebrow">GODKJENNING</span><h3>Svar fra lagene</h3></div><span className="pill">{pending.length} venter</span></div><ReviewQueue pending={pending} checkpoints={data.checkpoints} teams={data.teams} review={review} onError={setError} onFocus={setFocusedSubmission} /></section>
     {focusedSubmission?.url && <div className="modal-backdrop" onClick={() => setFocusedSubmission(null)}><div className="photo-modal" role="dialog" aria-modal="true" aria-label="Bildebevis i stort format" onClick={(e) => e.stopPropagation()}><button className="modal-close" aria-label="Lukk bilde" onClick={() => setFocusedSubmission(null)}>×</button><img src={focusedSubmission.url} alt="Innsendt bildebevis fra laget"/></div></div>}
   </div>
 }

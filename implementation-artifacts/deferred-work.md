@@ -55,3 +55,9 @@
 - source_spec: `implementation-artifacts/spec-3-4-deltakeren-sender-bilde-som-svar.md`
   summary: `TripContext.submit`, send-flyten i Kart og nettfeilstien har ingen kjørende test.
   evidence: Ingen React-testoppsett. Reglene er rene og testet, og flyten er verifisert i headless Chrome (demo). Dekkes av flyttesten i Story 7.1.
+- source_spec: `implementation-artifacts/spec-3-5-arrangoren-godkjenner-eller-avviser.md`
+  summary: Migrasjonen `202611250002_story_3_5_review.sql` (kolonne, kolonnerettigheter, trigger), RLS for godkjenning og live-skriving av `status` og `rejection_reason` er ikke kjørt eller prøvd.
+  evidence: Ingen Supabase-instans. Testes med to arrangører og to turer i Story 7.4, inkludert at en deltaker eller en annen turs arrangør avvises.
+- source_spec: `implementation-artifacts/spec-3-5-arrangoren-godkjenner-eller-avviser.md`
+  summary: Godkjenningskøen (`ReviewQueue`), `TripContext.review` og Admin-fanene har ingen kjørende komponenttest, og en beslutning kan gå tapt hvis nettleseren lukkes i de 5 sekundene (`pagehide` er best effort).
+  evidence: Ingen React-testoppsett. Køen og reglene er rene og testet med falsk tid, og flyten er verifisert i headless Chrome med to faner. Dekkes av flyttesten i Story 7.1.
