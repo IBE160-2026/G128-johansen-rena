@@ -46,3 +46,6 @@
 - source_spec: `implementation-artifacts/spec-3-2-poster-laases-opp-nar-jeg-er-pa-stedet.md`
   summary: Kart-siden og `PostMap` har ingen kjørende komponenttest for posisjon (opplåst markør, nektet-varsel).
   evidence: Ingen React-testoppsett. Reglene og sporingen er testet som rene funksjoner, og flyten er verifisert i headless Chrome. Dekkes av flyttesten i Story 7.1.
+- source_spec: `implementation-artifacts/spec-3-3-posisjonssimulator-i-demo-modus.md`
+  summary: Simulatorpanelet, kartklikk og kobling til Kart-siden har ingen kjørende komponenttest.
+  evidence: Ingen React-testoppsett. Posisjonskilden, flytting og normalisering er rene testede funksjoner, og flyten er verifisert i headless Chrome. Dekkes av flyttesten i Story 7.1.
