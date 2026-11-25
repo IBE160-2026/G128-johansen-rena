@@ -49,3 +49,6 @@
 - [ ] 2026-11-25 [story-4-4-bilder](980-2026-11-25-22-30-00-story-4-4-bilder.md) — samsvar sprint-nøkkelen 4-4-deltakeren-sender-bilde med epics-tittelen «ser turens bilder»
 - [ ] 2026-11-25 [story-5-1-endre-publisert-tur](979-2026-11-25-23-30-00-story-5-1-endre-publisert-tur.md) — migrasjon 202611250005 (updated_at på program_items) er ukjørt; test mot Supabase (Story 7.4)
 - [ ] 2026-11-25 [story-5-1-endre-publisert-tur](979-2026-11-25-23-30-00-story-5-1-endre-publisert-tur.md) — «Endre turen»-knapp og Turoversikt kommer med Epic 2; Admin er Rediger underveis til da
+- [ ] 2026-11-26 [story-5-2-nye-poster](978-2026-11-26-00-40-00-story-5-2-nye-poster.md) — live-modus henter ikke trips.area, så områdesirkel og avvisning utenfor området i kartvelgeren mangler i live
+- [ ] 2026-11-26 [story-5-2-nye-poster](978-2026-11-26-00-40-00-story-5-2-nye-poster.md) — kartvelgeren er ikke prøvd med tastatur eller fokusflytting
+- [ ] 2026-11-26 [story-5-2-nye-poster](978-2026-11-26-00-40-00-story-5-2-nye-poster.md) — merge 5.1 og 5.2 sammen med 4.1 til 4.4 i rekkefølge
