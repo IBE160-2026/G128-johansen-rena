@@ -121,3 +121,10 @@
 - source_spec: `implementation-artifacts/spec-2-3-utkast-genereres-med-mock-agenten.md`
   summary: Et nytt utkast overskriver det forrige uten spørsmål (én global lagringsnøkkel).
   evidence: `saveDraft` bruker `tripbuilder-draft-v1`. Det blir et reelt problem først når flere utkast eller publisering finnes (Story 2.5 og 2.7).
+
+- source_spec: `implementation-artifacts/spec-2-5-arrangoren-redigerer-program-og-poster.md`
+  summary: Utkast-siden (autolagring, feil ved felt, kartvelger, områdefelt, Publiser-tilstand) har ingen komponenttester.
+  evidence: Ingen DOM-testoppsett. Ren logikk er testet (`draftEdit.js`, `draftStore.js`); flyten er sjekket i headless Chrome.
+- source_spec: `implementation-artifacts/spec-2-5-arrangoren-redigerer-program-og-poster.md`
+  summary: Områdets sirkel kan ikke dras på kartet, bare endres med felt (UX-DR14 sier «flytte og endre»). Fanene mangler pil-navigasjon.
+  evidence: Bevisst avgrensning i spec (beslutning 5). Tas opp igjen om gruppen vil ha dragbart område.

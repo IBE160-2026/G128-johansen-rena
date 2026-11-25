@@ -98,3 +98,18 @@ h1,h2,h3,.sidebar-brand strong{font-family:'Cormorant Garamond',Georgia,serif}h1
 .start-panel .text-link{display:inline-flex;align-items:center;min-height:var(--tap-min,48px)}
 
 .progress-steps{list-style:none;margin:8px 0;display:flex;flex-direction:column;gap:12px}.progress-steps li{display:flex;align-items:center;gap:12px;min-height:var(--tap-min);color:var(--muted)}.progress-steps li>span{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;border:2px solid var(--stroke);font-weight:800;flex:none}.progress-steps li.active{color:var(--dark);font-weight:800}.progress-steps li.active>span{border-color:var(--copper);background:var(--copper);color:#fff}.progress-steps li.done>span{border-color:var(--success);color:var(--success)}.progress-steps small{font-weight:400;font-size:13px}.draft-panel{width:min(720px,100%)}.draft-panel h2{margin:18px 0 0}.draft-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}.draft-list.surface{padding:16px}.draft-list li{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.draft-list time{font-weight:800;color:var(--copper);min-width:52px}.draft-day{padding:16px}.draft-day h3{margin:0 0 10px;text-transform:capitalize}
+
+/* Story 2.5: redigering av utkast */
+.draft-panel{width:min(1180px,100%)}
+.draft-status{display:flex;flex-direction:column;gap:8px;padding:16px}.draft-count{margin:0;font-size:16px;font-weight:800}.draft-ok{color:var(--success)}.draft-general{margin:0;padding-left:18px}.draft-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.draft-actions .button{min-height:var(--tap-min)}
+.draft-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.draft-tabs button{min-height:var(--tap-min);padding:0 18px;border:1px solid var(--stroke);border-radius:12px;background:#fff;color:var(--dark);font-weight:800;cursor:pointer}.draft-tabs button.active{background:var(--dark);color:var(--light)}.draft-tabs button:focus-visible{outline:3px solid var(--copper);outline-offset:2px}
+.draft-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}.draft-content{display:flex;flex-direction:column;gap:12px;min-width:0}
+.draft-card{display:flex;flex-direction:column;gap:10px;align-items:stretch!important}.draft-card.selected{border-color:var(--copper)}.draft-card h3{margin:0}
+.draft-field{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}.draft-field label{font-size:12px;font-weight:800;color:var(--muted)}
+.draft-field input,.draft-field textarea{width:100%;min-height:var(--tap-min);border:1px solid #e3d6c4;background:#fff;color:var(--dark);padding:10px 12px;border-radius:10px;font-size:16px}.draft-field input:focus-visible,.draft-field textarea:focus-visible{outline:3px solid var(--copper);outline-offset:1px}
+.draft-field input[aria-invalid="true"],.draft-field textarea[aria-invalid="true"]{border:2px solid var(--danger)}
+.draft-fields{display:flex;gap:12px;flex-wrap:wrap}.draft-fields .draft-field{min-width:120px}
+.draft-area{border:1px solid var(--stroke);padding:16px;margin:0;display:flex;flex-direction:column;gap:8px}.draft-area legend{font-weight:800;padding:0 6px}
+.draft-points-row{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap}.draft-points-row .draft-field{max-width:200px;flex:none}.draft-points-title{flex:1;min-width:140px}
+.draft-card .button.small{align-self:flex-start;min-height:var(--tap-min)}.draft-map{padding:12px}.draft-map h3{margin:0 0 8px}
+@media (min-width:1024px){.draft-grid.has-map{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.draft-grid.has-map .draft-map{position:sticky;top:12px}.draft-grid.has-map .picker-map{height:480px}}
