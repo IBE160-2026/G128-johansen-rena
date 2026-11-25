@@ -229,7 +229,8 @@ export function TripProvider({ slug, children }) {
     if (!isOrganizer) throw new Error('Bare arrangører kan endre dette.')
     const table = collection === 'program' ? 'program_items' : collection === 'members' ? 'trip_members' : collection
     if (demoMode) {
-      const newItem = id ? { ...data[collection].find((item) => item.id === id), ...record } : { ...record, id: crypto.randomUUID(), trip_id: data.trip.id }
+      const stamp = collection === 'program' || collection === 'checkpoints' ? { updated_at: new Date().toISOString() } : {} // live setter databasen den med trigger
+      const newItem = id ? { ...data[collection].find((item) => item.id === id), ...record, ...stamp } : { ...record, id: crypto.randomUUID(), trip_id: data.trip.id, ...stamp }
       setData((previous) => ({
         ...previous,
         [collection]: id ? previous[collection].map((item) => item.id === id ? newItem : item) : [...previous[collection], newItem],

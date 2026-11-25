@@ -75,3 +75,10 @@ h1,h2,h3,.sidebar-brand strong{font-family:'Cormorant Garamond',Georgia,serif}h1
 
 .leader-row{position:relative}.leader-row.my-team{border-color:var(--row-color,#e8cda6);box-shadow:0 0 0 2px var(--row-color,#e8cda6)}.team-stripe{width:6px;align-self:stretch;border-radius:3px;background:var(--row-color,var(--stroke))}.my-team-badge{align-self:flex-start;font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;background:var(--dark);color:#fff}.leader-row b.score{font-size:var(--text-score)}.leader-rank{width:auto;min-width:40px}
 .photo-missing{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;color:var(--muted);border:1px dashed var(--stroke)}.photo-missing b{font-size:28px}.photo-missing p{margin:0;padding:0 12px;font-size:12px}.photo-missing>span{background:none;color:var(--muted)}
+
+/* Story 5.1: feil ved feltene, bekreftelse og Admin på mobil */
+.field-error{color:var(--danger);font-size:13px;font-weight:700;margin:0}
+.form-stack [aria-invalid="true"]{border-color:var(--danger)}
+.form-error{border:1px solid var(--danger);border-radius:var(--radius-md);padding:10px 12px;color:var(--danger);font-size:13px;font-weight:700}.form-error p{margin:0}
+.save-status{margin:0;padding:10px 12px;border-radius:var(--radius-md);background:var(--surface-muted);color:var(--success);font-size:13px;font-weight:700}
+@media(max-width:720px){.split-admin{grid-template-columns:1fr}.form-columns{grid-template-columns:1fr}.form-stack input,.form-stack textarea,.form-stack select,.form-stack .button,.admin-row select,.admin-tabs button,.row-buttons>button:not(.button){min-height:var(--tap-min)}.form-stack input,.form-stack textarea,.form-stack select{font-size:16px}.admin-row{flex-wrap:wrap}.row-buttons>button:not(.button){padding:8px 14px;font-size:12px}}
