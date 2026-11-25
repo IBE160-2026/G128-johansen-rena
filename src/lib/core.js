@@ -129,6 +129,14 @@ export function activeCheckpoints(checkpoints) {
     .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
 }
 
+/** Alle poster, også deaktiverte, sortert på `position`. Deltakerne ser deaktiverte poster nedtonet (Story 5.3). */
+export function visibleCheckpoints(checkpoints) {
+  return [...(checkpoints ?? [])].sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+}
+
+/** Tar posten imot nye innsendinger? Bare deaktiverte poster gjør det ikke. */
+export const acceptsSubmissions = (checkpoint) => checkpoint?.status !== 'deactivated'
+
 /** Teksten for en låst post (kortet og listen sier det samme). */
 export const LOCKED_HINT = 'Posten er låst. Oppgaven vises når du er på stedet.'
 
@@ -141,7 +149,9 @@ const SUBMISSION_STATUSES = ['approved', 'pending', 'rejected']
  * - `canSubmit`: laget kan levere en åpen post uten innsending, eller levere på nytt etter avvisning (laget var da på stedet).
  * - `canSeeTask`: oppgaveteksten vises for åpne poster og for poster laget har levert på.
  * - `done`: laget har en godkjent innsending (posten er fullført). `reason`: arrangørens begrunnelse når siste innsending er avvist.
- * - `action`: hva knappen skal si (solve, locked, sent, noteam). Tekst og ikon brukes sammen, aldri bare farge.
+ * - `deactivated`: posten er deaktivert av arrangøren. Den tar ikke imot nye innsendinger (heller ikke etter avvisning), og oppgaven skjules for lag uten innsending.
+ * - `chip`: «Deaktivert»-merket skal vises ved siden av statusen (etiketten sier det ikke selv).
+ * - `action`: hva knappen skal si (solve, locked, sent, noteam, deactivated). Tekst og ikon brukes sammen, aldri bare farge.
  */
 export function checkpointStatus(checkpoint, submissions, teamId, position = null) {
   const mine = (submissions ?? []).filter((s) => s.checkpoint_id === checkpoint.id && s.team_id === teamId)
@@ -149,15 +159,17 @@ export function checkpointStatus(checkpoint, submissions, teamId, position = nul
   const unlock = unlockStatus(checkpoint, position)
   const lock = unlock.state
   const submission = SUBMISSION_STATUSES.includes(latest?.status) ? latest.status : 'none'
-  const canSubmit = Boolean(teamId) && (submission === 'rejected' || (lock !== 'locked' && submission === 'none'))
-  const canSeeTask = lock !== 'locked' || submission !== 'none'
-  const label = { approved: 'Godkjent', pending: 'Venter på godkjenning', rejected: 'Avvist, prøv igjen' }[submission] ?? { open: 'Åpen', unlocked: 'Opplåst', locked: 'Låst' }[lock]
-  const icon = { approved: '✓', pending: '⏳', rejected: '↺' }[submission] ?? { open: '○', unlocked: '🔓', locked: '🔒' }[lock]
-  const action = canSubmit ? 'solve' : !teamId ? 'noteam' : submission === 'none' ? 'locked' : 'sent'
+  const deactivated = checkpoint.status === 'deactivated'
+  const canSubmit = !deactivated && Boolean(teamId) && (submission === 'rejected' || (lock !== 'locked' && submission === 'none'))
+  const canSeeTask = deactivated ? submission !== 'none' : lock !== 'locked' || submission !== 'none'
+  const closed = deactivated && submission === 'none'
+  const label = closed ? 'Deaktivert' : { approved: 'Godkjent', pending: 'Venter på godkjenning', rejected: deactivated ? 'Avvist, posten er stengt' : 'Avvist, prøv igjen' }[submission] ?? { open: 'Åpen', unlocked: 'Opplåst', locked: 'Låst' }[lock]
+  const icon = closed ? '⊘' : { approved: '✓', pending: '⏳', rejected: '↺' }[submission] ?? { open: '○', unlocked: '🔓', locked: '🔒' }[lock]
+  const action = canSubmit ? 'solve' : closed || (deactivated && submission === 'rejected') ? 'deactivated' : !teamId ? 'noteam' : submission === 'none' ? 'locked' : 'sent'
   const noCoordinates = !hasCoordinates(checkpoint) // posten kan aldri låses opp uten posisjon
-  const hint = lock === 'locked' && submission === 'none' ? (noCoordinates ? 'Posten mangler posisjon og kan ikke låses opp ennå.' : distanceHint(unlock.distance)) : null
+  const hint = closed ? 'Posten er deaktivert og tar ikke imot svar.' : !deactivated && lock === 'locked' && submission === 'none' ? (noCoordinates ? 'Posten mangler posisjon og kan ikke låses opp ennå.' : distanceHint(unlock.distance)) : null
   const reason = submission === 'rejected' ? latest?.rejection_reason ?? null : null
-  return { lock, submission, latest, canSubmit, canSeeTask, action, label, icon, distance: unlock.distance, hint, reason, done: submission === 'approved' }
+  return { lock, submission, latest, canSubmit, canSeeTask, action, label, icon, distance: unlock.distance, hint, reason, done: submission === 'approved', deactivated, chip: deactivated && !closed }
 }
 
 /** Har posten koordinater som kan tegnes på kartet? */

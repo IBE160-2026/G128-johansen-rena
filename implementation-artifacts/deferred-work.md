@@ -96,3 +96,10 @@
 - source_spec: `implementation-artifacts/spec-5-2-arrangoren-legger-til-nye-poster-og-programposter.md`
   summary: `LocationPicker` (trykk, dra, avvist flytting) og Admin-skjemaenes åpne og lukkede tilstand har ingen automatiske tester.
   evidence: Ingen DOM-testoppsett. Sjekket manuelt i headless Chrome (trykk innenfor og utenfor området, lagring, deltakerens kart). Fokusflytting og tastaturflytting av markøren er ikke gjort.
+
+- source_spec: `implementation-artifacts/spec-5-3-arrangoren-deaktiverer-en-post.md`
+  summary: Lagringsregelen for opplasting av bilder (`trip_media_insert`) kjenner ikke posten, så en direkte opplasting til en deaktivert post stoppes først når innsendingen settes inn (RLS).
+  evidence: Stien har ikke post-id. Resultatet er en foreldreløs fil i lagring, ikke en innsending. Vurder opprydding eller postid i stien senere.
+- source_spec: `implementation-artifacts/spec-5-3-arrangoren-deaktiverer-en-post.md`
+  summary: Visning av deaktiverte poster (kart, postliste, kort) og Admin-knappene har ingen komponenttester.
+  evidence: Ingen DOM-testoppsett. Ren logikk er testet (`checkpointStatus`, `visibleCheckpoints`, `acceptsSubmissions`), resten er sjekket i headless Chrome.

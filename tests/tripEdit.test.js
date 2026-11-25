@@ -171,3 +171,10 @@ test('feil på et felt skjemaet ikke viser blir en felles melding', () => {
   assert.equal(r.ok, false)
   assert.ok(r.errors.some((e) => e.field === null))
 })
+
+test('deaktivere og aktivere en eksisterende post med bare status', () => {
+  assert.deepEqual(validateChange(data(), 'checkpoints', { status: 'deactivated' }, 'c1'), { ok: true })
+  assert.deepEqual(validateChange(data(), 'checkpoints', { status: 'active' }, 'c1'), { ok: true })
+  const bad = validateChange(data(), 'checkpoints', { status: 'x' }, 'c1')
+  assert.equal(bad.ok, false)
+})
