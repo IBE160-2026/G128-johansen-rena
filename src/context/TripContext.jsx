@@ -7,6 +7,7 @@ import { buildSubmissionEntry, validateNote, validationError } from '../lib/subm
 import { applyReview, buildReviewUpdate } from '../lib/review.js'
 import { hasSubmissions } from '../lib/scoring.js'
 import { moveMember as applyMove } from '../lib/teams.js'
+import { CHANNEL_NAME, isRelevant, makeMessage, shouldRefreshNow } from '../lib/signal.js'
 import { changeRecord, clearDemoUser, createRecord, loadDemo, readDemoUser, writeDemoUser, loadTrip, removeRecord, resetDemo as resetDemoStore, saveDemo, uploadPhoto } from '../lib/api.js'
 import { demoOwn, demoUserForRole, findTripBySlug, roleHome, standings, tripPath, validateImage } from '../lib/core.js'
 import { demoImageDataUrl } from '../lib/demoImage.js'
@@ -37,8 +38,23 @@ export function TripProvider({ slug, children }) {
   const [cachedAt, setCachedAt] = useState(null)
   const requestRef = useRef(0)
   const dataRef = useRef(null)
+  const channelRef = useRef(null)
+  const senderRef = useRef(null)
+  const lastFetchRef = useRef(null)
+  // Data som ikke er en lokal endring (første innlasting og data lest på nytt etter signal): lagres ikke og gir ikke signal.
+  const receivedRef = useRef(data)
+  if (!senderRef.current) senderRef.current = globalThis.crypto?.randomUUID?.() ?? `fane-${Math.random().toString(36).slice(2)}` // randomUUID finnes ikke over http på LAN-IP
 
   useEffect(() => { dataRef.current = data }, [data])
+
+  /** Leser demodata fra lagring uten å lagre eller sende signal på nytt. */
+  const readDemoAgain = useCallback(() => {
+    let next = null
+    try { next = loadDemo(storage, initialDemoData, userStorage) } catch { /* ødelagt lagring: behold det som vises */ }
+    if (!next?.trip) return
+    receivedRef.current = next
+    setData(next)
+  }, [])
 
   const refresh = useCallback(async (userId) => {
     if (demoMode || !userId) return
@@ -88,8 +104,40 @@ export function TripProvider({ slug, children }) {
 
   useEffect(() => {
     if (!demoMode || !data) return
-    if (!saveDemo(storage, data)) setError('Demolagringen er full. Fjern noen bilder eller nullstill demoen.')
+    if (data === receivedRef.current) return // lest på nytt, ikke en lokal endring
+    if (!saveDemo(storage, data)) { setError('Demolagringen er full. Fjern noen bilder eller nullstill demoen.'); return }
+    try { channelRef.current?.postMessage(makeMessage(data.trip.id, senderRef.current)) } catch { /* signalet er en bonus */ }
   }, [data])
+
+  // Demo: andre faner på samme tur sender signal over BroadcastChannel, og da leses demodata på nytt (AD-10)
+  useEffect(() => {
+    if (!demoMode || typeof BroadcastChannel === 'undefined') return undefined
+    let channel
+    try { channel = new BroadcastChannel(CHANNEL_NAME) } catch { return undefined }
+    channelRef.current = channel
+    channel.onmessage = (event) => {
+      if (!isRelevant(event?.data, dataRef.current?.trip?.id, senderRef.current)) return
+      readDemoAgain()
+    }
+    return () => { channel.onmessage = null; channel.close(); if (channelRef.current === channel) channelRef.current = null }
+  }, [readDemoAgain])
+
+  // Begge moduser: når fanen blir synlig eller får fokus, hentes turen på nytt (høyst hvert 2. sekund)
+  useEffect(() => {
+    const fetchNow = () => {
+      const now = Date.now()
+      if (!shouldRefreshNow(lastFetchRef.current, now)) return
+      if (demoMode) { lastFetchRef.current = now; readDemoAgain() }
+      else if (session?.user?.id) { lastFetchRef.current = now; refresh(session.user.id) }
+    }
+    const onVisible = () => { if (document.visibilityState === 'visible') fetchNow() }
+    document.addEventListener('visibilitychange', onVisible)
+    window.addEventListener('focus', fetchNow)
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible)
+      window.removeEventListener('focus', fetchNow)
+    }
+  }, [session?.user?.id, refresh, readDemoAgain])
 
   // Når nettet kommer tilbake, hentes turen på nytt
   useEffect(() => {
@@ -288,7 +336,7 @@ export function TripProvider({ slug, children }) {
   /** Henter poengene på nytt (Story 4.2): live henter turen, demo leser lagringen på nytt. */
   async function refreshScores() {
     if (demoMode) {
-      setData(loadDemo(storage, initialDemoData, userStorage))
+      readDemoAgain()
       return
     }
     if (!userId) return
