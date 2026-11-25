@@ -3,13 +3,15 @@ import { useSearchParams } from 'react-router-dom'
 import { useTrip } from '../context/TripContext.jsx'
 import { LOCKED_HINT, activeCheckpoints, checkpointStatus, validateImage, visibleCheckpoints } from '../lib/core.js'
 import { NOTE_MAX, SENT_MESSAGE, canSendSubmission, submissionErrorMessage, validateNote } from '../lib/submission.js'
+import ChangedChip from '../components/ChangedChip.jsx'
 import PostMap from '../components/PostMap.jsx'
 import usePosition from '../hooks/usePosition.js'
 import PositionSimulator from '../components/PositionSimulator.jsx'
 import { normalizePosition, resolvePosition, shouldTrackReal } from '../lib/geo.js'
 
 export default function Rebus() {
-  const { data, own, submit, setError, demoMode } = useTrip()
+  const { data, own, submit, setError, demoMode, changes } = useTrip()
+  const [openedChanged, setOpenedChanged] = useState(null) // posten som var endret da den ble åpnet: merket står på kortet mens den er valgt
   const [simulated, setSimulated] = useState(null) // demo: bare i minnet, glemt når Kart forlates
   const [selected, setSelected] = useState(null)
   const [photo, setPhoto] = useState(null)
@@ -34,6 +36,15 @@ export default function Rebus() {
     if (id === activeId) return
     setParams((previous) => { const next = new URLSearchParams(previous); if (id) next.set('post', id); else next.delete('post'); return next }, { replace: true })
   }
+
+  const activePost = shown.find((post) => post.id === activeId)
+  const activeUpdated = activePost?.updated_at
+  useEffect(() => {
+    if (!activePost) { setOpenedChanged(null); return }
+    if (changes.isChanged(activePost)) { setOpenedChanged(activePost.id); changes.markSeen(activePost) } // å velge posten er å åpne den
+    else setOpenedChanged((previous) => previous === activePost.id ? previous : null)
+  }, [activeId, activeUpdated]) // eslint-disable-line react-hooks/exhaustive-deps
+  const postChanged = (post) => changes.isChanged(post) || post.id === openedChanged
 
   useEffect(() => {
     if (!photo) { setPreview(null); return undefined }
@@ -74,12 +85,12 @@ export default function Rebus() {
   }
 
   return <div className="page-stack"><div className="page-heading"><span className="eyebrow">KONKURRANSEN</span><h1>Kart<span className="copper-dot">.</span></h1><p>Finn postene, løs oppgavene og samle poeng.</p></div>
-    {trip.destination_revealed && shown.length > 0 && <section className="surface map-section"><div className="section-title"><div><span className="eyebrow">UTFORSK</span><h3>Postene på kartet</h3></div></div>{positionStatus === 'denied' || positionStatus === 'unavailable' ? <div className="notice position-notice" role="status"><span>{positionStatus === 'denied' ? 'Vi får ikke tilgang til posisjonen din. Tillat posisjon for dette nettstedet i nettleserinnstillingene og prøv igjen. Geolåste poster forblir låst, mens åpne poster virker som vanlig.' : 'Vi finner ikke posisjonen din akkurat nå. Geolåste poster forblir låst, mens åpne poster virker som vanlig.'}</span><button type="button" className="button small outline" onClick={retry}>Prøv igjen</button></div> : positionStatus === 'waiting' ? <p className="micro" role="status">Venter på posisjon …</p> : null}{demoMode && <PositionSimulator posts={posts} simulated={simulated} onSet={setSimulated} onClear={() => setSimulated(null)} />}<PostMap onMapClick={demoMode ? (point) => { const next = normalizePosition(point); if (next) setSimulated(next) } : undefined} checkpoints={checkpoints} submissions={submissions} teamId={myTeam?.id} position={position} positionStatus={positionStatus} selectedId={activeId} onSelect={selectPost} onSolve={setSelected} /></section>}
+    {trip.destination_revealed && shown.length > 0 && <section className="surface map-section"><div className="section-title"><div><span className="eyebrow">UTFORSK</span><h3>Postene på kartet</h3></div></div>{positionStatus === 'denied' || positionStatus === 'unavailable' ? <div className="notice position-notice" role="status"><span>{positionStatus === 'denied' ? 'Vi får ikke tilgang til posisjonen din. Tillat posisjon for dette nettstedet i nettleserinnstillingene og prøv igjen. Geolåste poster forblir låst, mens åpne poster virker som vanlig.' : 'Vi finner ikke posisjonen din akkurat nå. Geolåste poster forblir låst, mens åpne poster virker som vanlig.'}</span><button type="button" className="button small outline" onClick={retry}>Prøv igjen</button></div> : positionStatus === 'waiting' ? <p className="micro" role="status">Venter på posisjon …</p> : null}{demoMode && <PositionSimulator posts={posts} simulated={simulated} onSet={setSimulated} onClear={() => setSimulated(null)} />}<PostMap onMapClick={demoMode ? (point) => { const next = normalizePosition(point); if (next) setSimulated(next) } : undefined} checkpoints={checkpoints} submissions={submissions} teamId={myTeam?.id} position={position} positionStatus={positionStatus} selectedId={activeId} onSelect={selectPost} onSolve={setSelected} isChanged={postChanged} /></section>}
     <section><div className="section-title"><div><span className="eyebrow">UTFORDRINGENE</span><h3>Alle rebusposter</h3></div><span className="pill">{shown.length} poster</span></div>
       <div className="checkpoint-grid">{shown.map((checkpoint, index) => {
         const st = checkpointStatus(checkpoint, submissions, myTeam?.id, position)
         const entry = st.submission === 'pending' || st.submission === 'approved' ? st.latest : null
-        return <article className={`checkpoint-card${st.deactivated ? ' deactivated' : ''}`} key={checkpoint.id}><div className="checkpoint-top"><span className="checkpoint-number">POST {String(index + 1).padStart(2, '0')}</span><span className="points-pill">+{checkpoint.points} P</span></div><h3>{checkpoint.title}</h3><p>{st.canSeeTask ? checkpoint.description : st.hint ?? LOCKED_HINT}</p>{entry?.url && <img className="checkpoint-proof" src={entry.url} alt="Lagets innsendte bildebevis" loading="lazy"/>}<div className="checkpoint-bottom"><span className={`status ${st.submission}`}>{st.icon} {st.label}</span>{st.chip && <span className="status deactivated">⊘ Deaktivert</span>}{st.reason && <small className="reject-reason">Begrunnelse: {st.reason}</small>}<button className="button small outline" disabled={!st.canSubmit} onClick={() => setSelected(checkpoint)}>{{ solve: 'Send bilde →', locked: 'Låst', sent: 'Sendt inn', noteam: 'Ikke på lag', deactivated: 'Deaktivert' }[st.action]}</button></div></article>
+        return <article className={`checkpoint-card${st.deactivated ? ' deactivated' : ''}`} key={checkpoint.id}><div className="checkpoint-top"><span className="checkpoint-number">POST {String(index + 1).padStart(2, '0')}</span><span className="points-pill">+{checkpoint.points} P</span></div><h3>{checkpoint.title}{postChanged(checkpoint) && <> <ChangedChip /></>}</h3><p>{st.canSeeTask ? checkpoint.description : st.hint ?? LOCKED_HINT}</p>{entry?.url && <img className="checkpoint-proof" src={entry.url} alt="Lagets innsendte bildebevis" loading="lazy"/>}<div className="checkpoint-bottom"><span className={`status ${st.submission}`}>{st.icon} {st.label}</span>{st.chip && <span className="status deactivated">⊘ Deaktivert</span>}{st.reason && <small className="reject-reason">Begrunnelse: {st.reason}</small>}<button className="button small outline" disabled={!st.canSubmit} onClick={() => setSelected(checkpoint)}>{{ solve: 'Send bilde →', locked: 'Låst', sent: 'Sendt inn', noteam: 'Ikke på lag', deactivated: 'Deaktivert' }[st.action]}</button></div></article>
       })}</div>
       {!shown.length && <div className="empty-state">Ingen poster lagt inn ennå.</div>}
     </section>

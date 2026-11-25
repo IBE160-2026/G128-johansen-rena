@@ -103,3 +103,7 @@
 - source_spec: `implementation-artifacts/spec-5-3-arrangoren-deaktiverer-en-post.md`
   summary: Visning av deaktiverte poster (kart, postliste, kort) og Admin-knappene har ingen komponenttester.
   evidence: Ingen DOM-testoppsett. Ren logikk er testet (`checkpointStatus`, `visibleCheckpoints`, `acceptsSubmissions`), resten er sjekket i headless Chrome.
+
+- source_spec: `implementation-artifacts/spec-5-4-deltakerne-ser-endringer-med-en-gang.md`
+  summary: Koblingen for «Endret» (TripContext, Rebus, Home, Program, Shell: merker, banner, åpning markerer som sett) har ingen automatiske tester.
+  evidence: Ingen DOM-testoppsett. Regelen i `changes.js` er testet; flyten er sjekket med to faner i headless Chrome. Skjev klokke på enheten kan gi merker for tidlig eller for sent (akseptert i AD-16).

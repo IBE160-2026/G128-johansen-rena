@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import L from 'leaflet'
 import { Circle, CircleMarker, MapContainer, Marker, TileLayer, useMap, useMapEvents } from 'react-leaflet'
+import ChangedChip from './ChangedChip.jsx'
 import { LOCKED_HINT, checkpointBounds, checkpointStatus, hasCoordinates, visibleCheckpoints } from '../lib/core.js'
 
 const pad = (n) => String(n).padStart(2, '0')
@@ -42,7 +43,7 @@ function markerIcon(number, status, selected) {
 }
 
 /** Kart over postene med nummererte markører (låst eller åpen), og et postkort nederst for valgt post. */
-export default function PostMap({ checkpoints, submissions, teamId, position, positionStatus, selectedId, onSelect, onSolve, onMapClick }) {
+export default function PostMap({ checkpoints, submissions, teamId, position, positionStatus, selectedId, onSelect, onSolve, onMapClick, isChanged }) {
   const allPosts = useMemo(() => visibleCheckpoints(checkpoints), [checkpoints])
   const posts = useMemo(() => allPosts.filter(hasCoordinates), [allPosts]) // en post uten posisjon kan ikke tegnes
   const bounds = useMemo(() => checkpointBounds(posts), [posts])
@@ -93,7 +94,7 @@ export default function PostMap({ checkpoints, submissions, teamId, position, po
         <aside className="post-card" aria-live="polite" aria-label={`Post ${numberOf(selected)}: ${selected.title}`}>
           <button type="button" className="post-card-close" aria-label="Lukk postkortet" onClick={() => onSelect(null)}>×</button>
           <span className="eyebrow">POST {pad(numberOf(selected))} · +{selected.points} POENG</span>
-          <h3>{selected.title}</h3>
+          <h3>{selected.title}{isChanged?.(selected) && <> <ChangedChip /></>}</h3>
           <span className={`status ${status.submission}`}>{status.icon} {status.label}</span>{status.chip && <span className="status deactivated"> ⊘ Deaktivert</span>}
           {status.reason && <p className="notice danger">Begrunnelse: {status.reason}</p>}
           {status.canSeeTask ? <p>{selected.description}</p> : <p className="muted">{!position && (positionStatus === 'denied' || positionStatus === 'unavailable') ? 'Vi vet ikke hvor du er, så posten forblir låst. Trykk «Prøv igjen» over kartet.' : status.hint ?? LOCKED_HINT}</p>}

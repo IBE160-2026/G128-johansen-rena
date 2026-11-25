@@ -5,6 +5,7 @@ import { clearTripCache, isNetworkError, loadTripCache, saveTripCache } from '..
 import { compressImage } from '../lib/image.js'
 import { buildSubmissionEntry, validateNote, validationError } from '../lib/submission.js'
 import { applyReview, buildReviewUpdate } from '../lib/review.js'
+import { changedItems, isChanged as isItemChanged, loadSeen, markAllSeen as markAllItemsSeen, markSeen as markItemSeen, mergeSeen, readSeen, saveSeen } from '../lib/changes.js'
 import { hasSubmissions } from '../lib/scoring.js'
 import { moveMember as applyMove } from '../lib/teams.js'
 import { CHANNEL_NAME, isRelevant, makeMessage, shouldRefreshNow } from '../lib/signal.js'
@@ -171,6 +172,31 @@ export function TripProvider({ slug, children }) {
     if (demoMode && demoUserId && data && !own) { setDemoUserId(null); clearDemoUser(userStorage) }
   }, [demoUserId, data, own])
   const isOrganizer = own?.role === 'organizer'
+  // «Endret» per element (AD-16): bare deltakere, sett-status lokalt per enhet, tur og bruker
+  const tripId = data?.trip?.id
+  const [seenState, setSeenState] = useState(null)
+  const seenRef = useRef(null)
+  useEffect(() => {
+    const next = tripId && userId && !isOrganizer && own ? loadSeen(storage, tripId, userId, new Date()) : null
+    seenRef.current = next
+    setSeenState(next)
+  }, [tripId, userId, isOrganizer, !own]) // eslint-disable-line react-hooks/exhaustive-deps
+  const changeItems = useMemo(() => data ? [...(data.program ?? []).map((item) => ({ ...item, kind: 'program' })), ...(data.trip?.destination_revealed ? (data.checkpoints ?? []) : []).map((item) => ({ ...item, kind: 'checkpoint' }))] : [], [data])
+  const changedList = useMemo(() => changedItems(changeItems, seenState), [changeItems, seenState])
+  const commitSeen = (next) => {
+    if (!next || next === seenRef.current) return
+    const merged = mergeSeen(next, readSeen(storage, tripId, userId)) // en annen fane kan ha markert andre elementer
+    seenRef.current = merged
+    setSeenState(merged)
+    saveSeen(storage, tripId, userId, merged)
+  }
+  const changes = {
+    isChanged: (item) => isItemChanged(item, seenState),
+    markSeen: (item) => commitSeen(markItemSeen(seenRef.current, item)),
+    markAllSeen: () => commitSeen(markAllItemsSeen(seenRef.current, changeItems)),
+    count: changedList.length,
+    items: changedList,
+  }
   const leaderboard = useMemo(() => data ? standings(data.teams, data.checkpoints, data.submissions) : [], [data])
 
   function demoLogin(id) {
@@ -353,7 +379,7 @@ export function TripProvider({ slug, children }) {
   }
 
   const value = {
-    demoMode, slug, path, notFound, notMember, offline, cachedAt, data, own, userId, isOrganizer, loading, error, setError, leaderboard,
+    demoMode, slug, path, notFound, notMember, offline, cachedAt, data, own, userId, isOrganizer, loading, error, setError, leaderboard, changes,
     moveMember, demoLogin, chooseRole, switchRole, signOut, join, organizerEmail, write, destroy, updateTrip, submit, review,
     addPhoto, deletePhoto, resetDemo, refreshScores,
   }
