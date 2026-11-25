@@ -65,3 +65,7 @@
 - [ ] 2026-11-26 [story-2-3-mock-agent](974-2026-11-26-05-40-00-story-2-3-mock-agent.md) — et nytt utkast overskriver det forrige (én lagringsnøkkel); vurder før 2.5 og 2.7
 - [ ] 2026-11-26 [story-2-3-mock-agent](974-2026-11-26-05-40-00-story-2-3-mock-agent.md) — Story 2.1 (innlogging) og 2.4 (Claude i Edge Function) venter på Supabase
 - [ ] 2026-11-26 [story-2-3-mock-agent](974-2026-11-26-05-40-00-story-2-3-mock-agent.md) — merge 4.1 til 5.4 og 2.2 til 2.3 i rekkefølge
+- [ ] 2026-11-26 [story-2-5-rediger-utkast](973-2026-11-26-07-40-00-story-2-5-rediger-utkast.md) — Publiser er deaktivert til Story 2.7 (publisering)
+- [ ] 2026-11-26 [story-2-5-rediger-utkast](973-2026-11-26-07-40-00-story-2-5-rediger-utkast.md) — områdets sirkel kan ikke dras på kartet (bare felt), og fanene mangler pil-navigasjon
+- [ ] 2026-11-26 [story-2-5-rediger-utkast](973-2026-11-26-07-40-00-story-2-5-rediger-utkast.md) — live-delen av redigering (supabase-js, RLS, CHECK) er ikke med før Supabase finnes (Story 7.4)
+- [ ] 2026-11-26 [story-2-5-rediger-utkast](973-2026-11-26-07-40-00-story-2-5-rediger-utkast.md) — merge 4.1 til 5.4 og 2.2 til 2.5 i rekkefølge
