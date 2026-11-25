@@ -93,3 +93,6 @@ h1,h2,h3,.sidebar-brand strong{font-family:'Cormorant Garamond',Georgia,serif}h1
 .updated-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .updated-actions .button{min-height:var(--tap-min,44px)}
 .changes-section .program-card{margin-bottom:0}
+.new-trip-form input,.new-trip-form textarea,.new-trip-form .button{min-height:var(--tap-min)}.new-trip-form input,.new-trip-form textarea{font-size:16px}.new-trip-form :focus-visible,.start-panel .button:focus-visible{outline:3px solid var(--copper);outline-offset:2px}.field-hint{margin:0;font-size:13px;font-weight:700;color:var(--dark);border-left:4px solid var(--copper);padding-left:10px}.request-summary{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;padding:16px;margin:0}.request-summary dt{font-weight:800;font-size:12px;color:var(--muted)}.request-summary dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap}
+
+.start-panel .text-link{display:inline-flex;align-items:center;min-height:var(--tap-min,48px)}

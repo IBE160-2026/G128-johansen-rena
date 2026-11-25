@@ -161,3 +161,47 @@ export function validateTrip(draft) {
 
   return issues.length === 0 ? { ok: true } : { ok: false, issues }
 }
+
+export const MIN_DESCRIPTION = 30
+export const MAX_DESCRIPTION = 4000
+export const MAX_TEAMS = 6
+export const MAX_PARTICIPANTS = 1000
+export const MAX_POSTS = 100
+export const DESCRIPTION_HINT = 'Beskriv gjerne sted, datoer, antall, program og rebus.'
+
+/**
+ * Kontrakten for generering (AD-15, Story 2.2).
+ * @typedef {{ destination: string, start_date: string, end_date: string, participant_count: number, team_count?: number, post_count?: number, description: string }} TripRequest
+ *
+ * @param {unknown} req
+ * @returns {{ ok: true } | { ok: false, issues: Issue[] }} issues har `path` lik feltnavnet. `code: 'TOO_SHORT'` markerer for kort beskrivelse.
+ */
+export function validateTripRequest(req) {
+  /** @type {Array<Issue & { code?: string }>} */
+  const issues = []
+  const add = (path, message, code) => issues.push(code ? { path, message, code } : { path, message })
+  if (!isObject(req)) return { ok: false, issues: [{ path: '', message: 'Forespørselen mangler eller har feil format.' }] }
+
+  const isInt = (v) => typeof v === 'number' && Number.isSafeInteger(v)
+  if (!isText(req.destination)) add('destination', 'Skriv inn en destinasjon.')
+  const startOk = validDate(req.start_date)
+  const endOk = validDate(req.end_date)
+  if (!startOk) add('start_date', req.start_date ? 'Fra må være en gyldig dato (ÅÅÅÅ-MM-DD).' : 'Velg en fradato.')
+  if (!endOk) add('end_date', req.end_date ? 'Til må være en gyldig dato (ÅÅÅÅ-MM-DD).' : 'Velg en tildato.')
+  if (startOk && endOk) {
+    if (req.end_date < req.start_date) add('end_date', 'Til kan ikke være før Fra.')
+    else if ((toUtc(req.end_date) - toUtc(req.start_date)) / DAY_MS + 1 > MAX_TRIP_DAYS) add('end_date', `Turen kan ikke vare mer enn ${MAX_TRIP_DAYS} dager.`)
+  }
+  const participantsOk = isInt(req.participant_count) && req.participant_count >= 1 && req.participant_count <= MAX_PARTICIPANTS
+  if (!participantsOk) add('participant_count', `Deltakere må være et helt tall fra 1 til ${MAX_PARTICIPANTS}.`)
+  if (req.team_count !== undefined) {
+    if (!isInt(req.team_count) || req.team_count < 1 || req.team_count > MAX_TEAMS) add('team_count', `Lag må være et helt tall fra 1 til ${MAX_TEAMS}.`)
+    else if (participantsOk && req.team_count > req.participant_count) add('team_count', 'Det kan ikke være flere lag enn deltakere.')
+  }
+  if (req.post_count !== undefined && (!isInt(req.post_count) || req.post_count < 1 || req.post_count > MAX_POSTS)) add('post_count', `Antall poster må være et helt tall fra 1 til ${MAX_POSTS}.`)
+  const text = typeof req.description === 'string' ? req.description.trim() : ''
+  if (text.length < MIN_DESCRIPTION) add('description', DESCRIPTION_HINT, 'TOO_SHORT')
+  else if (text.length > MAX_DESCRIPTION) add('description', `Beskrivelsen kan ikke være lengre enn ${MAX_DESCRIPTION} tegn.`)
+
+  return issues.length === 0 ? { ok: true } : { ok: false, issues }
+}

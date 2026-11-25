@@ -107,3 +107,10 @@
 - source_spec: `implementation-artifacts/spec-5-4-deltakerne-ser-endringer-med-en-gang.md`
   summary: Koblingen for «Endret» (TripContext, Rebus, Home, Program, Shell: merker, banner, åpning markerer som sett) har ingen automatiske tester.
   evidence: Ingen DOM-testoppsett. Regelen i `changes.js` er testet; flyten er sjekket med to faner i headless Chrome. Skjev klokke på enheten kan gi merker for tidlig eller for sent (akseptert i AD-16).
+
+- source_spec: `implementation-artifacts/spec-2-2-arrangoren-beskriver-en-ny-tur.md`
+  summary: Ny tur-siden og «Ny tur»-lenken på Mine turer (skjema, fokus på første feil, gjenoppretting, «Start på nytt») har ingen komponenttester.
+  evidence: Ingen DOM-testoppsett. Regler og lagring er testet som rene funksjoner (`tripRequest.js`, `validateTripRequest`); flyten er sjekket i headless Chrome.
+- source_spec: none
+  summary: Knappene «Bytt rolle» og «Tilbakestill demo» i demo-banneret er 20 px høye og under kravet om 48 px trykkflate (UX-DR17).
+  evidence: Målt i headless Chrome på 390 px. Komponenten `DemoBanner.jsx` er fra Story 1.1.
