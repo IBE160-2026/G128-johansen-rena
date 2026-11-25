@@ -47,3 +47,5 @@
 - [ ] 2026-11-25 [story-4-4-bilder](980-2026-11-25-22-30-00-story-4-4-bilder.md) — test samlet signering og avvisning fra annen tur mot Supabase (Story 7.4)
 - [ ] 2026-11-25 [story-4-4-bilder](980-2026-11-25-22-30-00-story-4-4-bilder.md) — merge 4.1 til 4.4 i rekkefølge, sett dem til done og vurder retrospektiv for Epic 4
 - [ ] 2026-11-25 [story-4-4-bilder](980-2026-11-25-22-30-00-story-4-4-bilder.md) — samsvar sprint-nøkkelen 4-4-deltakeren-sender-bilde med epics-tittelen «ser turens bilder»
+- [ ] 2026-11-25 [story-5-1-endre-publisert-tur](979-2026-11-25-23-30-00-story-5-1-endre-publisert-tur.md) — migrasjon 202611250005 (updated_at på program_items) er ukjørt; test mot Supabase (Story 7.4)
+- [ ] 2026-11-25 [story-5-1-endre-publisert-tur](979-2026-11-25-23-30-00-story-5-1-endre-publisert-tur.md) — «Endre turen»-knapp og Turoversikt kommer med Epic 2; Admin er Rediger underveis til da
