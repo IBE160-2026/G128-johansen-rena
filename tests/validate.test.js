@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { validateTrip } from '../src/lib/validate.js'
+import { validateTrip, THEME_ACCENTS, THEME_ICONS } from '../src/lib/validate.js'
 import { distanceMeters } from '../src/lib/geo.js'
 
 function validDraft() {
@@ -209,7 +209,23 @@ test('ugyldig dato og klokkeslett avvises', () => {
 test('ugyldig tema avvises', () => {
   const draft = validDraft()
   draft.trip.theme = { accent: '', icon: 'kompass' }
+  assert.equal(issuesOf(draft)[0].path, 'trip.theme.accent')
+  draft.trip.theme = 'x'
   assert.equal(issuesOf(draft)[0].path, 'trip.theme')
+})
+
+test('tema: bare verdier fra listene godtas', () => {
+  for (const accent of THEME_ACCENTS) for (const icon of THEME_ICONS) {
+    const d = validDraft(); d.trip.theme = { accent, icon }
+    assert.equal(validateTrip(d).ok, true)
+  }
+  const d = validDraft(); d.trip.theme = { accent: 'fjord', icon: 'drage' }
+  assert.equal(issuesOf(d)[0].path, 'trip.theme.icon')
+  d.trip.theme = { accent: 'neon', icon: 'kompass' }
+  assert.equal(issuesOf(d)[0].path, 'trip.theme.accent')
+  assert.ok(THEME_ACCENTS.length >= 6 && THEME_ICONS.length >= 6)
+  for (const a of ['kobber', 'fjord']) assert.ok(THEME_ACCENTS.includes(a))
+  assert.ok(THEME_ICONS.includes('kompass'))
 })
 
 test('deaktivert post valideres som aktive poster', () => {

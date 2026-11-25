@@ -113,3 +113,18 @@ h1,h2,h3,.sidebar-brand strong{font-family:'Cormorant Garamond',Georgia,serif}h1
 .draft-points-row{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap}.draft-points-row .draft-field{max-width:200px;flex:none}.draft-points-title{flex:1;min-width:140px}
 .draft-card .button.small{align-self:flex-start;min-height:var(--tap-min)}.draft-map{padding:12px}.draft-map h3{margin:0 0 8px}
 @media (min-width:1024px){.draft-grid.has-map{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.draft-grid.has-map .draft-map{position:sticky;top:12px}.draft-grid.has-map .picker-map{height:480px}}
+/* Tema (Story 2.6): temaet settes som variabler på .app-shell og påvirker bare toppen og aksentene */
+.topbar{border-bottom:3px solid var(--primary)}
+.topbar-brand{display:flex;align-items:center;gap:12px}.topbar-brand strong{margin-top:2px}
+.topbar-symbol{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;background:var(--primary);color:var(--on-primary);font-size:24px;flex:none}
+.theme-preview{display:flex;align-items:center;gap:12px;padding:16px;background:var(--surface-page);border:1px solid var(--border);border-bottom:3px solid var(--primary);border-radius:12px}
+.theme-preview strong{display:block;font-size:18px;color:var(--ink-primary)}
+.theme-group{padding:12px 16px 16px;border-radius:12px}.theme-group legend{font-weight:800;padding:0 6px}
+.theme-options{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.theme-option{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-height:var(--tap-min);padding:8px 12px;border:2px solid var(--border);border-radius:12px;background:#fff;color:var(--ink-primary);font-weight:700;text-align:left}
+.theme-option.selected{border-color:var(--ink-primary);background:var(--surface-muted)}
+.theme-option:focus-visible{outline:3px solid var(--ink-primary);outline-offset:2px}
+.theme-swatch{width:28px;height:28px;border-radius:50%;border:1px solid #0003;flex:none}.theme-char{font-size:24px;width:28px;text-align:center;flex:none}
+.theme-chosen{font-size:12px;font-weight:800;margin-left:auto}
+
+.hero-card .eyebrow{color:var(--accent-on-dark)}

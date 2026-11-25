@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs'
 
 // AD-1: rene filer importerer bare hverandre. Nye rene filer i src/lib/ legges til her.
 // image.js er ikke med: den bruker lerret og DOM og er bevisst ikke ren.
-const PURE = ['core.js', 'geo.js', 'validate.js', 'demoStore.js', 'tripCache.js', 'submission.js', 'review.js', 'scoring.js', 'teams.js', 'signal.js', 'media.js', 'tripEdit.js', 'pickLocation.js', 'changes.js', 'tripRequest.js', 'mockAgent.js', 'generate.js', 'draftStore.js', 'draftEdit.js']
+const PURE = ['core.js', 'geo.js', 'validate.js', 'demoStore.js', 'tripCache.js', 'submission.js', 'review.js', 'scoring.js', 'teams.js', 'signal.js', 'media.js', 'tripEdit.js', 'pickLocation.js', 'changes.js', 'tripRequest.js', 'mockAgent.js', 'generate.js', 'draftStore.js', 'draftEdit.js', 'theme.js']
 
 const PATTERNS = [
   /\b(?:import|export)\b[^;'"]*?\bfrom\s*['"]([^'"]+)['"]/g, // også flerlinjede
