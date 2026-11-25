@@ -58,3 +58,6 @@
 - [ ] 2026-11-26 [story-5-4-endringer](976-2026-11-26-02-50-00-story-5-4-endringer.md) — test «Endret»-merker mot Supabase Realtime og skjev klokke på enheten (Story 7.4)
 - [ ] 2026-11-26 [story-5-4-endringer](976-2026-11-26-02-50-00-story-5-4-endringer.md) — merge 4.1 til 4.4 og 5.1 til 5.4 i rekkefølge, og vurder retrospektiv for Epic 4 og 5
 - [ ] 2026-11-26 [story-5-4-endringer](976-2026-11-26-02-50-00-story-5-4-endringer.md) — Epic 6 forutsetter utkast og generering fra Epic 2 (ikke bygget); avgrensning avgjøres før start
+- [ ] 2026-11-26 [story-2-2-ny-tur](975-2026-11-26-04-10-00-story-2-2-ny-tur.md) — «Beskrivelsen er klar» byttes ut med generering i Story 2.3 (mock-agenten)
+- [ ] 2026-11-26 [story-2-2-ny-tur](975-2026-11-26-04-10-00-story-2-2-ny-tur.md) — knappene i demo-banneret (Bytt rolle, Tilbakestill demo) er 20 px høye og under kravet om 48 px trykkflate
+- [ ] 2026-11-26 [story-2-2-ny-tur](975-2026-11-26-04-10-00-story-2-2-ny-tur.md) — merge 4.1 til 5.4 og 2.2 i rekkefølge, og vurder retrospektiv for Epic 4 og 5
