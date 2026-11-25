@@ -15,6 +15,7 @@ import Admin from './pages/Admin.jsx'
 import Start from './pages/Start.jsx'
 import MineTurer from './pages/MineTurer.jsx'
 import NyTur from './pages/NyTur.jsx'
+import Utkast from './pages/Utkast.jsx'
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
       <Route path="/" element={<DemoOnly><Start /></DemoOnly>} />
       <Route path="/mine-turer" element={<DemoOnly><MineTurer /></DemoOnly>} />
       <Route path="/ny-tur" element={<DemoOnly><NyTur /></DemoOnly>} />
+      <Route path="/utkast" element={<DemoOnly><Utkast /></DemoOnly>} />
       <Route path="/t/:slug/*" element={<TripRoute />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

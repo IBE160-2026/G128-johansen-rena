@@ -114,3 +114,10 @@
 - source_spec: none
   summary: Knappene «Bytt rolle» og «Tilbakestill demo» i demo-banneret er 20 px høye og under kravet om 48 px trykkflate (UX-DR17).
   evidence: Målt i headless Chrome på 390 px. Komponenten `DemoBanner.jsx` er fra Story 1.1.
+
+- source_spec: `implementation-artifacts/spec-2-3-utkast-genereres-med-mock-agenten.md`
+  summary: Ny tur-flyten (generering, avbryt, feiltilstand, navigasjon til Utkast) og Utkast-siden har ingen komponenttester.
+  evidence: Ingen DOM-testoppsett. Orkestreringen er testet som ren funksjon (`generate.js`), utkastet i `mockAgent.js` og lagringen i `draftStore.js`; flyten er sjekket i headless Chrome.
+- source_spec: `implementation-artifacts/spec-2-3-utkast-genereres-med-mock-agenten.md`
+  summary: Et nytt utkast overskriver det forrige uten spørsmål (én global lagringsnøkkel).
+  evidence: `saveDraft` bruker `tripbuilder-draft-v1`. Det blir et reelt problem først når flere utkast eller publisering finnes (Story 2.5 og 2.7).
