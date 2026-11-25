@@ -92,3 +92,7 @@
 - source_spec: `implementation-artifacts/spec-5-1-arrangoren-endrer-en-publisert-tur.md`
   summary: Admin-lagringsløpet (validering før `write`, feil ved felt, bekreftelsen) og `updated_at`-stemplet i demo-`write` har ingen automatiske tester.
   evidence: Ingen DOM- eller React-testoppsett. Ren `validateChange` er testet; resten sjekket manuelt i headless Chrome. En ren `stampUpdate`/`saveChange` kan trekkes ut senere.
+
+- source_spec: `implementation-artifacts/spec-5-2-arrangoren-legger-til-nye-poster-og-programposter.md`
+  summary: `LocationPicker` (trykk, dra, avvist flytting) og Admin-skjemaenes åpne og lukkede tilstand har ingen automatiske tester.
+  evidence: Ingen DOM-testoppsett. Sjekket manuelt i headless Chrome (trykk innenfor og utenfor området, lagring, deltakerens kart). Fokusflytting og tastaturflytting av markøren er ikke gjort.
