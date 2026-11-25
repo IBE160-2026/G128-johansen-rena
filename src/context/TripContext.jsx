@@ -285,6 +285,16 @@ export function TripProvider({ slug, children }) {
     }
   }
 
+  /** Henter poengene på nytt (Story 4.2): live henter turen, demo leser lagringen på nytt. */
+  async function refreshScores() {
+    if (demoMode) {
+      setData(loadDemo(storage, initialDemoData, userStorage))
+      return
+    }
+    if (!userId) return
+    await refresh(userId)
+  }
+
   function resetDemo() {
     if (!demoMode) return
     setData(resetDemoStore(storage, initialDemoData, userStorage))
@@ -295,7 +305,7 @@ export function TripProvider({ slug, children }) {
   const value = {
     demoMode, slug, path, notFound, notMember, offline, cachedAt, data, own, userId, isOrganizer, loading, error, setError, leaderboard,
     moveMember, demoLogin, chooseRole, switchRole, signOut, join, organizerEmail, write, destroy, updateTrip, submit, review,
-    addPhoto, deletePhoto, resetDemo,
+    addPhoto, deletePhoto, resetDemo, refreshScores,
   }
   return <Context.Provider value={value}>{children}</Context.Provider>
 }

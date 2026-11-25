@@ -48,6 +48,20 @@ export function standings(teams, checkpoints, submissions) {
     .sort((a, b) => b.points - a.points || String(a.name).localeCompare(String(b.name), 'nb'))
 }
 
+/**
+ * Plassering med delt plass ved lik poengsum (1, 1, 3). Rekkefølgen beholdes, og lagene sammenlignes med laget foran
+ * (listen kommer fra `standings`). Legger `rank` på hvert lag og `tied: true` når flere lag deler plassen.
+ */
+export function rankStandings(rows) {
+  const list = (rows ?? []).filter(Boolean)
+  const ranked = []
+  list.forEach((row, index) => {
+    const previous = ranked[index - 1]
+    ranked.push({ ...row, rank: previous && previous.points === row.points ? previous.rank : index + 1 })
+  })
+  return ranked.map((row) => ({ ...row, tied: ranked.filter((other) => other.rank === row.rank).length > 1 }))
+}
+
 /** Har posten innsendinger? Da kan den deaktiveres, men ikke slettes (AD-13), ellers forsvinner poengene. */
 export function hasSubmissions(checkpointId, submissions) {
   return (submissions ?? []).some((submission) => submission?.checkpoint_id === checkpointId)
