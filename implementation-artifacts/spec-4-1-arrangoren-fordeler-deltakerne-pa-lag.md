@@ -2,7 +2,8 @@
 title: 'Story 4.1: Arrangøren fordeler deltakerne på lag'
 type: 'feature'
 created: '2026-11-25'
-status: 'ready-for-dev'
+status: 'review'
+baseline_commit: 'ea420656f92aa17b25a0ee7d9abb502c1f9f1992'
 route: 'dispatch'
 review_loop_iteration: 0
 context:
@@ -53,11 +54,11 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `src/lib/teams.js` -- `TEAM_COLORS`, `teamColorToken`, `moveMember`, `memberCounts` -- ren logikk
-- [ ] `src/context/TripContext.jsx` -- `moveMember(memberId, teamId)` med regler, demo og live -- beslutning 1
-- [ ] `src/pages/Admin.jsx`, `src/pages/Team.jsx`, `src/styles.css` -- antall og farge per lag, tekst om innsendinger, lagfarge på Laget-fanen -- AC
-- [ ] `supabase/migrations/202611250004_story_4_1_team_color.sql` -- kolonne og utfylling, merket ukjørt -- beslutning 5
-- [ ] `tests/teams.test.js`, `tests/purity.test.js` -- matriseradene som kan testes rent
+- [x] `src/lib/teams.js` -- `TEAM_COLORS`, `teamColorToken`, `moveMember`, `memberCounts` -- ren logikk
+- [x] `src/context/TripContext.jsx` -- `moveMember(memberId, teamId)` med regler, demo og live -- beslutning 1
+- [x] `src/pages/Admin.jsx`, `src/pages/Team.jsx`, `src/styles.css` -- antall og farge per lag, tekst om innsendinger, lagfarge på Laget-fanen -- AC
+- [x] `supabase/migrations/202611250004_story_4_1_team_color.sql` -- kolonne og utfylling, merket ukjørt -- beslutning 5
+- [x] `tests/teams.test.js`, `tests/purity.test.js` -- matriseradene som kan testes rent
 
 **Acceptance Criteria:**
 - Gitt Admin for en tur, når arrangøren flytter en deltaker til et annet lag, så oppdateres `team_id`, og deltakeren ser det nye laget med lagfarge på Laget-fanen.
