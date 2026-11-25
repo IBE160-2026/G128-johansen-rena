@@ -69,3 +69,6 @@
 - [ ] 2026-11-26 [story-2-5-rediger-utkast](973-2026-11-26-07-40-00-story-2-5-rediger-utkast.md) — områdets sirkel kan ikke dras på kartet (bare felt), og fanene mangler pil-navigasjon
 - [ ] 2026-11-26 [story-2-5-rediger-utkast](973-2026-11-26-07-40-00-story-2-5-rediger-utkast.md) — live-delen av redigering (supabase-js, RLS, CHECK) er ikke med før Supabase finnes (Story 7.4)
 - [ ] 2026-11-26 [story-2-5-rediger-utkast](973-2026-11-26-07-40-00-story-2-5-rediger-utkast.md) — merge 4.1 til 5.4 og 2.2 til 2.5 i rekkefølge
+- [ ] 2026-11-26 [story-2-6-tema](972-2026-11-26-09-50-00-story-2-6-tema.md) — aktiv fane i meny bruker faste farger og følger ikke temaet (bevisst avgrensning)
+- [ ] 2026-11-26 [story-2-6-tema](972-2026-11-26-09-50-00-story-2-6-tema.md) — live henter ikke trips.theme ennå (Story 2.1 og 7.4)
+- [ ] 2026-11-26 [story-2-6-tema](972-2026-11-26-09-50-00-story-2-6-tema.md) — merge 4.1 til 5.4 og 2.2 til 2.6 i rekkefølge
