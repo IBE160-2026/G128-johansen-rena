@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { MAX_SIDE_PX, NETWORK_MESSAGE, NOTE_MAX, NOTE_MIN, SENT_MESSAGE, buildSubmissionEntry, canSendSubmission, scaleToFit, submissionErrorMessage, validateNote, validationError } from '../src/lib/submission.js'
+import { MAX_SIDE_PX, addDemoSubmission, NETWORK_MESSAGE, NOTE_MAX, NOTE_MIN, SENT_MESSAGE, buildSubmissionEntry, canSendSubmission, scaleToFit, submissionErrorMessage, validateNote, validationError } from '../src/lib/submission.js'
 import { validateImage } from '../src/lib/core.js'
 import { isNetworkError } from '../src/lib/tripCache.js'
 
@@ -90,4 +90,47 @@ test('bildevalidering: HEIC og tom filtype får egen forklaring, og ugyldig stø
   assert.throws(() => validateImage(null), /JPG-, PNG- eller WebP/)
   for (const size of [-1, undefined, NaN, Infinity]) assert.throws(() => validateImage({ type: 'image/jpeg', size }), /15 MB/)
   assert.doesNotThrow(() => validateImage({ type: 'image/jpeg', size: 0 }))
+})
+
+// Funn 4-A: innsendingen skal bygges på dataene slik de er etter bildebehandlingen
+const trip = () => ({
+  trip: { id: 't1', announcement: 'Før' },
+  members: [{ user_id: 'u1', team_id: 'lag1' }],
+  checkpoints: [{ id: 'p1', status: 'active' }, { id: 'p2' }],
+  submissions: [{ id: 's0', team_id: 'lag2', checkpoint_id: 'p1', status: 'pending' }],
+})
+const newEntry = { id: 's1', trip_id: 't1', team_id: 'lag1', checkpoint_id: 'p1', submitted_by: 'u1', status: 'pending' }
+
+test('endringer gjort underveis beholdes når innsendingen legges inn', () => {
+  const latest = trip()
+  latest.trip.announcement = 'Møt ved broa nå'
+  latest.submissions[0].status = 'approved'
+  const before = structuredClone(latest)
+  const { data } = addDemoSubmission(latest, newEntry)
+  assert.equal(data.trip.announcement, 'Møt ved broa nå')
+  assert.deepEqual(data.submissions, [newEntry, before.submissions[0]])
+  assert.deepEqual(latest, before)
+})
+
+test('innsendingen avvises når reglene ikke lenger er oppfylt', () => {
+  const rejected = (mutate, pattern) => {
+    const latest = trip()
+    mutate(latest)
+    const result = addDemoSubmission(latest, newEntry)
+    assert.equal(result.data, undefined)
+    assert.match(result.error, pattern)
+  }
+  rejected((d) => { d.trip.id = 'annen' }, /Turen ble endret/)
+  rejected((d) => { d.members[0].team_id = 'lag2' }, /Laget ditt ble endret/)
+  rejected((d) => { d.members = [] }, /Laget ditt ble endret/)
+  rejected((d) => { d.checkpoints = [] }, /finnes ikke lenger/)
+  rejected((d) => { d.checkpoints[0].status = 'deactivated' }, /deaktivert/)
+  rejected((d) => { d.submissions.push({ id: 's2', team_id: 'lag1', checkpoint_id: 'p1', status: 'pending' }) }, /allerede sendt/)
+  assert.match(addDemoSubmission(null, newEntry).error, /Turen ble endret/)
+})
+
+test('en avvist innsending stopper ikke et nytt forsøk', () => {
+  const latest = trip()
+  latest.submissions.push({ id: 's2', team_id: 'lag1', checkpoint_id: 'p1', status: 'rejected' })
+  assert.equal(addDemoSubmission(latest, newEntry).data.submissions.length, 3)
 })
