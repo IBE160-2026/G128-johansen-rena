@@ -55,3 +55,6 @@
 - [ ] 2026-11-26 [story-5-3-deaktiver-post](977-2026-11-26-01-40-00-story-5-3-deaktiver-post.md) — migrasjon 202611260001 (RLS: bare aktive poster tar imot innsendinger) er ukjørt; test mot Supabase (Story 7.4)
 - [ ] 2026-11-26 [story-5-3-deaktiver-post](977-2026-11-26-01-40-00-story-5-3-deaktiver-post.md) — opplasting til lagring kjenner ikke posten, så en direkte opplasting til en deaktivert post kan gi en foreldreløs fil
 - [ ] 2026-11-26 [story-5-3-deaktiver-post](977-2026-11-26-01-40-00-story-5-3-deaktiver-post.md) — merge 5.1 til 5.3 sammen med 4.1 til 4.4 i rekkefølge
+- [ ] 2026-11-26 [story-5-4-endringer](976-2026-11-26-02-50-00-story-5-4-endringer.md) — test «Endret»-merker mot Supabase Realtime og skjev klokke på enheten (Story 7.4)
+- [ ] 2026-11-26 [story-5-4-endringer](976-2026-11-26-02-50-00-story-5-4-endringer.md) — merge 4.1 til 4.4 og 5.1 til 5.4 i rekkefølge, og vurder retrospektiv for Epic 4 og 5
+- [ ] 2026-11-26 [story-5-4-endringer](976-2026-11-26-02-50-00-story-5-4-endringer.md) — Epic 6 forutsetter utkast og generering fra Epic 2 (ikke bygget); avgrensning avgjøres før start

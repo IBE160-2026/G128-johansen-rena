@@ -1,4 +1,4 @@
-import { NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useTrip } from '../context/TripContext.jsx'
 import DemoBanner from './DemoBanner.jsx'
 
@@ -10,7 +10,7 @@ const links = [
 ]
 
 export default function Shell({ children }) {
-  const { data, own, isOrganizer, signOut, setError, path, offline, cachedAt } = useTrip()
+  const { data, own, isOrganizer, signOut, setError, path, offline, cachedAt, changes } = useTrip()
   const { pathname } = useLocation()
   const wide = /\/admin\/?$/.test(pathname) // Admin er bred, deltakersider er maks 480 px (UX-DR18)
   const navigate = useNavigate()
@@ -37,6 +37,7 @@ export default function Shell({ children }) {
           </div>
         </header>
         {offline && <div className="notice offline" role="status">Ingen dekning. Du ser det som sist ble lastet{cachedAt ? ` (kl. ${new Date(cachedAt).toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit' })})` : ''}. Poeng og innsendinger vises ikke uten nett.</div>}
+        {!isOrganizer && changes.count > 0 && <div className="notice updated-banner" role="status"><strong>Programmet er oppdatert.</strong><span className="updated-actions"><Link to={`${path()}?endret=1`} className="text-link">Se endringer</Link><button type="button" className="button small outline" onClick={changes.markAllSeen}>Merk alle som sett</button></span></div>}
         <main className={`page-content${wide ? '' : ' narrow'}`}>{children}</main>
         <nav className="bottom-nav" aria-label="Hovedmeny"><Navigation links={links} isOrganizer={false} path={path} /></nav>
       </div>
