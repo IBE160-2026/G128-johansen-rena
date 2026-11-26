@@ -9,7 +9,7 @@ import { hasSubmissions } from '../lib/scoring.js'
 import { moveMember as applyMove } from '../lib/teams.js'
 import { CHANNEL_NAME, isRelevant, makeMessage, shouldRefreshNow } from '../lib/signal.js'
 import { changeRecord, clearDemoUser, createRecord, loadDemo, readDemoUser, writeDemoUser, loadTrip, removeRecord, resetDemo as resetDemoStore, saveDemo, uploadPhoto } from '../lib/api.js'
-import { demoOwn, demoUserForRole, findTripBySlug, roleHome, standings, tripPath, validateImage } from '../lib/core.js'
+import { acceptsSubmissions, demoOwn, demoUserForRole, findTripBySlug, roleHome, standings, tripPath, validateImage } from '../lib/core.js'
 import { demoImageDataUrl } from '../lib/demoImage.js'
 
 const Context = createContext(null)
@@ -260,6 +260,7 @@ export function TripProvider({ slug, children }) {
 
   async function submit(checkpointId, file, note) {
     if (!own?.team_id) throw validationError('Du må være på et lag før du kan sende inn.')
+    if (!acceptsSubmissions(data.checkpoints.find((c) => c.id === checkpointId))) throw validationError('Posten er deaktivert og tar ikke imot svar.')
     const noteError = validateNote(note)
     if (noteError) throw validationError(noteError)
     try { validateImage(file) } catch (e) { throw validationError(e.message) }

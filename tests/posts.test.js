@@ -149,3 +149,61 @@ test('ny innsending etter avvisning: begrunnelsen vises ikke på den nye', () =>
   const s = checkpointStatus(open, list, 't1')
   assert.deepEqual([s.submission, s.reason, s.done], ['pending', null, false])
 })
+
+test('visibleCheckpoints tar med deaktiverte, sortert, og tåler null', async () => {
+  const { visibleCheckpoints } = await import('../src/lib/core.js')
+  assert.deepEqual(visibleCheckpoints([cp({ id: 'b', position: 2, status: 'deactivated' }), cp({ id: 'a', position: 1 })]).map((c) => c.id), ['a', 'b'])
+  assert.deepEqual(visibleCheckpoints(null), [])
+  assert.deepEqual(visibleCheckpoints(undefined), [])
+})
+
+test('deaktivert post uten innsending: lukket, skjult oppgave, ingen innsending', () => {
+  const s = checkpointStatus(cp({ status: 'deactivated', requires_location: false }), [], 't1')
+  assert.deepEqual([s.deactivated, s.canSubmit, s.canSeeTask, s.action, s.label], [true, false, false, 'deactivated', 'Deaktivert'])
+})
+
+test('deaktivert post: godkjent beholder hake, avvist kan ikke sende på nytt, ventende vises', () => {
+  const d = cp({ status: 'deactivated', requires_location: false })
+  const ok = checkpointStatus(d, [sub({ status: 'approved' })], 't1')
+  assert.deepEqual([ok.done, ok.label, ok.deactivated, ok.canSubmit], [true, 'Godkjent', true, false])
+  const rej = checkpointStatus(d, [sub({ status: 'rejected', rejection_reason: 'Uklart' })], 't1')
+  assert.deepEqual([rej.canSubmit, rej.canSeeTask, rej.reason], [false, true, 'Uklart'])
+  const pen = checkpointStatus(d, [sub()], 't1')
+  assert.deepEqual([pen.label, pen.canSeeTask, pen.canSubmit], ['Venter på godkjenning', true, false])
+})
+
+test('post uten status regnes som aktiv', () => {
+  assert.equal(checkpointStatus(cp({ status: undefined, requires_location: false }), [], 't1').deactivated, false)
+})
+
+test('deaktivert post med avvist innsending: ikke «prøv igjen», ingen ny innsending, merket vises', () => {
+  const post = { id: 'c1', status: 'deactivated', latitude: 1, longitude: 1, requires_location: false, radius_m: 50 }
+  const st = checkpointStatus(post, [{ checkpoint_id: 'c1', team_id: 't', status: 'rejected', created_at: '2026-01-01' }], 't')
+  assert.equal(st.canSubmit, false)
+  assert.equal(st.action, 'deactivated')
+  assert.ok(!/prøv igjen/.test(st.label))
+  assert.equal(st.chip, true)
+})
+
+test('deaktivert post uten innsending: etiketten sier det selv, ingen ekstra merke, og teksten er ikke «låst»', () => {
+  const post = { id: 'c1', status: 'deactivated', latitude: 1, longitude: 1, requires_location: true, radius_m: 50 }
+  const st = checkpointStatus(post, [], 't')
+  assert.equal(st.label, 'Deaktivert')
+  assert.equal(st.chip, false)
+  assert.match(st.hint, /deaktivert/)
+})
+
+test('godkjent og ventende på deaktivert post får merket i tillegg', () => {
+  const post = { id: 'c1', status: 'deactivated', latitude: 1, longitude: 1, requires_location: false, radius_m: 50 }
+  for (const status of ['approved', 'pending']) {
+    assert.equal(checkpointStatus(post, [{ checkpoint_id: 'c1', team_id: 't', status, created_at: '2026-01-01' }], 't').chip, true)
+  }
+})
+
+test('acceptsSubmissions: bare deaktiverte poster avviser', async () => {
+  const { acceptsSubmissions } = await import('../src/lib/core.js')
+  assert.equal(acceptsSubmissions({ status: 'deactivated' }), false)
+  assert.equal(acceptsSubmissions({ status: 'active' }), true)
+  assert.equal(acceptsSubmissions({}), true)
+  assert.equal(acceptsSubmissions(undefined), true)
+})

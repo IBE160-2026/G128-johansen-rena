@@ -52,3 +52,6 @@
 - [ ] 2026-11-26 [story-5-2-nye-poster](978-2026-11-26-00-40-00-story-5-2-nye-poster.md) — live-modus henter ikke trips.area, så områdesirkel og avvisning utenfor området i kartvelgeren mangler i live
 - [ ] 2026-11-26 [story-5-2-nye-poster](978-2026-11-26-00-40-00-story-5-2-nye-poster.md) — kartvelgeren er ikke prøvd med tastatur eller fokusflytting
 - [ ] 2026-11-26 [story-5-2-nye-poster](978-2026-11-26-00-40-00-story-5-2-nye-poster.md) — merge 5.1 og 5.2 sammen med 4.1 til 4.4 i rekkefølge
+- [ ] 2026-11-26 [story-5-3-deaktiver-post](977-2026-11-26-01-40-00-story-5-3-deaktiver-post.md) — migrasjon 202611260001 (RLS: bare aktive poster tar imot innsendinger) er ukjørt; test mot Supabase (Story 7.4)
+- [ ] 2026-11-26 [story-5-3-deaktiver-post](977-2026-11-26-01-40-00-story-5-3-deaktiver-post.md) — opplasting til lagring kjenner ikke posten, så en direkte opplasting til en deaktivert post kan gi en foreldreløs fil
+- [ ] 2026-11-26 [story-5-3-deaktiver-post](977-2026-11-26-01-40-00-story-5-3-deaktiver-post.md) — merge 5.1 til 5.3 sammen med 4.1 til 4.4 i rekkefølge
