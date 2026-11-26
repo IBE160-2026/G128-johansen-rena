@@ -26,8 +26,24 @@ test('ødelagt eller utilgjengelig lagring gir null uten krasj', () => {
   assert.equal(loadDraft(broken), null); assert.equal(saveDraft(broken, {}, draft), false); clearDraft(broken)
 })
 
-test('et ugyldig lagret utkast gir null i stedet for å krasje visningen', () => {
+test('et utkast med valideringsfeil åpnes, men et ødelagt utkast gir null', () => {
   const s = memory()
   saveDraft(s, { destination: 'A' }, { ...draft, program_items: [{ id: 'p1', event_date: '2026-04-24' }] })
-  assert.equal(loadDraft(s), null)
+  assert.ok(loadDraft(s))
+  saveDraft(s, {}, { ...draft, checkpoints: 'x' }); assert.equal(loadDraft(s), null)
+  saveDraft(s, {}, { ...draft, teams: [null] }); assert.equal(loadDraft(s), null)
+  saveDraft(s, {}, { ...draft, trip: { name: 'X' } }); assert.equal(loadDraft(s), null)
+})
+
+test('utkast som ville krasjet visningen gir null: manglende område, ugyldig dato og id-er som ikke er unike', () => {
+  const s = memory()
+  const tryDraft = (d) => { saveDraft(s, {}, d); return loadDraft(s) }
+  assert.ok(tryDraft(draft))
+  assert.equal(tryDraft({ ...draft, trip: { ...draft.trip, area: undefined } }), null)
+  assert.equal(tryDraft({ ...draft, trip: { ...draft.trip, area: { center: {}, radius_m: 5 } } }), null)
+  assert.equal(tryDraft({ ...draft, trip: { ...draft.trip, start_date: '' } }), null)
+  assert.equal(tryDraft({ ...draft, trip: { ...draft.trip, end_date: 'abc' } }), null)
+  assert.equal(tryDraft({ ...draft, teams: [{ id: 't1', name: 'A' }, { id: 't1', name: 'B' }] }), null)
+  assert.equal(tryDraft({ ...draft, checkpoints: [{ ...draft.checkpoints[0], id: '' }] }), null)
+  assert.equal(tryDraft({ ...draft, program_items: [{ title: 'uten id' }] }), null)
 })
