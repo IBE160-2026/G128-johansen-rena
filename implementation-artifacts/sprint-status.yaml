@@ -30,7 +30,7 @@
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 
 generated: 10-28-2026 21:03
-last_updated: 11-26-2026 20:10
+last_updated: 11-26-2026 21:10
 project: G128-johansen-rena
 project_key: NOKEY
 tracking_system: file-system
@@ -135,7 +135,7 @@ action_items:
     action: "Legg nettlesertestene inn i repoet som grunnlag for Story 7.1, med skjermbilder
       og mål av utseendet (funn 4-H)."
     owner: "Kevin og Stian"
-    status: open
+    status: done
     ref: "implementation-artifacts/epic-4-retro-2026-11-26.md"
   - id: "epic-4-retro-item-8-samle-statustekstene-så-team-jsx-bruker"
     epic: 4
