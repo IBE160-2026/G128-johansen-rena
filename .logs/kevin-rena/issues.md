@@ -37,3 +37,5 @@
 - [ ] 2026-11-25 [story-3-5-godkjenning](985-2026-11-25-06-05-00-story-3-5-godkjenning.md) — migrasjon `202611250002_story_3_5_review.sql` og RLS for godkjenning er ukjørt; test mot Supabase (Story 7.4)
 - [x] 2026-11-25 [story-3-6-poeng](984-2026-11-25-07-05-00-story-3-6-poeng.md) — merge `story-3-6-poeng` og sett Story 3.6 til done (løst 2026-11-25, merget i PR, Story 3.- er done)
 - [ ] 2026-11-25 [story-3-6-poeng](984-2026-11-25-07-05-00-story-3-6-poeng.md) — `team_scores` og fasiten er ikke kjørt mot en database (Story 7.4)
+- [ ] 2026-11-25 [story-4-1-lagfordeling](983-2026-11-25-19-43-00-story-4-1-lagfordeling.md) — manuell sjekk i headless Chrome av lagflytting (arrangør flytter, deltaker ser nytt lag og farge)
+- [ ] 2026-11-25 [story-4-1-lagfordeling](983-2026-11-25-19-43-00-story-4-1-lagfordeling.md) — migrasjon `202611250004_story_4_1_team_color.sql` og RLS for flytting er ukjørt; test mot Supabase (Story 7.4)

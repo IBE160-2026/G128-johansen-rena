@@ -70,3 +70,5 @@ h1,h2,h3,.sidebar-brand strong{font-family:'Cormorant Garamond',Georgia,serif}h1
 .submission-decision{display:flex;flex-direction:column;gap:8px;min-width:220px}.submission-decision input{padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-md);font:inherit}.submission-decision .button{min-height:var(--tap-min)}.submission-note{margin:4px 0;font-size:14px}
 .reject-reason{color:var(--danger);font-size:13px;margin:4px 0 0}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.team-banner{border-left:6px solid var(--team-color,var(--border))}
+.team-counts{list-style:none;margin:8px 0 12px;padding:0;display:flex;flex-wrap:wrap;gap:8px}.team-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-left:6px solid var(--team-color,var(--border));border-radius:var(--radius-md);background:var(--surface-base);font-size:13px}.team-chip b{background:var(--surface-muted);border-radius:99px;padding:1px 8px}.team-chip.none{border-left-color:var(--locked)}

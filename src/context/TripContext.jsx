@@ -6,6 +6,7 @@ import { compressImage } from '../lib/image.js'
 import { buildSubmissionEntry, validateNote, validationError } from '../lib/submission.js'
 import { applyReview, buildReviewUpdate } from '../lib/review.js'
 import { hasSubmissions } from '../lib/scoring.js'
+import { moveMember as applyMove } from '../lib/teams.js'
 import { changeRecord, clearDemoUser, createRecord, loadDemo, readDemoUser, writeDemoUser, loadTrip, removeRecord, resetDemo as resetDemoStore, saveDemo, uploadPhoto } from '../lib/api.js'
 import { demoOwn, demoUserForRole, findTripBySlug, roleHome, standings, tripPath, validateImage } from '../lib/core.js'
 import { demoImageDataUrl } from '../lib/demoImage.js'
@@ -233,6 +234,20 @@ export function TripProvider({ slug, children }) {
     }
   }
 
+  /** Arrangøren flytter en deltaker til et lag, eller til «uten lag» (Story 4.1). Innsendinger berøres aldri. */
+  async function moveMember(memberId, teamId) {
+    if (!isOrganizer) throw new Error('Bare arrangøren kan flytte deltakere.')
+    const result = applyMove(data.members, memberId, teamId, data.teams)
+    if (result.error) throw new Error(result.error)
+    if (!result.changed) return
+    const target = teamId === '' || teamId === undefined ? null : teamId
+    if (demoMode) setData((previous) => ({ ...previous, members: applyMove(previous.members, memberId, teamId, previous.teams).members }))
+    else {
+      try { await changeRecord('trip_members', memberId, { team_id: target }) }
+      finally { await refresh(userId) }
+    }
+  }
+
   /** Arrangøren avgjør en innsending (AD-7). Samme beslutning to ganger endrer ingenting (idempotent). */
   async function review(submissionId, status, reason = null) {
     if (!isOrganizer) throw new Error('Bare arrangøren kan godkjenne eller avvise.')
@@ -279,7 +294,7 @@ export function TripProvider({ slug, children }) {
 
   const value = {
     demoMode, slug, path, notFound, notMember, offline, cachedAt, data, own, userId, isOrganizer, loading, error, setError, leaderboard,
-    demoLogin, chooseRole, switchRole, signOut, join, organizerEmail, write, destroy, updateTrip, submit, review,
+    moveMember, demoLogin, chooseRole, switchRole, signOut, join, organizerEmail, write, destroy, updateTrip, submit, review,
     addPhoto, deletePhoto, resetDemo,
   }
   return <Context.Provider value={value}>{children}</Context.Provider>
