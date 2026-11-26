@@ -74,3 +74,10 @@
 - source_spec: `implementation-artifacts/spec-4-2-deltakeren-ser-ledertavlen.md`
   summary: Merket «Oppdateres live» på ledertavlen lover mer enn 4.2 leverer.
   evidence: Det finnes ingen sanntid før Story 4.3. Teksten bør vurderes da.
+
+- source_spec: `implementation-artifacts/spec-4-3-ledertavlen-oppdateres-i-sanntid.md`
+  summary: Koblingen i `TripContext` (BroadcastChannel, ekko-vern, fokus-henting) har ingen automatiske tester.
+  evidence: Ingen DOM- eller React-testoppsett i repoet; bare de rene hjelperne er testet. Dekkes av manuell to-fane-sjekk og Story 7.1.
+- source_spec: `implementation-artifacts/spec-4-3-ledertavlen-oppdateres-i-sanntid.md`
+  summary: En lest-på-nytt-henting kan overskrive en lokal endring som ikke ble lagret fordi demolagringen var full.
+  evidence: `readDemoAgain` erstatter tilstanden med lagret kopi. Sjelden (full lagring), og feilmeldingen vises først.
