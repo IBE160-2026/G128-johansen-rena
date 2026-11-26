@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { DRAFT_KEY, clearDraft, loadDraft, saveDraft } from '../src/lib/draftStore.js'
+import { DRAFT_KEY, clearDraft, isCurrentDraft, loadDraft, saveDraft } from '../src/lib/draftStore.js'
 
 const memory = () => { const m = new Map(); return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, v), removeItem: (k) => m.delete(k) } }
 const draft = {
@@ -46,4 +46,14 @@ test('utkast som ville krasjet visningen gir null: manglende område, ugyldig da
   assert.equal(tryDraft({ ...draft, teams: [{ id: 't1', name: 'A' }, { id: 't1', name: 'B' }] }), null)
   assert.equal(tryDraft({ ...draft, checkpoints: [{ ...draft.checkpoints[0], id: '' }] }), null)
   assert.equal(tryDraft({ ...draft, program_items: [{ title: 'uten id' }] }), null)
+})
+
+test('en gammel fane kjenner igjen at utkastet er publisert eller byttet ut', () => {
+  const s = memory()
+  saveDraft(s, {}, draft, new Date('2026-01-01T00:00:00Z'))
+  assert.equal(isCurrentDraft(s, '2026-01-01T00:00:00.000Z'), true)
+  saveDraft(s, {}, draft, new Date('2026-01-02T00:00:00Z'))
+  assert.equal(isCurrentDraft(s, '2026-01-01T00:00:00.000Z'), false)
+  clearDraft(s)
+  assert.equal(isCurrentDraft(s, '2026-01-02T00:00:00.000Z'), false)
 })

@@ -2,10 +2,19 @@ import { supabase } from './supabase.js'
 import { validateImage } from './core.js'
 import { applySignedUrls, pathsToSign } from './media.js'
 import { generateDraft } from './generate.js'
+import { publishToDemo } from './publish.js'
 import { seedDraft } from '../data/demo.js'
 
-// Demo-implementasjonen (lagring av seed-turen i nettleseren) ligger i demoStore.js, men går via api.js (AD-4).
-export { DEMO_DATA_KEY, DEMO_USER_KEY, clearDemoUser, loadDemo, readDemoUser, resetDemo, saveDemo, writeDemoUser } from './demoStore.js'
+// Demo-implementasjonen (lagring av prøveturen og publiserte turer i nettleseren) ligger i demoStore.js, men går via api.js (AD-4).
+export { DEMO_DATA_KEY, DEMO_USER_KEY, clearDemoUser, listPublished, loadDemo, loadPublished, readDemoUser, resetDemo, resetTexts, saveDemo, writeDemoUser } from './demoStore.js'
+export { canPublish } from './publish.js'
+
+const cryptoRandom = () => crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32
+
+/** Publiserer utkastet i demo (Story 2.7; live venter på Supabase og Story 2.1). Utkastet røres ikke. */
+export function publishDraft(storage, draft, request, now = new Date()) {
+  return publishToDemo(storage, draft, request, { random: cryptoRandom, now })
+}
 
 function unwrap({ data, error }) {
   if (error) throw error

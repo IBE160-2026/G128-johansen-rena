@@ -16,6 +16,7 @@ import Start from './pages/Start.jsx'
 import MineTurer from './pages/MineTurer.jsx'
 import NyTur from './pages/NyTur.jsx'
 import Utkast from './pages/Utkast.jsx'
+import Del from './pages/Del.jsx'
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
       <Route path="/mine-turer" element={<DemoOnly><MineTurer /></DemoOnly>} />
       <Route path="/ny-tur" element={<DemoOnly><NyTur /></DemoOnly>} />
       <Route path="/utkast" element={<DemoOnly><Utkast /></DemoOnly>} />
+      <Route path="/del/:slug" element={<DemoOnly><Del /></DemoOnly>} />
       <Route path="/t/:slug/*" element={<TripRoute />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

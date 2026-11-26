@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useTrip } from '../context/TripContext.jsx'
 import { DEMO_ORGANIZER_ID, formatDate } from '../lib/core.js'
 import DemoBanner from '../components/DemoBanner.jsx'
@@ -7,7 +8,9 @@ export default function Welcome() {
   const { data, demoMode, demoLogin, join, organizerEmail, error, setError, notMember } = useTrip()
   const [mode, setMode] = useState('participant')
   const [name, setName] = useState('')
-  const [code, setCode] = useState('')
+  const [params] = useSearchParams()
+  const linkCode = (params.get('kode') ?? '').trim().slice(0, 40) // turkoden fra delingslenken (Story 2.7)
+  const [code, setCode] = useState(linkCode)
   const [email, setEmail] = useState('')
   const [busy, setBusy] = useState(false)
   const [sent, setSent] = useState(false)
@@ -38,6 +41,8 @@ export default function Welcome() {
           {notMember && !error && <div className="notice" role="status">Du er ikke med på denne turen. Skriv inn navn og kode for å bli med.</div>}
           {demoMode ? (
             <>
+              {linkCode && <p className="link-code">Turkode fra lenken: <strong>{linkCode}</strong></p>}
+              {linkCode && trip?.join_code && linkCode.toUpperCase() !== trip.join_code && <p className="field-error">Koden stemmer ikke med denne turen.</p>}
               <label htmlFor="demo-member">Velg deltaker</label>
               <select id="demo-member" value={name} onChange={(e) => setName(e.target.value)}><option value="">Velg navn …</option>{(data?.members ?? []).map((member) => <option key={member.id} value={member.user_id}>{member.display_name}</option>)}</select>
               <button className="button primary full" disabled={!name} onClick={() => demoLogin(name)}>Gå inn på turen →</button>
