@@ -72,9 +72,9 @@
 - [ ] 2026-11-26 [story-2-6-tema](972-2026-11-26-09-50-00-story-2-6-tema.md) — aktiv fane i meny bruker faste farger og følger ikke temaet (bevisst avgrensning)
 - [ ] 2026-11-26 [story-2-6-tema](972-2026-11-26-09-50-00-story-2-6-tema.md) — live henter ikke trips.theme ennå (Story 2.1 og 7.4)
 - [x] 2026-11-26 [story-2-6-tema](972-2026-11-26-09-50-00-story-2-6-tema.md) — merge 4.1 til 5.4 og 2.2 til 2.6 i rekkefølge (erstattet 2026-11-26 av nyere punkt)
-- [ ] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — publisert demotur beholder prøveturens navn, beskrivelse og kunngjøring fra mock-agenten, og Utkast kan ikke redigere dem
-- [ ] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — lenke og QR-kode virker bare i nettleseren turen ble publisert i; live-publisering venter på Supabase og Story 2.1
+- [x] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — publisert demotur beholder prøveturens navn, beskrivelse og kunngjøring fra mock-agenten, og Utkast kan ikke redigere dem (løst 2026-11-26)
+- [ ] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — lenke og QR-kode på telefoner krever Supabase, live-publisering (2.1), bli med med navn og kode (3.1) og en nettadresse telefonene kan nå
 - [ ] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — publiserte demoturer kan ikke avpubliseres eller slettes, og en ødelagt oversikt overskrives ved neste publisering
-- [ ] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — delingssiden nevner «Supabase» slik spec-en krever, selv om mikroteksten ellers skal være uten tekniske ord; vurder ny tekst
+- [ ] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — teksten på delingssiden (med «Supabase») skrives om når live-publisering bygges
 - [ ] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — bygget varsler om en JS-fil over 500 kB (568 kB); vurder kodedeling
 - [ ] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — merge 4.1 til 5.4 og 2.2 til 2.7 i rekkefølge
