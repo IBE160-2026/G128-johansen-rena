@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import ChangedChip from '../components/ChangedChip.jsx'
 import { useTrip } from '../context/TripContext.jsx'
-import { currentTripDay, formatDate, sortEvents } from '../lib/core.js'
+import { countText, currentTripDay, formatDate, sortEvents } from '../lib/core.js'
 
 export default function Program() {
   const { data, changes } = useTrip()
@@ -19,7 +19,7 @@ export default function Program() {
 
   return <div className="page-stack"><div className="page-heading"><span className="eyebrow">{trip.name.toUpperCase()}</span><h1>Program<span className="copper-dot">.</span></h1><p>Hele turen, dag for dag.</p></div>
     <div className="day-tabs">{days.map((date) => <button key={date} className={selected === date ? 'active' : ''} onClick={() => setSelected(date)}><span>{formatDate(date, { weekday: 'short' })}</span><strong>{date.slice(-2)}</strong></button>)}</div>
-    <section className="surface"><div className="section-title"><div><span className="eyebrow">DAGENS PROGRAM</span><h3>{formatDate(selected)}</h3></div><span className="pill">{items.length} punkter</span></div>
+    <section className="surface"><div className="section-title"><div><span className="eyebrow">DAGENS PROGRAM</span><h3>{formatDate(selected)}</h3></div><span className="pill">{countText(items.length, 'punkt', 'punkter')}</span></div>
       {items.length ? <div className="timeline big">{items.map((event) => {
         const changed = changes.isChanged(event)
         const open = () => changes.markSeen(event)

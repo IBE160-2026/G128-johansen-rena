@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useTrip } from '../context/TripContext.jsx'
 import { rankStandings } from '../lib/scoring.js'
+import { countText } from '../lib/core.js'
 import { teamColorToken } from '../lib/teams.js'
 
 const PULL_DISTANCE = 70
@@ -61,14 +62,14 @@ export default function Leaderboard() {
   }
 
   return <div className="page-stack" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} onTouchCancel={onTouchCancel}><div className="page-heading"><span className="eyebrow">KONKURRANSEN</span><h1>Ledertavle<span className="copper-dot">.</span></h1><p>Slik ligger lagene an.</p></div>
-    <section className="surface"><div className="section-title"><div><span className="eyebrow">LEDERTAVLE</span><h3>Stillingen</h3></div><span className="pill">Oppdateres live</span><button type="button" className="btn" onClick={reload} disabled={refreshing || offline}>{refreshing ? 'Oppdaterer…' : 'Oppdater'}</button></div>
+    <section className="surface"><div className="section-title"><div><span className="eyebrow">LEDERTAVLE</span><h3>Stillingen</h3></div><span className="pill">Oppdateres live</span><button type="button" className="button small outline" onClick={reload} disabled={refreshing || offline}>{refreshing ? 'Oppdaterer…' : 'Oppdater'}</button></div>
       <div className="sr-only" aria-live="polite" role="status">{announcement}</div>
       {offline ? <p className="muted">Stillingen vises ikke uten nett.</p> : !ranked.length ? <p className="muted">Ingen lag ennå.</p> : <div className="leaderboard">{ranked.map((team) => {
         const mine = !!own?.team_id && team.id === own.team_id
         return <div className={`leader-row ${mine ? 'my-team' : ''}`} key={team.id} ref={(el) => { if (el) rowRefs.current.set(team.id, el); else rowRefs.current.delete(team.id) }} style={{ '--row-color': `var(--${teamColorToken(team, teams)})` }}>
           <span className="team-stripe" aria-hidden="true" />
           <span className="leader-rank">{team.rank === 1 && team.points > 0 && <span aria-hidden="true">🥇 </span>}<span aria-hidden="true">{team.rank}.</span><span className="sr-only">{team.rank}. plass{team.tied ? ' (delt)' : ''}</span></span>
-          <span><strong>{team.emoji} {team.name}</strong>{mine && <span className="my-team-badge">Ditt lag</span>}<small>{members.filter((m) => m.team_id === team.id).length} medlemmer · {team.completed} godkjente</small></span>
+          <span className="leader-team"><strong>{team.emoji} {team.name}</strong>{mine && <span className="my-team-badge">Ditt lag</span>}<small>{countText(members.filter((m) => m.team_id === team.id).length, 'medlem', 'medlemmer')} · {countText(team.completed, 'godkjent', 'godkjente')}</small></span>
           <b className="score">{team.points} <small>poeng</small></b>
         </div>
       })}</div>}

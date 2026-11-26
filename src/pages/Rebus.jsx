@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTrip } from '../context/TripContext.jsx'
-import { LOCKED_HINT, activeCheckpoints, checkpointStatus, validateImage, visibleCheckpoints } from '../lib/core.js'
+import { LOCKED_HINT, activeCheckpoints, countText, checkpointStatus, validateImage, visibleCheckpoints } from '../lib/core.js'
 import { NOTE_MAX, SENT_MESSAGE, canSendSubmission, submissionErrorMessage, validateNote } from '../lib/submission.js'
 import ChangedChip from '../components/ChangedChip.jsx'
 import PostMap from '../components/PostMap.jsx'
@@ -86,7 +86,7 @@ export default function Rebus() {
 
   return <div className="page-stack"><div className="page-heading"><span className="eyebrow">KONKURRANSEN</span><h1>Kart<span className="copper-dot">.</span></h1><p>Finn postene, løs oppgavene og samle poeng.</p></div>
     {trip.destination_revealed && shown.length > 0 && <section className="surface map-section"><div className="section-title"><div><span className="eyebrow">UTFORSK</span><h3>Postene på kartet</h3></div></div>{positionStatus === 'denied' || positionStatus === 'unavailable' ? <div className="notice position-notice" role="status"><span>{positionStatus === 'denied' ? 'Vi får ikke tilgang til posisjonen din. Tillat posisjon for dette nettstedet i nettleserinnstillingene og prøv igjen. Geolåste poster forblir låst, mens åpne poster virker som vanlig.' : 'Vi finner ikke posisjonen din akkurat nå. Geolåste poster forblir låst, mens åpne poster virker som vanlig.'}</span><button type="button" className="button small outline" onClick={retry}>Prøv igjen</button></div> : positionStatus === 'waiting' ? <p className="micro" role="status">Venter på posisjon …</p> : null}{demoMode && <PositionSimulator posts={posts} simulated={simulated} onSet={setSimulated} onClear={() => setSimulated(null)} />}<PostMap onMapClick={demoMode ? (point) => { const next = normalizePosition(point); if (next) setSimulated(next) } : undefined} checkpoints={checkpoints} submissions={submissions} teamId={myTeam?.id} position={position} positionStatus={positionStatus} selectedId={activeId} onSelect={selectPost} onSolve={setSelected} isChanged={postChanged} /></section>}
-    <section><div className="section-title"><div><span className="eyebrow">UTFORDRINGENE</span><h3>Alle rebusposter</h3></div><span className="pill">{shown.length} poster</span></div>
+    <section><div className="section-title"><div><span className="eyebrow">UTFORDRINGENE</span><h3>Alle rebusposter</h3></div><span className="pill">{countText(shown.length, 'post', 'poster')}</span></div>
       <div className="checkpoint-grid">{shown.map((checkpoint, index) => {
         const st = checkpointStatus(checkpoint, submissions, myTeam?.id, position)
         const entry = st.submission === 'pending' || st.submission === 'approved' ? st.latest : null
