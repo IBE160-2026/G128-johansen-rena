@@ -90,6 +90,7 @@
 - [x] 2026-11-26 [sprint-status-done](967-2026-11-26-20-00-08-sprint-status-done.md) — retrospektiv for Epic 4 og 5 er ikke gjort (valgfritt) (løst 2026-11-26)
 - [ ] 2026-11-26 [sprint-status-done](967-2026-11-26-20-00-08-sprint-status-done.md) — storyene i 2, 4 og 5 er satt til «done» etter verifisering i demo-modus; det som gjelder database og tilgang (blant annet migrasjonene og RLS i 4.1, 5.1 og 5.3) er ikke prøvd og må testes i Story 7.4
 - [ ] 2026-11-26 [sprint-status-done](967-2026-11-26-20-00-08-sprint-status-done.md) — personvern for bilder (samtykke, lagringstid og sletting) skulle avklares før Story 4.4 og står fortsatt åpent, selv om Epic 4 er satt til «done»
-- [ ] 2026-11-26 [retrospektiv-epic-4-og-5](966-2026-11-26-20-05-38-retrospektiv-epic-4-og-5.md) — en treg innsending i demo kan overskrive arrangørens endring fra en annen fane (`submit` i TripContext); gjenskapt og bør rettes før demonstrasjon
+- [x] 2026-11-26 [retrospektiv-epic-4-og-5](966-2026-11-26-20-05-38-retrospektiv-epic-4-og-5.md) — en treg innsending i demo kan overskrive arrangørens endring fra en annen fane (`submit` i TripContext); gjenskapt og bør rettes før demonstrasjon (løst 2026-11-26)
 - [ ] 2026-11-26 [retrospektiv-epic-4-og-5](966-2026-11-26-20-05-38-retrospektiv-epic-4-og-5.md) — de 7 tiltakene fra retrospektivene for Epic 4 og 5 står som `open` i action_items i sprint-status.yaml
 - [ ] 2026-11-26 [retrospektiv-epic-4-og-5](966-2026-11-26-20-05-38-retrospektiv-epic-4-og-5.md) — animasjonen på ledertavlen og redusert bevegelse er ikke prøvd i nettleser
+- [ ] 2026-11-26 [rett-treg-innsending](965-2026-11-26-20-10-02-rett-treg-innsending.md) — sett tiltaket om overskrivingen (epic-4-retro-item-5) til done i sprint-status etter merging
