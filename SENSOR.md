@@ -51,6 +51,8 @@ Du bruker **to faner i samme nettleservindu**: fane A er arrangøren, og fane B 
 | 15 | B | Se øverst på siden, og trykk **Se endringer**. | Banneret «Programmet er oppdatert.» vises, og punktet er merket **Endret**. |
 | 16 | B | Trykk **I dag**, deretter **Se bildene**, og del et bilde (maks 450 KB i demo). | Bildet vises i galleriet. |
 
+**Hvis en fane ikke oppdateres (steg 13 og 15):** Last siden på nytt i den fanen. Rollen og turen beholdes. Dette er en kjent feil: signalet mellom fanene kan komme før nettleseren har gjort de nye dataene tilgjengelige i den andre fanen. Da gruppen kjørte protokollen automatisk 26. november 2026, uteble varselet i steg 15 i flere av kjøringene.
+
 **Starte på nytt:** **Tilbakestill demo** i banneret setter turen du står på, tilbake til utgangspunktet. En publisert tur går tilbake til slik den ble publisert.
 
 **Raskere vei:** Vil du bare prøve deltakersiden, velger du **Deltaker** på startsiden. Da kommer du rett inn i den ferdige prøveturen.
@@ -67,7 +69,7 @@ npm run test:e2e    # nettlesertester i headless Chrome
 
 `npm run test:e2e` krever i tillegg Google Chrome eller Chromium. Finner testen ikke programmet, setter du `CHROME_PATH`. Nettlesertestene er bare kjørt på macOS. Les [e2e/README.md](e2e/README.md) for hva de dekker.
 
-26. november 2026 besto 824 enhetstester og alle 39 stegene i nettlesertestene på gruppens maskin, og bygget gikk gjennom. Bygget varsler om én JavaScript-fil over 500 kB.
+26. november 2026 besto 824 enhetstester og alle 39 stegene i nettlesertestene i en ny klon av repoet på en av gruppens maskiner, og bygget gikk gjennom. Nettlesertestene kan feile av og til på grunn av den kjente feilen mellom fanene. Bygget varsler om én JavaScript-fil over 500 kB.
 
 **Automatiske kontroller av utkast fra KI.** `validateTrip` i [src/lib/validate.js](src/lib/validate.js) avviser blant annet utkast der påkrevde felt mangler, en post ligger utenfor turens område, en programpost ligger utenfor perioden, en dag mangler program, eller antall lag og poster ikke stemmer med bestillingen. Se [tests/validate.test.js](tests/validate.test.js) og [tests/mockAgent.test.js](tests/mockAgent.test.js). Kontrollene er hittil bare brukt på prøveturen og mock-KI-en, ikke på svar fra en ekte språkmodell.
 
@@ -93,6 +95,7 @@ Fullstendig status: [sprint-status.yaml](implementation-artifacts/sprint-status.
 
 ### Kjente begrensninger
 
+- I demo hender det at den andre fanen ikke oppdateres av seg selv (se merknaden under testprotokollen).
 - Lenken og QR-koden til en publisert tur virker bare i nettleseren den ble publisert i.
 - Demolagringen har begrenset plass. Mange bilder kan fylle den.
 - Publiserte demoturer kan ikke slettes.
