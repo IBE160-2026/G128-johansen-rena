@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import ChangedChip from '../components/ChangedChip.jsx'
 import PostList from '../components/PostList.jsx'
 import { useTrip } from '../context/TripContext.jsx'
-import { activeCheckpoints, currentEventId, currentTripDay, formatDate, localDate, sortEvents } from '../lib/core.js'
+import { activeCheckpoints, countText, currentEventId, currentTripDay, formatDate, localDate, sortEvents } from '../lib/core.js'
 
 export default function Home() {
   const { data, own, leaderboard, path, isOrganizer, changes } = useTrip()
@@ -45,13 +45,13 @@ export default function Home() {
       <div className="hero-orbit"/><div className="hero-content"><span className="eyebrow">TURPROGRAM</span><h2>{formatDate(date)}</h2><p>{formatDate(trip.start_date, { day: 'numeric', month: 'long' })} — {formatDate(trip.end_date, { day: 'numeric', month: 'long', year: 'numeric' })}</p><Link className="button gold" to={path('program')}>Se hele programmet <span>↗</span></Link></div><strong className="hero-numeral">{date.slice(-2)}</strong>
     </section>
     <div className="stat-grid">
-      <div className="stat-card"><span className="eyebrow">DELTAGERE</span><strong>{members.length}</strong><span>på turen</span></div>
+      <div className="stat-card"><span className="eyebrow">DELTAKERE</span><strong>{members.length}</strong><span>på turen</span></div>
       <div className="stat-card"><span className="eyebrow">LAG</span><strong>{teams.length}</strong><span>klare til kamp</span></div>
       <div className="stat-card"><span className="eyebrow">REBUSPOSTER</span><strong>{activeCheckpoints(checkpoints).length}</strong><span>venter på dere</span></div>
     </div>
     {trip.destination_revealed && <section className="surface"><div className="section-title"><div><span className="eyebrow">POSTER</span><h3>Rebusposter</h3></div><Link to={path('kart')} className="text-link">Se kartet ↗</Link></div><PostList checkpoints={checkpoints} submissions={submissions} teamId={own.team_id} path={path} isChanged={changes.isChanged} /></section>}
     <div className="split-grid">
-      <section className="surface team-home"><span className="eyebrow">DITT LAG</span><h3>{myTeam ? `${myTeam.emoji} ${myTeam.name}` : 'Ikke fordelt'}</h3><p>{myTeam ? `${members.filter((m) => m.team_id === myTeam.id).length} medlemmer · ${rank + 1}. plass` : 'Arrangøren kan sette deg på et lag.'}</p><Link to={path('ledertavle')} className="text-link">Ledertavle og poeng ↗</Link></section>
+      <section className="surface team-home"><span className="eyebrow">DITT LAG</span><h3>{myTeam ? `${myTeam.emoji} ${myTeam.name}` : 'Ikke fordelt'}</h3><p>{myTeam ? `${countText(members.filter((m) => m.team_id === myTeam.id).length, 'medlem', 'medlemmer')} · ${rank + 1}. plass` : 'Arrangøren kan sette deg på et lag.'}</p><Link to={path('ledertavle')} className="text-link">Ledertavle og poeng ↗</Link></section>
       <section className="surface team-home"><span className="eyebrow">MINNER</span><h3>📸 Bildegalleri</h3><p>Del øyeblikkene fra turen med resten av gjengen.</p><Link to={path('bilder')} className="text-link">Se bildene ↗</Link></section>
     </div>
   </div>

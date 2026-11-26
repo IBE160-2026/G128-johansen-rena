@@ -39,27 +39,27 @@
 - [ ] 2026-11-25 [story-3-6-poeng](984-2026-11-25-07-05-00-story-3-6-poeng.md) — `team_scores` og fasiten er ikke kjørt mot en database (Story 7.4)
 - [ ] 2026-11-25 [story-4-1-lagfordeling](983-2026-11-25-19-43-00-story-4-1-lagfordeling.md) — manuell sjekk i headless Chrome av lagflytting (arrangør flytter, deltaker ser nytt lag og farge)
 - [ ] 2026-11-25 [story-4-1-lagfordeling](983-2026-11-25-19-43-00-story-4-1-lagfordeling.md) — migrasjon `202611250004_story_4_1_team_color.sql` og RLS for flytting er ukjørt; test mot Supabase (Story 7.4)
-- [ ] 2026-11-25 [story-4-2-ledertavlen](982-2026-11-25-20-40-00-story-4-2-ledertavlen.md) — merge 4.1 og 4.2 (4.2 bygger på 4.1) og sett begge til done
+- [x] 2026-11-25 [story-4-2-ledertavlen](982-2026-11-25-20-40-00-story-4-2-ledertavlen.md) — merge 4.1 og 4.2 (4.2 bygger på 4.1) og sett begge til done (løst 2026-11-26)
 - [ ] 2026-11-25 [story-4-2-ledertavlen](982-2026-11-25-20-40-00-story-4-2-ledertavlen.md) — prøv aria-live-melding, dra-ned-gest og animasjon for hånd på mobil
 - [ ] 2026-11-25 [story-4-2-ledertavlen](982-2026-11-25-20-40-00-story-4-2-ledertavlen.md) — vurder «Oppdateres live»-merket i Story 4.3
 - [ ] 2026-11-25 [story-4-3-sanntid](981-2026-11-25-21-30-00-story-4-3-sanntid.md) — test Realtime og 5 s-kravet mot Supabase (Story 7.4)
-- [ ] 2026-11-25 [story-4-3-sanntid](981-2026-11-25-21-30-00-story-4-3-sanntid.md) — merge 4.1, 4.2 og 4.3 i rekkefølge og sett dem til done
+- [x] 2026-11-25 [story-4-3-sanntid](981-2026-11-25-21-30-00-story-4-3-sanntid.md) — merge 4.1, 4.2 og 4.3 i rekkefølge og sett dem til done (løst 2026-11-26)
 - [ ] 2026-11-25 [story-4-4-bilder](980-2026-11-25-22-30-00-story-4-4-bilder.md) — test samlet signering og avvisning fra annen tur mot Supabase (Story 7.4)
-- [ ] 2026-11-25 [story-4-4-bilder](980-2026-11-25-22-30-00-story-4-4-bilder.md) — merge 4.1 til 4.4 i rekkefølge, sett dem til done og vurder retrospektiv for Epic 4
+- [x] 2026-11-25 [story-4-4-bilder](980-2026-11-25-22-30-00-story-4-4-bilder.md) — merge 4.1 til 4.4 i rekkefølge, sett dem til done og vurder retrospektiv for Epic 4 (løst 2026-11-26)
 - [ ] 2026-11-25 [story-4-4-bilder](980-2026-11-25-22-30-00-story-4-4-bilder.md) — samsvar sprint-nøkkelen 4-4-deltakeren-sender-bilde med epics-tittelen «ser turens bilder»
 - [ ] 2026-11-25 [story-5-1-endre-publisert-tur](979-2026-11-25-23-30-00-story-5-1-endre-publisert-tur.md) — migrasjon 202611250005 (updated_at på program_items) er ukjørt; test mot Supabase (Story 7.4)
 - [ ] 2026-11-25 [story-5-1-endre-publisert-tur](979-2026-11-25-23-30-00-story-5-1-endre-publisert-tur.md) — «Endre turen»-knapp og Turoversikt kommer med Epic 2; Admin er Rediger underveis til da
 - [ ] 2026-11-26 [story-5-2-nye-poster](978-2026-11-26-00-40-00-story-5-2-nye-poster.md) — live-modus henter ikke trips.area, så områdesirkel og avvisning utenfor området i kartvelgeren mangler i live
 - [ ] 2026-11-26 [story-5-2-nye-poster](978-2026-11-26-00-40-00-story-5-2-nye-poster.md) — kartvelgeren er ikke prøvd med tastatur eller fokusflytting
-- [ ] 2026-11-26 [story-5-2-nye-poster](978-2026-11-26-00-40-00-story-5-2-nye-poster.md) — merge 5.1 og 5.2 sammen med 4.1 til 4.4 i rekkefølge
+- [x] 2026-11-26 [story-5-2-nye-poster](978-2026-11-26-00-40-00-story-5-2-nye-poster.md) — merge 5.1 og 5.2 sammen med 4.1 til 4.4 i rekkefølge (løst 2026-11-26)
 - [ ] 2026-11-26 [story-5-3-deaktiver-post](977-2026-11-26-01-40-00-story-5-3-deaktiver-post.md) — migrasjon 202611260001 (RLS: bare aktive poster tar imot innsendinger) er ukjørt; test mot Supabase (Story 7.4)
 - [ ] 2026-11-26 [story-5-3-deaktiver-post](977-2026-11-26-01-40-00-story-5-3-deaktiver-post.md) — opplasting til lagring kjenner ikke posten, så en direkte opplasting til en deaktivert post kan gi en foreldreløs fil
-- [ ] 2026-11-26 [story-5-3-deaktiver-post](977-2026-11-26-01-40-00-story-5-3-deaktiver-post.md) — merge 5.1 til 5.3 sammen med 4.1 til 4.4 i rekkefølge
+- [x] 2026-11-26 [story-5-3-deaktiver-post](977-2026-11-26-01-40-00-story-5-3-deaktiver-post.md) — merge 5.1 til 5.3 sammen med 4.1 til 4.4 i rekkefølge (løst 2026-11-26)
 - [ ] 2026-11-26 [story-5-4-endringer](976-2026-11-26-02-50-00-story-5-4-endringer.md) — test «Endret»-merker mot Supabase Realtime og skjev klokke på enheten (Story 7.4)
-- [ ] 2026-11-26 [story-5-4-endringer](976-2026-11-26-02-50-00-story-5-4-endringer.md) — merge 4.1 til 4.4 og 5.1 til 5.4 i rekkefølge, og vurder retrospektiv for Epic 4 og 5
+- [x] 2026-11-26 [story-5-4-endringer](976-2026-11-26-02-50-00-story-5-4-endringer.md) — merge 4.1 til 4.4 og 5.1 til 5.4 i rekkefølge, og vurder retrospektiv for Epic 4 og 5 (løst 2026-11-26)
 - [ ] 2026-11-26 [story-5-4-endringer](976-2026-11-26-02-50-00-story-5-4-endringer.md) — Epic 6 forutsetter utkast og generering fra Epic 2 (ikke bygget); avgrensning avgjøres før start
 - [ ] 2026-11-26 [story-2-2-ny-tur](975-2026-11-26-04-10-00-story-2-2-ny-tur.md) — «Beskrivelsen er klar» byttes ut med generering i Story 2.3 (mock-agenten)
-- [ ] 2026-11-26 [story-2-2-ny-tur](975-2026-11-26-04-10-00-story-2-2-ny-tur.md) — knappene i demo-banneret (Bytt rolle, Tilbakestill demo) er 20 px høye og under kravet om 48 px trykkflate
+- [x] 2026-11-26 [story-2-2-ny-tur](975-2026-11-26-04-10-00-story-2-2-ny-tur.md) — knappene i demo-banneret (Bytt rolle, Tilbakestill demo) er 20 px høye og under kravet om 48 px trykkflate (løst 2026-11-26)
 - [x] 2026-11-26 [story-2-2-ny-tur](975-2026-11-26-04-10-00-story-2-2-ny-tur.md) — merge 4.1 til 5.4 og 2.2 i rekkefølge, og vurder retrospektiv for Epic 4 og 5 (erstattet 2026-11-26 av nyere punkt)
 - [x] 2026-11-26 [story-2-3-mock-agent](974-2026-11-26-05-40-00-story-2-3-mock-agent.md) — utkastet kan ikke redigeres eller publiseres ennå (Story 2.5 og 2.7) (løst 2026-11-26)
 - [ ] 2026-11-26 [story-2-3-mock-agent](974-2026-11-26-05-40-00-story-2-3-mock-agent.md) — et nytt utkast overskriver det forrige (én lagringsnøkkel); vurder før 2.5 og 2.7
@@ -77,4 +77,13 @@
 - [ ] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — publiserte demoturer kan ikke avpubliseres eller slettes, og en ødelagt oversikt overskrives ved neste publisering
 - [ ] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — teksten på delingssiden (med «Supabase») skrives om når live-publisering bygges
 - [ ] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — bygget varsler om en JS-fil over 500 kB (568 kB); vurder kodedeling
-- [ ] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — merge 4.1 til 5.4 og 2.2 til 2.7 i rekkefølge
+- [x] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — merge 4.1 til 5.4 og 2.2 til 2.7 i rekkefølge (løst 2026-11-26)
+- [ ] 2026-11-26 [merge-4-1-til-2-7](970-2026-11-26-19-48-45-merge-4-1-til-2-7.md) — sprint-status står fortsatt som «review» for storyene som ble merget (4.1–5.4, 2.2, 2.3 og 2.5–2.7); oppdater til «done» og vurder retrospektiv for Epic 4 og 5
+- [x] 2026-11-26 [merge-4-1-til-2-7](970-2026-11-26-19-48-45-merge-4-1-til-2-7.md) — definisjonen av ferdig er ikke helt oppfylt for de mergede storyene: hele mobilflyten er ikke testet samlet på main, migrasjonene 0004, 0005 og 202611260001 er ikke kjørt, og utsatt arbeid står i deferred-work.md og ikke i README (mobilflyten testet 2026-11-26; resten står i neste punkt)
+- [ ] 2026-11-26 [test-mobilflyt-main](969-2026-11-26-19-52-54-test-mobilflyt-main.md) — migrasjonene 0004, 0005 og 202611260001 er ikke kjørt, og utsatt arbeid står i deferred-work.md og ikke i README
+- [x] 2026-11-26 [test-mobilflyt-main](969-2026-11-26-19-52-54-test-mobilflyt-main.md) — ledertavlen på mobil: lagnavn, «Ditt lag» og medlemstall flyter sammen, fordi `.leader-row>span:nth-child(2)` treffer plasseringen etter at `team-stripe` kom til først i raden (løst 2026-11-26)
+- [x] 2026-11-26 [test-mobilflyt-main](969-2026-11-26-19-52-54-test-mobilflyt-main.md) — ledertavlen: «Oppdater» har klassen `btn`, som ikke finnes i styles.css, så knappen er ustylet og 27 px høy (fra Story 4.2) (løst 2026-11-26)
+- [x] 2026-11-26 [test-mobilflyt-main](969-2026-11-26-19-52-54-test-mobilflyt-main.md) — Program på 390 px: prikken i tidslinjen ligger oppå klokkeslettet (løst 2026-11-26)
+- [x] 2026-11-26 [test-mobilflyt-main](969-2026-11-26-19-52-54-test-mobilflyt-main.md) — trykkflater under 48 px (UX-DR17): «Send bilde»/«Låst» 36, tekstlenkene på I dag 16–32, «Admin» 16, avataren 40, begrunnelsesfeltet 43 og knappene i demo-banneret (løst 2026-11-26)
+- [x] 2026-11-26 [test-mobilflyt-main](969-2026-11-26-19-52-54-test-mobilflyt-main.md) — tekst: «1 bilder» og «1 godkjente» mangler entall, og I dag skriver «Deltagere» mens resten av appen skriver «deltakere» (løst 2026-11-26)
+- [ ] 2026-11-26 [test-mobilflyt-main](969-2026-11-26-19-52-54-test-mobilflyt-main.md) — kartet: post 2 og 5 ligger delvis skjult bak post 1 i utsnittet kartet åpner med

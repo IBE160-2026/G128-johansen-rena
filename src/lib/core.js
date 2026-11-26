@@ -183,3 +183,8 @@ export function checkpointBounds(checkpoints) {
   const lngs = points.map((c) => c.longitude)
   return [[Math.min(...lats), Math.min(...lngs)], [Math.max(...lats), Math.max(...lngs)]]
 }
+
+/** Antall med riktig form: countText(1, 'bilde', 'bilder') gir «1 bilde», ellers flertall (også for 0). */
+export function countText(count, one, many) {
+  return `${count} ${count === 1 ? one : many}`
+}

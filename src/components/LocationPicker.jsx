@@ -5,7 +5,7 @@ import { pickLocation } from '../lib/pickLocation.js'
 
 const FALLBACK_CENTER = [59.9139, 10.7522]
 
-const pickIcon = L.divIcon({ className: 'post-marker selected open', html: '<span class="post-marker-icon" aria-hidden="true">📍</span>', iconSize: [44, 44], iconAnchor: [22, 22] })
+const pickIcon = L.divIcon({ className: 'post-marker selected open', html: '<span class="post-marker-icon" aria-hidden="true">📍</span>', iconSize: [48, 48], iconAnchor: [24, 24] })
 
 function Clicks({ onPoint }) {
   useMapEvents({ click: (e) => onPoint(e.latlng) })

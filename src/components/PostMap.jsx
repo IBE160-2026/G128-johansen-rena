@@ -37,8 +37,8 @@ function markerIcon(number, status, selected) {
   return L.divIcon({
     className: `post-marker ${status.done ? 'done' : status.lock}${status.deactivated ? ' deactivated' : ''}${selected ? ' selected' : ''}`,
     html: `<span class="post-marker-icon" aria-hidden="true">${status.done ? '✓' : status.deactivated ? '⊘' : { locked: '🔒', unlocked: '🔓', open: '○' }[status.lock]}</span><span class="post-marker-number" aria-hidden="true">${number}</span>`,
-    iconSize: [44, 44],
-    iconAnchor: [22, 22],
+    iconSize: [48, 48],
+    iconAnchor: [24, 24],
   })
 }
 

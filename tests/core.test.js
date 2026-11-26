@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { currentTripDay, distanceMeters, sortEvents, standings, validateImage } from '../src/lib/core.js'
+import { currentTripDay, distanceMeters, sortEvents, standings, validateImage, countText } from '../src/lib/core.js'
 
 test('viser første dag før avreise og siste dag etter hjemkomst', () => {
   assert.equal(currentTripDay('2026-04-24', '2026-04-27', new Date('2026-04-20T12:00:00Z')), '2026-04-24')
@@ -35,4 +35,10 @@ test('bildeinnsending godtar vanlige fotoformater og avviser tekst og store file
   assert.doesNotThrow(() => validateImage({ type: 'image/png', size: 15 * 1024 * 1024 }))
   assert.throws(() => validateImage({ type: 'image/png', size: 15 * 1024 * 1024 + 1 }), /15 MB/)
   assert.throws(() => validateImage({ type: 'image/png', size: NaN }), /15 MB/)
+})
+
+test('countText velger entall bare for 1', () => {
+  assert.equal(countText(1, 'bilde', 'bilder'), '1 bilde')
+  assert.equal(countText(0, 'bilde', 'bilder'), '0 bilder')
+  assert.equal(countText(2, 'godkjent', 'godkjente'), '2 godkjente')
 })
