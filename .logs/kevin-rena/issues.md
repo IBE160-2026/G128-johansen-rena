@@ -94,3 +94,7 @@
 - [ ] 2026-11-26 [retrospektiv-epic-4-og-5](966-2026-11-26-20-05-38-retrospektiv-epic-4-og-5.md) — de 7 tiltakene fra retrospektivene for Epic 4 og 5 står som `open` i action_items i sprint-status.yaml
 - [ ] 2026-11-26 [retrospektiv-epic-4-og-5](966-2026-11-26-20-05-38-retrospektiv-epic-4-og-5.md) — animasjonen på ledertavlen og redusert bevegelse er ikke prøvd i nettleser
 - [x] 2026-11-26 [rett-treg-innsending](965-2026-11-26-20-10-02-rett-treg-innsending.md) — sett tiltaket om overskrivingen (epic-4-retro-item-5) til done i sprint-status etter merging (løst 2026-11-26)
+- [ ] 2026-11-26 [nettlesertester-i-repoet](964-2026-11-26-21-06-50-nettlesertester-i-repoet.md) — første steg i `endringer.e2e.js` feilet én gang på 38 kjøringer; årsaken er ukjent, siden testverktøyet da hang på et skjermbilde. Hengingen er rettet, så feilen skrives ut om den kommer igjen
+- [ ] 2026-11-26 [nettlesertester-i-repoet](964-2026-11-26-21-06-50-nettlesertester-i-repoet.md) — nettlesertestene er bare kjørt på macOS; Stian bør kjøre `npm run test:e2e` på sin maskin
+- [ ] 2026-11-26 [nettlesertester-i-repoet](964-2026-11-26-21-06-50-nettlesertester-i-repoet.md) — sett tiltaket om nettlesertester (epic-4-retro-item-7) til done i sprint-status etter merging
+- [ ] 2026-11-26 [nettlesertester-i-repoet](964-2026-11-26-21-06-50-nettlesertester-i-repoet.md) — sensorstøtten må oppdateres; avklar om det er et eget dokument eller README og docs for sensor (README har gammel status)
