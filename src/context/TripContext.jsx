@@ -8,7 +8,7 @@ import { applyReview, buildReviewUpdate } from '../lib/review.js'
 import { changedItems, isChanged as isItemChanged, loadSeen, markAllSeen as markAllItemsSeen, markSeen as markItemSeen, mergeSeen, readSeen, saveSeen } from '../lib/changes.js'
 import { hasSubmissions } from '../lib/scoring.js'
 import { moveMember as applyMove } from '../lib/teams.js'
-import { CHANNEL_NAME, isRelevant, makeMessage, shouldRefreshNow } from '../lib/signal.js'
+import { CHANNEL_NAME, createStoredMarks, isRelevant, makeMessage, shouldRefreshNow } from '../lib/signal.js'
 import { changeRecord, clearDemoUser, createRecord, loadDemo, readDemoUser, writeDemoUser, loadTrip, removeRecord, resetDemo as resetDemoStore, saveDemo, uploadPhoto } from '../lib/api.js'
 import { acceptsSubmissions, demoOwn, demoUserForRole, findTripBySlug, roleHome, standings, tripPath, validateImage } from '../lib/core.js'
 import { demoImageDataUrl } from '../lib/demoImage.js'
@@ -42,8 +42,9 @@ export function TripProvider({ slug, children }) {
   const channelRef = useRef(null)
   const senderRef = useRef(null)
   const lastFetchRef = useRef(null)
-  // Data som ikke er en lokal endring (første innlasting og data lest på nytt etter signal): lagres ikke og gir ikke signal.
-  const receivedRef = useRef(data)
+  // Data som alt står i lagringen (første innlasting, lest på nytt etter signal, eller nettopp skrevet): lagres ikke igjen.
+  const storedRef = useRef(null)
+  if (!storedRef.current) { storedRef.current = createStoredMarks(); storedRef.current.add(data) }
   if (!senderRef.current) senderRef.current = globalThis.crypto?.randomUUID?.() ?? `fane-${Math.random().toString(36).slice(2)}` // randomUUID finnes ikke over http på LAN-IP
 
   useEffect(() => { dataRef.current = data }, [data])
@@ -53,9 +54,14 @@ export function TripProvider({ slug, children }) {
     let next = null
     try { next = loadDemo(storage, initialDemoData, userStorage, slug) } catch { /* ødelagt lagring: behold det som vises */ }
     if (!next?.trip) return
-    receivedRef.current = next
+    storedRef.current.add(next)
     setData(next)
   }, [slug])
+
+  /** Sier fra til andre faner på samme tur at lagringen er endret. */
+  const announceChange = useCallback((changed) => {
+    try { channelRef.current?.postMessage(makeMessage(changed.trip.id, senderRef.current)) } catch { /* signalet er en bonus */ }
+  }, [])
 
   const refresh = useCallback(async (userId) => {
     if (demoMode || !userId) return
@@ -105,10 +111,10 @@ export function TripProvider({ slug, children }) {
 
   useEffect(() => {
     if (!demoMode || !data) return
-    if (data === receivedRef.current) return // lest på nytt, ikke en lokal endring
+    if (storedRef.current.has(data)) return // alt lagret, ikke en lokal endring
     if (!saveDemo(storage, data)) { setError('Demolagringen er full. Fjern noen bilder eller nullstill demoen.'); return }
-    try { channelRef.current?.postMessage(makeMessage(data.trip.id, senderRef.current)) } catch { /* signalet er en bonus */ }
-  }, [data])
+    announceChange(data)
+  }, [data, announceChange])
 
   // Demo: andre faner på samme tur sender signal over BroadcastChannel, og da leses demodata på nytt (AD-10)
   useEffect(() => {
@@ -302,6 +308,9 @@ export function TripProvider({ slug, children }) {
         throw validationError(added.error)
       }
       if (!saveDemo(storage, added.data)) throw new Error('Demolagringen er full. Slett noen bilder eller nullstill demoen.')
+      // Lagret her. Skrev effekten den en gang til etter visningen, kunne den overskrive noe en annen fane lagret imens.
+      storedRef.current.add(added.data)
+      announceChange(added.data)
       setData(added.data)
     } else {
       const blob = await compressImage(file) // maks 1600 px, JPEG (AD-11)
