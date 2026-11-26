@@ -24,6 +24,11 @@ Du trenger Node 22 eller nyere og Google Chrome (eller Chromium). Finner testen 
 - Stegene i en fil bygger på hverandre. Rett den første feilen først.
 - `endringer.e2e.js` holder bildebehandlingen igjen til testen slipper den, så tidsvinduet styres av testen.
 
+## Kjente forbehold
+
+- **Blank side:** Chrome avbryter av og til hentingen av en av filene fra Vite, og da står siden blank. Verktøyet laster siden én gang til bare når dette skjer, og skriver `ADVARSEL`. Årsaken til avbruddet er ikke funnet.
+- **Fane som slutter å svare:** Én gang har en fane sluttet å svare midt i `endringer.e2e.js`, slik at stegene etterpå feilet. Det lot seg ikke gjenskape med diagnostikk på, og årsaken er ukjent. Verktøyet gir da feilen «Chrome svarte ikke». Kjør testen på nytt, og meld fra hvis det gjentar seg.
+
 ## Skjermbilder
 
 Skjermbilder havner i `e2e/artifacts/` (ikke i git). `utseende.e2e.js` tar bilde av hver side, og et steg som feiler, tar bilde av alle fanene (`feil-…`). **Se på bildene når du har endret utseendet.** Målene fanger ikke alt.

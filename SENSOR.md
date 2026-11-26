@@ -51,7 +51,7 @@ Du bruker **to faner i samme nettleservindu**: fane A er arrangøren, og fane B 
 | 15 | B | Se øverst på siden, og trykk **Se endringer**. | Banneret «Programmet er oppdatert.» vises, og punktet er merket **Endret**. |
 | 16 | B | Trykk **I dag**, deretter **Se bildene**, og del et bilde (maks 450 KB i demo). | Bildet vises i galleriet. |
 
-**Hvis en fane ikke oppdateres (steg 13 og 15):** Last siden på nytt i den fanen. Rollen og turen beholdes. Dette er en kjent feil: signalet mellom fanene kan komme før nettleseren har gjort de nye dataene tilgjengelige i den andre fanen. Da gruppen kjørte protokollen automatisk 26. november 2026, uteble varselet i steg 15 i flere av kjøringene.
+**Blir en side blank, eller oppdateres ikke den andre fanen:** Last siden på nytt. Rollen og turen beholdes.
 
 **Starte på nytt:** **Tilbakestill demo** i banneret setter turen du står på, tilbake til utgangspunktet. En publisert tur går tilbake til slik den ble publisert.
 
@@ -69,7 +69,7 @@ npm run test:e2e    # nettlesertester i headless Chrome
 
 `npm run test:e2e` krever i tillegg Google Chrome eller Chromium. Finner testen ikke programmet, setter du `CHROME_PATH`. Nettlesertestene er bare kjørt på macOS. Les [e2e/README.md](e2e/README.md) for hva de dekker.
 
-26. november 2026 besto 824 enhetstester og alle 39 stegene i nettlesertestene i en ny klon av repoet på en av gruppens maskiner, og bygget gikk gjennom. Nettlesertestene kan feile av og til på grunn av den kjente feilen mellom fanene. Bygget varsler om én JavaScript-fil over 500 kB.
+26. november 2026 besto 825 enhetstester og alle 41 stegene i nettlesertestene i en ny klon av repoet på en av gruppens maskiner, og bygget gikk gjennom. Nettlesertestene kan feile av og til uten at appen har en feil. Se «Kjente forbehold» i [e2e/README.md](e2e/README.md). Bygget varsler om én JavaScript-fil over 500 kB.
 
 **Automatiske kontroller av utkast fra KI.** `validateTrip` i [src/lib/validate.js](src/lib/validate.js) avviser blant annet utkast der påkrevde felt mangler, en post ligger utenfor turens område, en programpost ligger utenfor perioden, en dag mangler program, eller antall lag og poster ikke stemmer med bestillingen. Se [tests/validate.test.js](tests/validate.test.js) og [tests/mockAgent.test.js](tests/mockAgent.test.js). Kontrollene er hittil bare brukt på prøveturen og mock-KI-en, ikke på svar fra en ekte språkmodell.
 
@@ -95,7 +95,6 @@ Fullstendig status: [sprint-status.yaml](implementation-artifacts/sprint-status.
 
 ### Kjente begrensninger
 
-- I demo hender det at den andre fanen ikke oppdateres av seg selv (se merknaden under testprotokollen).
 - Lenken og QR-koden til en publisert tur virker bare i nettleseren den ble publisert i.
 - Demolagringen har begrenset plass. Mange bilder kan fylle den.
 - Publiserte demoturer kan ikke slettes.
@@ -135,7 +134,7 @@ Slik styres en story: Spesifikasjonen skrives og godkjennes av et gruppemedlem f
 2. Storyen: [spesifikasjonen for 4.3](implementation-artifacts/spec-4-3-ledertavlen-oppdateres-i-sanntid.md), med reviewlogg.
 3. Koden: [pull request 17](https://github.com/IBE160-2026/G128-johansen-rena/pull/17), [signal.js](src/lib/signal.js) og [TripContext.jsx](src/context/TripContext.jsx).
 4. Testene: [tests/signal.test.js](tests/signal.test.js) og [e2e/endringer.e2e.js](e2e/endringer.e2e.js).
-5. Feil funnet etterpå: Verken review eller retrospektivet oppdaget først at en fane kunne skrive eldre data over nyere. Nettlesertestene avdekket det, feilen ble rettet i [pull request 30](https://github.com/IBE160-2026/G128-johansen-rena/pull/30), og den er dokumentert som funn 4-J i [retrospektivet](implementation-artifacts/epic-4-retro-2026-11-26.md).
+5. Feil funnet etterpå: Verken review eller retrospektivet oppdaget først at en fane kunne skrive eldre data over nyere. Nettlesertestene avdekket det. Senere viste en gjennomkjøring av testprotokollen at signalet også kunne komme før de nye dataene var synlige. Den første feilen ble rettet i [pull request 30](https://github.com/IBE160-2026/G128-johansen-rena/pull/30), og begge er dokumentert (funn 4-J og 4-K) i [retrospektivet](implementation-artifacts/epic-4-retro-2026-11-26.md).
 
 Fem sekunder er ikke målt i live-modus.
 

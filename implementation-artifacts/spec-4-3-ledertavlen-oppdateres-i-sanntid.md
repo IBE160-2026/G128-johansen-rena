@@ -66,6 +66,8 @@ context:
 
 ## Spec Change Log
 
+- 2026-11-26 (godkjent av Kevin etter at storyen var ferdig): I demo lytter appen **i tillegg** på `storage`-hendelsen for turen den viser, og leser da turen på nytt. `BroadcastChannel` beholdes. Grunnen: signalet kan komme før de nye dataene er synlige i den andre fanen, som da leste gamle data og ikke leste igjen. Det opphever avvisningen av «`storage`-hendelse som reserve» i reviewloggen. Forbudet mot å bruke hendelsen *i stedet for* `BroadcastChannel` gjelder fortsatt. Commit `c5f9ba5`.
+
 ## Review Triage Log
 
 Tre reviewere (Blind Hunter, Edge Case Hunter, Verification Gap). Patchet:
