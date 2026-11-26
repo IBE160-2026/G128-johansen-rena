@@ -40,7 +40,7 @@
 - [ ] 2026-11-25 [story-4-1-lagfordeling](983-2026-11-25-19-43-00-story-4-1-lagfordeling.md) — manuell sjekk i headless Chrome av lagflytting (arrangør flytter, deltaker ser nytt lag og farge)
 - [ ] 2026-11-25 [story-4-1-lagfordeling](983-2026-11-25-19-43-00-story-4-1-lagfordeling.md) — migrasjon `202611250004_story_4_1_team_color.sql` og RLS for flytting er ukjørt; test mot Supabase (Story 7.4)
 - [x] 2026-11-25 [story-4-2-ledertavlen](982-2026-11-25-20-40-00-story-4-2-ledertavlen.md) — merge 4.1 og 4.2 (4.2 bygger på 4.1) og sett begge til done (løst 2026-11-26)
-- [ ] 2026-11-25 [story-4-2-ledertavlen](982-2026-11-25-20-40-00-story-4-2-ledertavlen.md) — prøv aria-live-melding, dra-ned-gest og animasjon for hånd på mobil
+- [x] 2026-11-25 [story-4-2-ledertavlen](982-2026-11-25-20-40-00-story-4-2-ledertavlen.md) — prøv aria-live-melding, dra-ned-gest og animasjon for hånd på mobil (løst 2026-11-26; animasjonen står i nytt punkt)
 - [ ] 2026-11-25 [story-4-2-ledertavlen](982-2026-11-25-20-40-00-story-4-2-ledertavlen.md) — vurder «Oppdateres live»-merket i Story 4.3
 - [ ] 2026-11-25 [story-4-3-sanntid](981-2026-11-25-21-30-00-story-4-3-sanntid.md) — test Realtime og 5 s-kravet mot Supabase (Story 7.4)
 - [x] 2026-11-25 [story-4-3-sanntid](981-2026-11-25-21-30-00-story-4-3-sanntid.md) — merge 4.1, 4.2 og 4.3 i rekkefølge og sett dem til done (løst 2026-11-26)
@@ -87,6 +87,9 @@
 - [x] 2026-11-26 [test-mobilflyt-main](969-2026-11-26-19-52-54-test-mobilflyt-main.md) — trykkflater under 48 px (UX-DR17): «Send bilde»/«Låst» 36, tekstlenkene på I dag 16–32, «Admin» 16, avataren 40, begrunnelsesfeltet 43 og knappene i demo-banneret (løst 2026-11-26)
 - [x] 2026-11-26 [test-mobilflyt-main](969-2026-11-26-19-52-54-test-mobilflyt-main.md) — tekst: «1 bilder» og «1 godkjente» mangler entall, og I dag skriver «Deltagere» mens resten av appen skriver «deltakere» (løst 2026-11-26)
 - [ ] 2026-11-26 [test-mobilflyt-main](969-2026-11-26-19-52-54-test-mobilflyt-main.md) — kartet: post 2 og 5 ligger delvis skjult bak post 1 i utsnittet kartet åpner med
-- [ ] 2026-11-26 [sprint-status-done](967-2026-11-26-20-00-08-sprint-status-done.md) — retrospektiv for Epic 4 og 5 er ikke gjort (valgfritt)
+- [x] 2026-11-26 [sprint-status-done](967-2026-11-26-20-00-08-sprint-status-done.md) — retrospektiv for Epic 4 og 5 er ikke gjort (valgfritt) (løst 2026-11-26)
 - [ ] 2026-11-26 [sprint-status-done](967-2026-11-26-20-00-08-sprint-status-done.md) — storyene i 2, 4 og 5 er satt til «done» etter verifisering i demo-modus; det som gjelder database og tilgang (blant annet migrasjonene og RLS i 4.1, 5.1 og 5.3) er ikke prøvd og må testes i Story 7.4
 - [ ] 2026-11-26 [sprint-status-done](967-2026-11-26-20-00-08-sprint-status-done.md) — personvern for bilder (samtykke, lagringstid og sletting) skulle avklares før Story 4.4 og står fortsatt åpent, selv om Epic 4 er satt til «done»
+- [ ] 2026-11-26 [retrospektiv-epic-4-og-5](966-2026-11-26-20-05-38-retrospektiv-epic-4-og-5.md) — en treg innsending i demo kan overskrive arrangørens endring fra en annen fane (`submit` i TripContext); gjenskapt og bør rettes før demonstrasjon
+- [ ] 2026-11-26 [retrospektiv-epic-4-og-5](966-2026-11-26-20-05-38-retrospektiv-epic-4-og-5.md) — de 7 tiltakene fra retrospektivene for Epic 4 og 5 står som `open` i action_items i sprint-status.yaml
+- [ ] 2026-11-26 [retrospektiv-epic-4-og-5](966-2026-11-26-20-05-38-retrospektiv-epic-4-og-5.md) — animasjonen på ledertavlen og redusert bevegelse er ikke prøvd i nettleser
