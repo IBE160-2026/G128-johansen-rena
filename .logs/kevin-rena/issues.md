@@ -106,3 +106,4 @@
 - [ ] 2026-11-26 [sensorstotte](963-2026-11-26-21-23-18-sensorstotte.md) — årsaken til at Chrome av og til avbryter hentingen av en skriptfil i nettlesertestene, er ukjent
 - [x] 2026-11-26 [rapport-til-stian](962-2026-11-26-22-24-47-rapport-til-stian.md) — `sensorstotte` er ikke merget inn i `main` (løst 2026-11-26)
 - [ ] 2026-11-26 [rapport-til-stian](962-2026-11-26-22-24-47-rapport-til-stian.md) — send Stian lenken til rapporten
+- [ ] 2026-11-26 [todo-neste-steg](961-2026-11-26-22-30-27-todo-neste-steg.md) — `todo-neste-steg` er ikke merget inn i `main`
