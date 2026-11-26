@@ -84,6 +84,8 @@ context:
 
 ## Spec Change Log
 
+- 2026-11-26 (bestilt av Kevin etter bygging): en publisert tur skal ikke beholde prøveturens tekster. Mock-agenten lager navn, beskrivelse og velkomstbeskjed fra forespørselen, og Utkast har fanen «Turen» (først og valgt ved åpning) der de kan redigeres. `draftEdit.js` har `updateTripText`. Destinasjonen er fortsatt prøveturens.
+
 ## Review Triage Log
 
 Tre reviewere (Blind Hunter, Edge Case Hunter, Verification Gap), pluss sjekk i headless Chrome (390 px). Patchet:

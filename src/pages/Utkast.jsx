@@ -5,7 +5,7 @@ import DemoBanner from '../components/DemoBanner.jsx'
 import LocationPicker from '../components/LocationPicker.jsx'
 import { clearDraft, isCurrentDraft, loadDraft, saveDraft } from '../lib/draftStore.js'
 import { canPublish, publishDraft } from '../lib/api.js'
-import { areaError, draftErrors, updateArea, updateElement, updateTheme } from '../lib/draftEdit.js'
+import { areaError, draftErrors, TRIP_TEXT_LIMITS, updateArea, updateElement, updateTheme, updateTripText } from '../lib/draftEdit.js'
 import { formatDate } from '../lib/core.js'
 import { pointsFromInput, THEME_ACCENTS, THEME_ICONS } from '../lib/validate.js'
 import { ACCENT_COLORS, ICON_SYMBOLS, resolveTheme, themeVars } from '../lib/theme.js'
@@ -13,7 +13,7 @@ import { ACCENT_COLORS, ICON_SYMBOLS, resolveTheme, themeVars } from '../lib/the
 const storage = (() => { try { return window.localStorage } catch { return null } })()
 const safe = storage ?? { getItem: () => null, setItem: () => { throw new Error('ingen lagring') } }
 
-const TABS = [['program', 'Program'], ['poster', 'Poster'], ['lag', 'Lag'], ['poeng', 'Poeng'], ['tema', 'Tema']]
+const TABS = [['turen', 'Turen'], ['program', 'Program'], ['poster', 'Poster'], ['lag', 'Lag'], ['poeng', 'Poeng'], ['tema', 'Tema']]
 const STALE_DRAFT = 'Utkastet er publisert eller byttet ut i en annen fane. Last siden på nytt.'
 const decimal = (text) => (String(text).trim() === '' ? NaN : Number(String(text).trim().replace(',', '.')))
 const same = (a, b) => a === b || (Number.isNaN(a) && Number.isNaN(b))
@@ -76,7 +76,7 @@ export default function Utkast() {
   const [draft, setDraft] = useState(stored?.draft ?? null)
   const draftRef = useRef(draft)
   const [saved, setSaved] = useState('')
-  const [tab, setTab] = useState('program')
+  const [tab, setTab] = useState('turen')
   const [selected, setSelected] = useState(null)
   const [publishError, setPublishError] = useState('')
   const [areaPending, setAreaPending] = useState(false)
@@ -150,6 +150,23 @@ export default function Utkast() {
   const pointsField = (cp) => (
     <NumField id={`${cp.id}-points`} label="Poeng (1 til 500)" value={cp.points} parse={pointsFromInput} inputMode="numeric"
       onValue={(v) => edit('checkpoints', cp.id, { points: v })} errors={errorsFor(cp.id, 'points')} />
+  )
+
+  const tripErrors = (field) => errors.general.filter((g) => g.path === `trip.${field}`)
+  const tripText = (field, label, multiline) => (
+    <Field id={`trip-${field}`} label={label} errors={tripErrors(field)}>
+      {(aria) => {
+        const props = { ...aria, maxLength: TRIP_TEXT_LIMITS[field], value: trip[field] ?? '', onChange: (e) => apply(updateTripText(draftRef.current, { [field]: e.target.value })) }
+        return multiline ? <textarea {...props} rows={3} /> : <input {...props} type="text" />
+      }}
+    </Field>
+  )
+  const tripPanel = (
+    <div className="surface draft-card">
+      {tripText('name', 'Navn på turen')}
+      {tripText('description', 'Beskrivelse', true)}
+      {tripText('announcement', 'Velkomstbeskjed til deltakerne', true)}
+    </div>
   )
 
   const programPanel = (
@@ -267,7 +284,7 @@ export default function Utkast() {
     </>
   )
 
-  const panels = { program: programPanel, poster: postPanel, lag: teamPanel, poeng: pointsPanel, tema: themePanel }
+  const panels = { turen: tripPanel, program: programPanel, poster: postPanel, lag: teamPanel, poeng: pointsPanel, tema: themePanel }
   const hasMap = tab === 'poster' && selectedPost
 
   return (
@@ -276,7 +293,7 @@ export default function Utkast() {
       <main className="start draft-view">
         <div className="start-panel draft-panel">
           <span className="eyebrow">UTKAST</span>
-          <h1>{trip.name}</h1>
+          <h1>{trip.name || 'Uten navn'}</h1>
           <p className="muted">Demo: KI-en er simulert, og destinasjonen er alltid prøveturens. Endringer lagres med en gang.</p>
           <dl className="request-summary surface">
             <dt>Periode</dt><dd>{period}</dd>

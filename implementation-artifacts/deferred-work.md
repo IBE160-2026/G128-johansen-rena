@@ -143,8 +143,5 @@
   summary: Publisering i live-modus er ikke bygget, og publiserte demoturer kan ikke avpubliseres eller slettes.
   evidence: Bevisst avgrensning i spec (beslutning 11 og «Never»). Gamle publiserte turer tar plass i localStorage.
 - source_spec: `implementation-artifacts/spec-2-7-arrangoren-publiserer-turen.md`
-  summary: En publisert tur beholder prøveturens navn, beskrivelse og kunngjøring fra mock-agenten, og Utkast kan ikke redigere dem.
-  evidence: Sett i headless Chrome: tre dager og ni deltakere gir «Prøvetur Budapest» med «Fire dager, åtte venner …».
-- source_spec: `implementation-artifacts/spec-2-7-arrangoren-publiserer-turen.md`
   summary: Er oversikten over publiserte turer ødelagt, overskrives den ved neste publisering, og eldre turer forsvinner fra Mine turer. Delvis ødelagte turer (for eksempel uten turkode) oppdages ikke.
   evidence: Funnet i review. Krever at localStorage er endret utenfor appen. Turene ligger fortsatt under egne nøkler og kan åpnes på adressen.
