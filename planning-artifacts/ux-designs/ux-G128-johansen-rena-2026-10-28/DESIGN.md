@@ -131,6 +131,23 @@ Fargene er valgt for sterkt sollys utendørs. All tekst har minst 4.5:1 kontrast
 
 Unngå gradienter, farger som skiller programinnhold etter kategori, og rødt for noe annet enn feil.
 
+## Tema (Story 2.6)
+
+Turens tema er data (`trip.theme = { accent, icon }`, AD-14), og verdiene er faste lister i `src/lib/validate.js` (`THEME_ACCENTS`, `THEME_ICONS`). Fargene og tegnene ligger i `src/lib/theme.js`, og en test sjekker at nøklene er de samme. Temaet setter `primary`, `primary-pressed`, `on-primary` og aliasene på toppelementet og påvirker bare toppen og aksentene, aldri status-, lag- eller poengfarger. Ugyldig eller manglende tema gir standardtemaet (`kobber`, `kompass`).
+
+**ThemeAccent** (kontrast målt mot hvit og krem `#FBF8F2`, og `on-primary` (hvit) mot `primary`; alle er minst 4.5:1):
+
+| Navn | Etikett | `primary` | `pressed` | Mot hvit | Mot krem | `on` mot `primary` |
+| --- | --- | --- | --- | --- | --- | --- |
+| kobber | Kobber | #8a5216 | #6e4111 | 6.4:1 | 6.0:1 | 6.4:1 |
+| fjord | Fjord | #0f766e | #0b5a54 | 5.5:1 | 5.2:1 | 5.5:1 |
+| skog | Skog | #2f6b3a | #24542d | 6.4:1 | 6.0:1 | 6.4:1 |
+| baer | Bær | #9d2a55 | #7d2043 | 7.3:1 | 6.8:1 | 7.3:1 |
+| natt | Natt | #3b4a9c | #2d3a7c | 7.9:1 | 7.5:1 | 7.9:1 |
+| lyng | Lyng | #7a3e9d | #5f2f7c | 7.0:1 | 6.6:1 | 7.0:1 |
+
+**ThemeIcon:** `kompass` (🧭), `fjell` (⛰️), `telt` (⛺), `bat` (⛵), `kart` (🗺️), `flagg` (🚩).
+
 ## Typography
 
 Systemfonter, slik at ingen fontfiler må lastes. Det hjelper på kravet om under 3 s over 4G (SM-7).

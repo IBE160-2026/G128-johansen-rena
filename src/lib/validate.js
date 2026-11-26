@@ -17,6 +17,10 @@ import { distanceMeters } from './geo.js'
  */
 
 export const MAX_POINTS = 500
+
+/** Faste tema-lister (AD-14). Navnene brukes som verdier i `trip.theme`. Fargene og tegnene ligger i theme.js. */
+export const THEME_ACCENTS = ['kobber', 'fjord', 'skog', 'baer', 'natt', 'lyng']
+export const THEME_ICONS = ['kompass', 'fjell', 'telt', 'bat', 'kart', 'flagg']
 const MAX_TRIP_DAYS = 366
 
 /** Felles regel for poeng på en post: heltall fra 1 til 500. Gir en feilmelding, ellers null. */
@@ -94,8 +98,12 @@ export function validateTrip(draft, req) {
     if (!radiusOk) add('trip.area.radius_m', 'Turens område må ha en radius større enn 0 meter.')
     if (centerOk && radiusOk && Math.abs(a.center.lat) <= 90 && Math.abs(a.center.lng) <= 180) area = a
 
-    if (trip.theme !== undefined && (!isObject(trip.theme) || !isText(trip.theme.accent) || !isText(trip.theme.icon))) {
-      add('trip.theme', 'Temaet må ha en aksentfarge og et ikon.')
+    if (trip.theme !== undefined) {
+      if (!isObject(trip.theme)) add('trip.theme', 'Temaet må ha en aksentfarge og et ikon.')
+      else {
+        if (!THEME_ACCENTS.includes(trip.theme.accent)) add('trip.theme.accent', `Aksentfargen må være en av: ${THEME_ACCENTS.join(', ')}.`)
+        if (!THEME_ICONS.includes(trip.theme.icon)) add('trip.theme.icon', `Ikonet må være ett av: ${THEME_ICONS.join(', ')}.`)
+      }
     }
   }
 

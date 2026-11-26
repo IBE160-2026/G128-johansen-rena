@@ -1,6 +1,7 @@
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useTrip } from '../context/TripContext.jsx'
 import DemoBanner from './DemoBanner.jsx'
+import { ICON_SYMBOLS, resolveTheme, themeVars } from '../lib/theme.js'
 
 const links = [
   { to: '', label: 'I dag', icon: '⌂' },
@@ -20,8 +21,11 @@ export default function Shell({ children }) {
     catch (e) { setError(e.message) }
   }
 
+  const theme = resolveTheme(data.trip.theme)
+  const symbol = ICON_SYMBOLS[theme.icon]
+
   return (
-    <div className="app-shell">
+    <div className="app-shell" style={themeVars(data.trip.theme)}>
       <aside className="sidebar">
         <div className="sidebar-brand"><span className="eyebrow">TURAPP</span><strong>TripBuilder<span>.</span></strong></div>
         <Navigation links={links} isOrganizer={isOrganizer} path={path} />
@@ -30,7 +34,7 @@ export default function Shell({ children }) {
       <div className="app-main">
         <DemoBanner />
         <header className="topbar">
-          <div className="topbar-brand"><span className="eyebrow">{data.trip.destination_revealed ? data.trip.destination : 'Hemmelig destinasjon'}</span><strong>{data.trip.name}</strong></div>
+          <div className="topbar-brand"><span className="topbar-symbol" aria-hidden="true">{symbol.char}</span><div><span className="eyebrow">{data.trip.destination_revealed ? data.trip.destination : 'Hemmelig destinasjon'}</span><strong>{data.trip.name}</strong></div></div>
           <div className="topbar-actions">
             {isOrganizer && <NavLink className="text-link" to={path('admin')}>Admin</NavLink>}
             <button className="avatar" onClick={logout} title="Logg ut" aria-label="Logg ut">{own.display_name.slice(0, 1).toUpperCase()}</button>

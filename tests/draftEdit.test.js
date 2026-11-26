@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { areaError, draftErrors, updateArea, updateElement } from '../src/lib/draftEdit.js'
+import { areaError, draftErrors, updateArea, updateElement, updateTheme } from '../src/lib/draftEdit.js'
 import { validateTrip } from '../src/lib/validate.js'
 
 const base = () => ({
@@ -94,4 +94,22 @@ test('ugyldig område avvises', () => {
 test('valideringen i draftErrors stemmer med validateTrip', () => {
   const d = updateElement(updateElement(base(), 'teams', 't2', { name: '' }), 'checkpoints', 'c1', { radius_m: 0 })
   assert.equal(draftErrors(d).count, validateTrip(d).issues.length)
+})
+
+test('updateTheme godtar bare verdier fra listene', () => {
+  const d = base()
+  const next = updateTheme(d, { accent: 'fjord', icon: 'fjell' })
+  assert.deepEqual(next.trip.theme, { accent: 'fjord', icon: 'fjell' })
+  assert.equal(validateTrip(next).ok, true)
+  assert.equal(d.trip.theme, undefined)
+  for (const bad of [{ accent: 'neon', icon: 'fjell' }, { accent: 'fjord', icon: 'drage' }, { accent: 'fjord' }, null, 'x']) {
+    assert.equal(updateTheme(d, bad), d)
+  }
+  assert.equal(updateTheme(null, { accent: 'fjord', icon: 'fjell' }), null)
+})
+
+test('ugyldig tema i utkast gir feil i general og kan rettes', () => {
+  const d = base(); d.trip.theme = 'x'
+  assert.ok(draftErrors(d).general.some((g) => g.path === 'trip.theme'))
+  assert.equal(draftErrors(updateTheme(d, { accent: 'skog', icon: 'telt' })).count, 0)
 })

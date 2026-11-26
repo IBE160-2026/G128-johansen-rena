@@ -4,14 +4,15 @@ import { useTrip } from '../context/TripContext.jsx'
 import DemoBanner from '../components/DemoBanner.jsx'
 import LocationPicker from '../components/LocationPicker.jsx'
 import { loadDraft, saveDraft } from '../lib/draftStore.js'
-import { areaError, draftErrors, updateArea, updateElement } from '../lib/draftEdit.js'
+import { areaError, draftErrors, updateArea, updateElement, updateTheme } from '../lib/draftEdit.js'
 import { formatDate } from '../lib/core.js'
-import { pointsFromInput } from '../lib/validate.js'
+import { pointsFromInput, THEME_ACCENTS, THEME_ICONS } from '../lib/validate.js'
+import { ACCENT_COLORS, ICON_SYMBOLS, resolveTheme, themeVars } from '../lib/theme.js'
 
 const storage = (() => { try { return window.localStorage } catch { return null } })()
 const safe = storage ?? { getItem: () => null, setItem: () => { throw new Error('ingen lagring') } }
 
-const TABS = [['program', 'Program'], ['poster', 'Poster'], ['lag', 'Lag'], ['poeng', 'Poeng']]
+const TABS = [['program', 'Program'], ['poster', 'Poster'], ['lag', 'Lag'], ['poeng', 'Poeng'], ['tema', 'Tema']]
 const decimal = (text) => (String(text).trim() === '' ? NaN : Number(String(text).trim().replace(',', '.')))
 const same = (a, b) => a === b || (Number.isNaN(a) && Number.isNaN(b))
 
@@ -193,7 +194,55 @@ export default function Utkast() {
     </ul>
   )
 
-  const panels = { program: programPanel, poster: postPanel, lag: teamPanel, poeng: pointsPanel }
+  const current = resolveTheme(trip.theme)
+  const rawTheme = trip.theme !== null && typeof trip.theme === 'object' ? trip.theme : {}
+  const themeValid = THEME_ACCENTS.includes(rawTheme.accent) && THEME_ICONS.includes(rawTheme.icon)
+  const themeMissing = trip.theme === undefined
+  // et halvt tema beholder den gyldige delen; resten fylles med standardtemaet
+  const base = { accent: THEME_ACCENTS.includes(rawTheme.accent) ? rawTheme.accent : current.accent, icon: THEME_ICONS.includes(rawTheme.icon) ? rawTheme.icon : current.icon }
+  const pick = (patch) => apply(updateTheme(draftRef.current, { ...base, ...patch }))
+  const themePanel = (
+    <>
+      <div className="theme-preview" style={themeVars(current)} aria-label="Forhåndsvisning av toppen på deltakersiden">
+        <span className="topbar-symbol" aria-hidden="true">{ICON_SYMBOLS[current.icon].char}</span>
+        <div><span className="eyebrow">{trip.destination_revealed === false ? 'Hemmelig destinasjon' : (trip.destination ?? 'Destinasjon')}</span><strong>{trip.name || 'Uten navn'}</strong></div>
+      </div>
+      {themeMissing && <p className="muted">Utkastet har ikke valgt tema ennå, så standardtemaet brukes.</p>}
+      {!themeValid && !themeMissing && <p className="field-error">Temaet i utkastet er ugyldig. Velg en aksentfarge og et symbol.</p>}
+      <fieldset className="surface theme-group">
+        <legend>Aksentfarge</legend>
+        <div className="theme-options">
+          {THEME_ACCENTS.map((key) => {
+            const on = (themeValid || themeMissing) && current.accent === key
+            return (
+              <button key={key} type="button" className={`theme-option${on ? ' selected' : ''}`} aria-pressed={on} onClick={() => pick({ accent: key })}>
+                <span className="theme-swatch" style={{ background: ACCENT_COLORS[key].primary }} aria-hidden="true" />
+                <span>{ACCENT_COLORS[key].label}</span>
+                {on && <span className="theme-chosen">Valgt</span>}
+              </button>
+            )
+          })}
+        </div>
+      </fieldset>
+      <fieldset className="surface theme-group">
+        <legend>Symbol</legend>
+        <div className="theme-options">
+          {THEME_ICONS.map((key) => {
+            const on = (themeValid || themeMissing) && current.icon === key
+            return (
+              <button key={key} type="button" className={`theme-option${on ? ' selected' : ''}`} aria-pressed={on} onClick={() => pick({ icon: key })}>
+                <span className="theme-char" aria-hidden="true">{ICON_SYMBOLS[key].char}</span>
+                <span>{ICON_SYMBOLS[key].label}</span>
+                {on && <span className="theme-chosen">Valgt</span>}
+              </button>
+            )
+          })}
+        </div>
+      </fieldset>
+    </>
+  )
+
+  const panels = { program: programPanel, poster: postPanel, lag: teamPanel, poeng: pointsPanel, tema: themePanel }
   const hasMap = tab === 'poster' && selectedPost
 
   return (

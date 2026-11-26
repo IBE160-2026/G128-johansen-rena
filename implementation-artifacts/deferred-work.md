@@ -128,3 +128,10 @@
 - source_spec: `implementation-artifacts/spec-2-5-arrangoren-redigerer-program-og-poster.md`
   summary: Områdets sirkel kan ikke dras på kartet, bare endres med felt (UX-DR14 sier «flytte og endre»). Fanene mangler pil-navigasjon.
   evidence: Bevisst avgrensning i spec (beslutning 5). Tas opp igjen om gruppen vil ha dragbart område.
+
+- source_spec: `implementation-artifacts/spec-2-6-turen-far-tema.md`
+  summary: Shells bruk av temaet og Tema-fanen i Utkast har ingen komponenttester.
+  evidence: Ingen DOM-testoppsett. Paletter, kontrast, `resolveTheme`, `themeVars` og `updateTheme` er testet som rene funksjoner; flyten er sjekket i headless Chrome.
+- source_spec: `implementation-artifacts/spec-2-6-turen-far-tema.md`
+  summary: Aktiv fane i sidemeny og bunnmeny bruker faste farger og følger ikke temaet; live henter ikke `trips.theme`.
+  evidence: Spec begrenser temaet til toppen og primærfargede flater (beslutning 6). Live-henting av tema følger med Story 2.1 og 7.4.

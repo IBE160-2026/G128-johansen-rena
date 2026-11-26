@@ -1,4 +1,4 @@
-import { validateTrip } from './validate.js'
+import { validateTrip, THEME_ACCENTS, THEME_ICONS } from './validate.js'
 
 /**
  * Ren redigering av utkastet (Story 2.5, AD-1). Ingen sideeffekter, ingen avhengigheter utenom validate.js.
@@ -38,6 +38,13 @@ export function areaError(area) {
 export function updateArea(draft, area) {
   if (!isObject(draft) || !isObject(draft.trip) || areaError(area)) return draft
   return { ...draft, trip: { ...draft.trip, area: { center: { lat: area.center.lat, lng: area.center.lng }, radius_m: area.radius_m } } }
+}
+
+/** Setter temaet. Bare aksent og ikon fra de faste listene godtas, ellers er utkastet uendret. */
+export function updateTheme(draft, theme) {
+  if (!isObject(draft) || !isObject(draft.trip) || !isObject(theme)) return draft
+  if (!THEME_ACCENTS.includes(theme.accent) || !THEME_ICONS.includes(theme.icon)) return draft
+  return { ...draft, trip: { ...draft.trip, theme: { accent: theme.accent, icon: theme.icon } } }
 }
 
 const PATH = /^(program_items|checkpoints|teams)\[(\d+)\](?:\.(\w+))?$/
