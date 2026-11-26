@@ -63,6 +63,18 @@ describe('endringer mellom to faner (Epic 4 og 5)', () => {
     await p.send('Emulation.setTouchEmulationEnabled', { enabled: false })
   })
 
+  step('en fane oppdateres når lagringen endres, også uten signal', async () => {
+    await participantAt('')
+    await p.waitFor(() => document.querySelector('.page-heading'), [])
+    // Signalet kan komme før de nye dataene er synlige. Da må nettleserens melding om lagringen holde.
+    await o.run(() => {
+      const data = JSON.parse(localStorage.getItem('tripbuilder-demo-v2'))
+      data.trip.announcement = 'Uten signal'
+      localStorage.setItem('tripbuilder-demo-v2', JSON.stringify(data))
+    })
+    await p.waitForText('Uten signal', { timeout: 3000 })
+  })
+
   step('4.1: en flyttet deltaker ser nytt lag, og innsendingen blir hos det gamle', async () => {
     await openAdmin(o, 'Lag')
     await o.fill(`select[aria-label="Lag for ${me.display_name}"]`, newTeam.id)

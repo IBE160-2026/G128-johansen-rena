@@ -9,7 +9,7 @@ import { changedItems, isChanged as isItemChanged, loadSeen, markAllSeen as mark
 import { hasSubmissions } from '../lib/scoring.js'
 import { moveMember as applyMove } from '../lib/teams.js'
 import { CHANNEL_NAME, createStoredMarks, isRelevant, makeMessage, shouldRefreshNow } from '../lib/signal.js'
-import { changeRecord, clearDemoUser, createRecord, loadDemo, readDemoUser, writeDemoUser, loadTrip, removeRecord, resetDemo as resetDemoStore, saveDemo, uploadPhoto } from '../lib/api.js'
+import { changeRecord, clearDemoUser, createRecord, dataKeyFor, loadDemo, readDemoUser, writeDemoUser, loadTrip, removeRecord, resetDemo as resetDemoStore, saveDemo, uploadPhoto } from '../lib/api.js'
 import { acceptsSubmissions, demoOwn, demoUserForRole, findTripBySlug, roleHome, standings, tripPath, validateImage } from '../lib/core.js'
 import { demoImageDataUrl } from '../lib/demoImage.js'
 
@@ -127,6 +127,18 @@ export function TripProvider({ slug, children }) {
       readDemoAgain()
     }
     return () => { channel.onmessage = null; channel.close(); if (channelRef.current === channel) channelRef.current = null }
+  }, [readDemoAgain])
+
+  // Demo: signalet kan komme før de nye dataene er synlige i denne fanen. `storage`-hendelsen kommer først når de er det,
+  // og leser derfor på nytt i tillegg til signalet. Den sendes bare til andre faner enn den som skrev.
+  useEffect(() => {
+    if (!demoMode) return undefined
+    const onStorage = (event) => {
+      const trip = dataRef.current?.trip
+      if (trip && event.storageArea === storage && event.key === dataKeyFor(trip)) readDemoAgain()
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
   }, [readDemoAgain])
 
   // Begge moduser: når fanen blir synlig eller får fokus, hentes turen på nytt (høyst hvert 2. sekund)

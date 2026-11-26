@@ -115,6 +115,18 @@ describe('publisering av en tur (Story 2.7)', () => {
     assert.equal(await storageItem('tripbuilder-demo-v2'), trialBefore)
   })
 
+  step('en publisert tur oppdateres i den andre fanen også uten signal', async () => {
+    await participant.front()
+    await participant.goto(`/t/${slug}`)
+    await participant.waitFor(() => document.querySelector('.page-heading'), [])
+    await organizer.run((key) => {
+      const entry = JSON.parse(localStorage.getItem(key))
+      entry.data.trip.announcement = 'Uten signal på publisert tur'
+      localStorage.setItem(key, JSON.stringify(entry))
+    }, `tripbuilder-demo-trip-v1:${slug}`)
+    await participant.waitForText('Uten signal på publisert tur', { timeout: 3000 })
+  })
+
   step('«Tilbakestill demo» nullstiller bare denne turen, og man blir på den', async () => {
     await organizer.front()
     await organizer.goto(`/t/${slug}`)
