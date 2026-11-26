@@ -3,7 +3,8 @@ import { Link, useSearchParams } from 'react-router-dom'
 import ReviewQueue from '../components/ReviewQueue.jsx'
 import { useTrip } from '../context/TripContext.jsx'
 import { formatDate, sortEvents } from '../lib/core.js'
-import { pointsError, pointsFromInput } from '../lib/validate.js'
+import { pointsFromInput } from '../lib/validate.js'
+import { validateChange } from '../lib/tripEdit.js'
 import { memberCounts, teamColorToken } from '../lib/teams.js'
 
 const tabs = [['overview', 'Oversikt'], ['program', 'Program'], ['checkpoints', 'Rebusposter'], ['teams', 'Lag'], ['inbox', 'Innsendinger']]
@@ -22,6 +23,8 @@ export default function Admin() {
   const [focusedSubmission, setFocusedSubmission] = useState(null)
   const [eventForm, setEventForm] = useState({ event_date: data.trip.start_date, start_time: '12:00', title: '', description: '' })
   const [taskForm, setTaskForm] = useState({ title: '', description: '', points: '10', latitude: '', longitude: '' })
+  const [errors, setErrors] = useState([]) // { field, message } fra validateChange
+  const [saved, setSaved] = useState('')
   const [announcement, setAnnouncement] = useState(data.trip.announcement ?? '')
 
   if (!isOrganizer) return <div className="page-stack"><h1>Ingen tilgang</h1><p>Dette området er kun for arrangøren.</p><Link to={path()}>Gå tilbake</Link></div>
@@ -33,12 +36,29 @@ export default function Admin() {
     finally { setWorking(false) }
   }
 
+  /** Validerer endringen før lagring. Ved feil lagres ingenting, og feilene vises ved feltene. */
+  function checkChange(collection, record, id) {
+    const result = validateChange(data, collection, record, id)
+    setSaved('')
+    setErrors(result.ok ? [] : result.errors)
+    return result.ok
+  }
+  const fieldError = (field) => errors.find((e) => e.field === field)?.message
+  const fieldProps = (field, id) => (fieldError(field) ? { 'aria-invalid': true, 'aria-describedby': `${id}-error` } : {})
+  const FieldError = ({ field, id }) => (fieldError(field) ? <p className="field-error" id={`${id}-error`}>{fieldError(field)}</p> : null)
+  const FormErrors = () => (errors.some((e) => !e.field) ? <div className="form-error" role="alert">{errors.filter((e) => !e.field).map((e) => <p key={e.message}>{e.message}</p>)}</div> : null)
+  const Saved = () => <p className={saved ? 'save-status' : 'sr-only'} role="status">{saved}</p>
+  const SAVED_TEXT = 'Lagret. Deltakerne ser endringen nå.'
+  function switchTab(key) { setTab(key); setErrors([]); setSaved('') }
+
   function startProgram(event) {
+    setErrors([]); setSaved('')
     setEditingProgram(event.id)
     setEventForm({ event_date: event.event_date, start_time: event.start_time.slice(0, 5), title: event.title, description: event.description ?? '' })
   }
 
   function startTask(task) {
+    setErrors([]); setSaved('')
     setEditingTask(task.id)
     setTaskForm({ title: task.title, description: task.description ?? '', points: String(task.points), latitude: String(task.latitude), longitude: String(task.longitude) })
   }
@@ -46,7 +66,9 @@ export default function Admin() {
   async function saveProgram(e) {
     e.preventDefault()
     await perform(async () => {
+      if (!checkChange('program', eventForm, editingProgram)) return
       await write('program', eventForm, editingProgram)
+      setSaved(SAVED_TEXT)
       setEditingProgram(null)
       setEventForm({ event_date: data.trip.start_date, start_time: '12:00', title: '', description: '' })
     })
@@ -55,14 +77,14 @@ export default function Admin() {
   async function saveTask(e) {
     e.preventDefault()
     await perform(async () => {
-      // Tomme og negative poeng lagres ikke. Et eldre 0-poengs-felt kan fortsatt redigeres uten å endre poengene.
-      const unchanged = editingTask && Number(taskForm.points) === data.checkpoints.find((x) => x.id === editingTask)?.points
-      const problem = unchanged ? null : pointsError(pointsFromInput(taskForm.points))
-      if (problem) throw new Error(problem)
-      await write('checkpoints', {
-        ...taskForm, points: pointsFromInput(taskForm.points) >= 0 ? pointsFromInput(taskForm.points) : Number(taskForm.points), latitude: Number(taskForm.latitude), longitude: Number(taskForm.longitude),
+      const record = {
+        ...taskForm, points: pointsFromInput(taskForm.points), latitude: taskForm.latitude.trim() === '' ? NaN : Number(taskForm.latitude), longitude: taskForm.longitude.trim() === '' ? NaN : Number(taskForm.longitude),
         position: editingTask ? data.checkpoints.find((x) => x.id === editingTask)?.position : data.checkpoints.length + 1,
-      }, editingTask)
+        ...(editingTask ? {} : { radius_m: 50, requires_location: false, status: 'active' }), // som databasens standardverdier
+      }
+      if (!checkChange('checkpoints', record, editingTask)) return
+      await write('checkpoints', record, editingTask)
+      setSaved(SAVED_TEXT)
       setEditingTask(null)
       setTaskForm({ title: '', description: '', points: '10', latitude: '', longitude: '' })
     })
@@ -71,7 +93,7 @@ export default function Admin() {
   const pending = data.submissions.filter((submission) => submission.status === 'pending')
 
   return <div className="page-stack"><div className="page-heading"><span className="eyebrow">ARRANGØRPANELET</span><h1>Administrasjon<span className="copper-dot">.</span></h1><p>Styr program, lag og rebus fra ett sted.</p></div>
-    <div className="admin-tabs">{tabs.map(([key, title]) => <button key={key} className={tab === key ? 'active' : ''} onClick={() => setTab(key)}>{title}{key === 'inbox' && pending.length ? <b>{pending.length}</b> : null}</button>)}</div>
+    <div className="admin-tabs">{tabs.map(([key, title]) => <button key={key} className={tab === key ? 'active' : ''} onClick={() => switchTab(key)}>{title}{key === 'inbox' && pending.length ? <b>{pending.length}</b> : null}</button>)}</div>
 
     {tab === 'overview' && <div className="page-stack">
       <div className="stat-grid"><div className="stat-card"><span className="eyebrow">DELTAKERE</span><strong>{data.members.length}</strong></div><div className="stat-card"><span className="eyebrow">LAG</span><strong>{data.teams.length}</strong></div><div className="stat-card"><span className="eyebrow">VENTER PÅ SVAR</span><strong>{pending.length}</strong></div></div>
@@ -83,10 +105,10 @@ export default function Admin() {
       <section className="surface"><div className="section-title"><h3>Stillingen</h3></div>{leaderboard.map((team) => <div className="admin-row" key={team.id}><span>{team.emoji} {team.name}</span><strong>{team.points} p</strong></div>)}</section>
     </div>}
 
-    {tab === 'program' && <div className="split-admin"><section className="surface"><span className="eyebrow">{editingProgram ? 'REDIGER' : 'NYTT PUNKT'}</span><h3>{editingProgram ? 'Rediger aktivitet' : 'Legg til aktivitet'}</h3><form className="form-stack" onSubmit={saveProgram}><label htmlFor="event-date">Dato</label><input id="event-date" type="date" min={data.trip.start_date} max={data.trip.end_date} required value={eventForm.event_date} onChange={(e) => setEventForm({ ...eventForm, event_date: e.target.value })}/><label htmlFor="event-time">Tid</label><input id="event-time" type="time" required value={eventForm.start_time} onChange={(e) => setEventForm({ ...eventForm, start_time: e.target.value })}/><label htmlFor="event-title">Tittel</label><input id="event-title" required maxLength="120" value={eventForm.title} onChange={(e) => setEventForm({ ...eventForm, title: e.target.value })}/><label htmlFor="event-description">Beskrivelse</label><textarea id="event-description" rows="3" maxLength="1000" value={eventForm.description} onChange={(e) => setEventForm({ ...eventForm, description: e.target.value })}/><button className="button primary" disabled={working}>{editingProgram ? 'Lagre endringer' : 'Legg til'}</button>{editingProgram && <button type="button" className="button ghost" onClick={() => { setEditingProgram(null); setEventForm({ event_date: data.trip.start_date, start_time: '12:00', title: '', description: '' }) }}>Avbryt</button>}</form></section>
+    {tab === 'program' && <div className="split-admin"><section className="surface"><span className="eyebrow">{editingProgram ? 'REDIGER' : 'NYTT PUNKT'}</span><h3>{editingProgram ? 'Rediger aktivitet' : 'Legg til aktivitet'}</h3><form className="form-stack" onSubmit={saveProgram} noValidate>{FormErrors()}{Saved()}<label htmlFor="event-date">Dato</label><input id="event-date" type="date" min={data.trip.start_date} max={data.trip.end_date} required value={eventForm.event_date} {...fieldProps('event_date', 'event-date')} onChange={(e) => setEventForm({ ...eventForm, event_date: e.target.value })}/>{FieldError({ field: 'event_date', id: 'event-date' })}<label htmlFor="event-time">Tid</label><input id="event-time" type="time" required value={eventForm.start_time} {...fieldProps('start_time', 'event-time')} onChange={(e) => setEventForm({ ...eventForm, start_time: e.target.value })}/>{FieldError({ field: 'start_time', id: 'event-time' })}<label htmlFor="event-title">Tittel</label><input id="event-title" required maxLength="120" value={eventForm.title} {...fieldProps('title', 'event-title')} onChange={(e) => setEventForm({ ...eventForm, title: e.target.value })}/>{FieldError({ field: 'title', id: 'event-title' })}<label htmlFor="event-description">Beskrivelse</label><textarea id="event-description" rows="3" maxLength="1000" value={eventForm.description} onChange={(e) => setEventForm({ ...eventForm, description: e.target.value })}/><button className="button primary" disabled={working}>{editingProgram ? 'Lagre endringer' : 'Legg til'}</button>{editingProgram && <button type="button" className="button ghost" onClick={() => { setErrors([]); setSaved(''); setEditingProgram(null); setEventForm({ event_date: data.trip.start_date, start_time: '12:00', title: '', description: '' }) }}>Avbryt</button>}</form></section>
       <section className="surface"><h3>Programmet</h3>{sortEvents(data.program).map((event) => <div className="admin-row" key={event.id}><div><small>{formatDate(event.event_date)} · {event.start_time.slice(0, 5)}</small><strong>{event.title}</strong></div><div className="row-buttons"><button onClick={() => startProgram(event)}>Rediger</button><button className="delete" disabled={working} onClick={() => { if (window.confirm('Slette punktet?')) perform(() => destroy('program', event.id)) }}>Slett</button></div></div>)}</section></div>}
 
-    {tab === 'checkpoints' && <div className="split-admin"><section className="surface"><span className="eyebrow">{editingTask ? 'REDIGER' : 'NY POST'}</span><h3>{editingTask ? 'Rediger rebuspost' : 'Legg til rebuspost'}</h3><form className="form-stack" onSubmit={saveTask}><label htmlFor="task-title">Navn / sted</label><input id="task-title" required maxLength="120" value={taskForm.title} onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}/><label htmlFor="task-description">Oppgave</label><textarea id="task-description" required rows="3" maxLength="1000" value={taskForm.description} onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}/><label htmlFor="task-points">Poeng</label><input id="task-points" type="number" min="1" max="500" step="1" required value={taskForm.points} onChange={(e) => setTaskForm({ ...taskForm, points: e.target.value })}/><div className="form-columns"><div><label htmlFor="task-lat">Breddegrad</label><input id="task-lat" type="number" step="any" min="-90" max="90" required value={taskForm.latitude} onChange={(e) => setTaskForm({ ...taskForm, latitude: e.target.value })}/></div><div><label htmlFor="task-lng">Lengdegrad</label><input id="task-lng" type="number" step="any" min="-180" max="180" required value={taskForm.longitude} onChange={(e) => setTaskForm({ ...taskForm, longitude: e.target.value })}/></div></div><button className="button primary" disabled={working}>{editingTask ? 'Lagre endringer' : 'Legg til post'}</button>{editingTask && <button className="button ghost" type="button" onClick={() => setEditingTask(null)}>Avbryt</button>}</form></section>
+    {tab === 'checkpoints' && <div className="split-admin"><section className="surface"><span className="eyebrow">{editingTask ? 'REDIGER' : 'NY POST'}</span><h3>{editingTask ? 'Rediger rebuspost' : 'Legg til rebuspost'}</h3><form className="form-stack" onSubmit={saveTask} noValidate>{FormErrors()}{Saved()}<label htmlFor="task-title">Navn / sted</label><input id="task-title" required maxLength="120" value={taskForm.title} {...fieldProps('title', 'task-title')} onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}/>{FieldError({ field: 'title', id: 'task-title' })}<label htmlFor="task-description">Oppgave</label><textarea id="task-description" required rows="3" maxLength="1000" {...fieldProps('description', 'task-description')} value={taskForm.description} onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}/>{FieldError({ field: 'description', id: 'task-description' })}<label htmlFor="task-points">Poeng</label><input id="task-points" type="number" min="1" max="500" step="1" required value={taskForm.points} {...fieldProps('points', 'task-points')} onChange={(e) => setTaskForm({ ...taskForm, points: e.target.value })}/>{FieldError({ field: 'points', id: 'task-points' })}<div className="form-columns"><div><label htmlFor="task-lat">Breddegrad</label><input id="task-lat" type="number" step="any" min="-90" max="90" required value={taskForm.latitude} {...fieldProps('latitude', 'task-lat')} onChange={(e) => setTaskForm({ ...taskForm, latitude: e.target.value })}/>{FieldError({ field: 'latitude', id: 'task-lat' })}</div><div><label htmlFor="task-lng">Lengdegrad</label><input id="task-lng" type="number" step="any" min="-180" max="180" required value={taskForm.longitude} {...fieldProps('longitude', 'task-lng')} onChange={(e) => setTaskForm({ ...taskForm, longitude: e.target.value })}/>{FieldError({ field: 'longitude', id: 'task-lng' })}</div></div><button className="button primary" disabled={working}>{editingTask ? 'Lagre endringer' : 'Legg til post'}</button>{editingTask && <button className="button ghost" type="button" onClick={() => { setErrors([]); setSaved(''); setEditingTask(null); setTaskForm({ title: '', description: '', points: '10', latitude: '', longitude: '' }) }}>Avbryt</button>}</form></section>
       <section className="surface"><h3>Rebuspostene</h3>{data.checkpoints.map((task) => <div className="admin-row" key={task.id}><div><small>{task.points} poeng</small><strong>{task.title}</strong></div><div className="row-buttons"><button onClick={() => startTask(task)}>Rediger</button><button className="delete" disabled={working} onClick={() => { if (window.confirm('Slette posten?')) perform(() => destroy('checkpoints', task.id)) }}>Slett</button></div></div>)}</section></div>}
 
     {tab === 'teams' && <section className="surface"><span className="eyebrow">DELTAKERFORDELING</span><h3>Lag og medlemmer</h3><p className="muted">Flytt deltakere mellom lag. Innsendinger og poeng blir hos laget som sendte dem, også etter at en deltaker er flyttet.</p>

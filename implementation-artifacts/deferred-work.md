@@ -88,3 +88,7 @@
 - source_spec: `implementation-artifacts/spec-4-4-deltakeren-ser-turens-bilder.md`
   summary: Signerte URL-er fornyes ikke før siden lastes på nytt, og ett samlet `createSignedUrls` har ingen oppdeling ved svært mange bilder.
   evidence: URL-ene varer 3600 s. Galleriet bytter nå til plassholder ved lastefeil, men henter ikke nye URL-er.
+
+- source_spec: `implementation-artifacts/spec-5-1-arrangoren-endrer-en-publisert-tur.md`
+  summary: Admin-lagringsløpet (validering før `write`, feil ved felt, bekreftelsen) og `updated_at`-stemplet i demo-`write` har ingen automatiske tester.
+  evidence: Ingen DOM- eller React-testoppsett. Ren `validateChange` er testet; resten sjekket manuelt i headless Chrome. En ren `stampUpdate`/`saveChange` kan trekkes ut senere.
