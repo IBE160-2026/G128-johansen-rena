@@ -30,7 +30,7 @@
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 
 generated: 10-28-2026 21:03
-last_updated: 11-26-2026 20:05
+last_updated: 11-26-2026 20:10
 project: G128-johansen-rena
 project_key: NOKEY
 tracking_system: file-system
@@ -120,7 +120,7 @@ action_items:
     action: "Rett overskrivingen i demo: submit skal bygge på de nyeste lagrede dataene
       etter bildebehandlingen, med test (funn 4-A)."
     owner: "Kevin og Stian"
-    status: open
+    status: done
     ref: "implementation-artifacts/epic-4-retro-2026-11-26.md"
   - id: "epic-4-retro-item-6-live-test-av-epic-4-migrasjon-for-lagfar"
     epic: 4
