@@ -1,6 +1,6 @@
 # Oppsett av appen
 
-TripBuilder AI bygger på Blåtur-malen. Appen har *Hjem, Program, Rebus med bildebevis/lag/poeng, Bilder* og et lite *Admin*-område. Turer åpnes på `/t/<slug>`, og demo-turen ligger på `/t/provetur` (seed i `src/seed/demo-trip.json`). Generator og flere turer per bruker bygges i Epic 2.
+TripBuilder AI bygger på Blåtur-malen. Appen har *Hjem, Program, Rebus med bildebevis/lag/poeng, Bilder* og et lite *Admin*-område. Turer åpnes på `/t/<slug>`, og demo-turen ligger på `/t/provetur` (seed i `src/seed/demo-trip.json`). I demomodus kan arrangøren også lage, redigere og publisere nye turer med en simulert KI. En testprotokoll står i [SENSOR.md](../SENSOR.md).
 
 ## Kom i gang (uten konto eller nøkler)
 
@@ -23,6 +23,7 @@ Kjør kommandoene i repo-roten. Åpne adressen Vite viser (vanligvis `http://loc
 ```bash
 npm test
 npm run build
+npm run test:e2e   # nettlesertester, se e2e/README.md
 ```
 
 ## Koble til Supabase (nytt utviklingsprosjekt)
@@ -30,7 +31,7 @@ npm run build
 **Ikke kjør migrasjonen på databasen fra den gamle Blåtur-appen.** Den nye modellen erstatter ikke de gamle tabellene automatisk. Opprett et separat Supabase-prosjekt først.
 
 1. Installer Supabase CLI (`npm install --save-dev supabase` eller global installasjon), og ha Docker/OrbStack tilgjengelig for lokal Supabase.
-2. Kjør `npx supabase start` for å teste lokalt. Migrasjonene `202610280001_initial.sql` og `202610280002_rebus_photo_submissions.sql` oppretter tabeller, RLS, en privat bilde-bucket og krever bildebevis på nye rebusinnsendinger. `supabase/seed.sql` lager **kun lokalt** en prøvetur med invitasjonskode `demo-2026`.
+2. Kjør `npx supabase start` for å teste lokalt. Migrasjonene i `supabase/migrations/` kjøres i rekkefølge. De to første oppretter tabeller, RLS, en privat bilde-bucket og krever bildebevis på nye rebusinnsendinger, og de senere legger til regler fra storyene. Ingen av dem er prøvd mot et Supabase-prosjekt ennå. `supabase/seed.sql` lager **kun lokalt** en prøvetur med invitasjonskode `demo-2026`.
 3. Lag `.env.local` fra `.env.example`. Sett `VITE_SUPABASE_URL` og `VITE_SUPABASE_PUBLISHABLE_KEY` til URL og publishable key for utviklingsprosjektet (for lokale nøkler: `npx supabase status`). Start Vite på nytt.
 4. For en hostet Supabase-instans: kjør migrasjonen som en migrasjon via CLI mot **utviklingsinstansen**. Opprett tur/lag og kodehash for denne instansen; **ikke bruk demokoden i produksjon**.
 5. Under **Authentication**: aktiver Anonymous Sign-Ins for deltakerflyten og Email OTP/magic links for arrangøren. Sett riktig Site URL/redirect URL til lokal Vite/Vercel-URL. Anonymous Sign-Ins bør ha bot-beskyttelse (CAPTCHA/Turnstile) før offentlig deploy.
@@ -70,8 +71,9 @@ Et gyldig utkast kan publiseres fra **Utkast**. Turen får turkode, lenke og QR-
 ## Ikke implementert ennå
 
 - Publisering i live-modus (venter på Supabase og Story 2.1).
-- **GPS-låst opplåsing** er ikke implementert ennå (Story 3.2). Den skjer i klienten, og posisjonen sendes aldri til serveren (AD-6). Arrangørens godkjenning er kontrollen.
-- KI-generering av nye turer og tema (Epic 2).
+- Generering med en ekte språkmodell (Story 2.4) og nye KI-forslag for deler av turen (Epic 6). KI-en er simulert i demo.
+- Innlogging for arrangør (Story 2.1) og å bli med med turkode og navn (Story 3.1).
+- Opplåsing med GPS er laget (Story 3.2), men ikke felttestet. Den skjer i klienten, og posisjonen sendes aldri til serveren (AD-6). Arrangørens godkjenning er kontrollen.
 - Automatisk migrering fra dagens produksjonsdatabase.
 - Manuell gjennomgang og test mot en faktisk Supabase-instans må gjøres før dette kan kalles produksjonsklart.
 

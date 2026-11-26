@@ -6,7 +6,7 @@ import { publishToDemo } from './publish.js'
 import { seedDraft } from '../data/demo.js'
 
 // Demo-implementasjonen (lagring av prøveturen og publiserte turer i nettleseren) ligger i demoStore.js, men går via api.js (AD-4).
-export { DEMO_DATA_KEY, DEMO_USER_KEY, clearDemoUser, listPublished, loadDemo, loadPublished, readDemoUser, resetDemo, resetTexts, saveDemo, writeDemoUser } from './demoStore.js'
+export { DEMO_DATA_KEY, DEMO_USER_KEY, clearDemoUser, dataKeyFor, listPublished, loadDemo, loadPublished, readDemoUser, resetDemo, resetTexts, saveDemo, writeDemoUser } from './demoStore.js'
 export { canPublish } from './publish.js'
 
 const cryptoRandom = () => crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32

@@ -4,9 +4,13 @@ Gruppeprosjekt i **IBE160 Programmering med KI** ved Høgskolen i Molde, høsten
 
 Repoet inneholder gruppens applikasjon og dokumentasjon av utvikling, testing og kvalitetssikring med KI.
 
-## Status (24. november 2026)
+> **Sensor:** Start i [SENSOR.md](SENSOR.md). Der står hvordan appen kjøres uten nøkler, en testprotokoll, og hvor grunnlaget for vurderingen ligger.
 
-- **Fase:** Planleggingen (fase 0) er ferdig, og sprint-status ligger i [implementation-artifacts/sprint-status.yaml](implementation-artifacts/sprint-status.yaml). Applikasjonen bygges på blåtur-malen (Story 1.1). Kjør den lokalt uten nøkler: `npm install && npm run dev`, og åpne adressen Vite viser. Se [docs/app-oppsett.md](docs/app-oppsett.md) for oppsett, tester og Supabase.
+## Status (26. november 2026)
+
+- **Fase:** Utvikling. Kjerneflyten virker i demomodus: lag og publiser en tur, spill den og følg opp underveis. KI-en er simulert, og live-modus med Supabase er ikke prøvd. Se [sprint-status](implementation-artifacts/sprint-status.yaml).
+- **Kjør lokalt uten nøkler:** `npm install && npm run dev`, og åpne adressen Vite viser (Node.js 22.12 eller nyere).
+- **Tester:** `npm test`, `npm run build` og `npm run test:e2e` ([om nettlesertestene](e2e/README.md)). Oppsett av Supabase står i [docs/app-oppsett.md](docs/app-oppsett.md).
 - **Plan:** [planning-artifacts/gjennomforingsplan.md](planning-artifacts/gjennomforingsplan.md)
 - **Leveranser:** [Leveranser/product-brief.md](Leveranser/product-brief.md) er den gjeldende briefen. Kopien i `planning-artifacts/briefs/` er BMAD-arbeidskopien.
 - **Planleggingsdokumenter:** PRD, UX, arkitektur og epics/stories ligger i [planning-artifacts/](planning-artifacts/).

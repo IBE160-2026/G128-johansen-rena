@@ -85,6 +85,8 @@ async function connect(target, session) {
     socket.send(JSON.stringify({ id, method, params }))
   })
   const page = { send, acceptDialogs: true, dialogs: [] }
+  const scriptRequests = new Map()
+  let abortedScripts = []
 
   socket.onmessage = (event) => {
     const message = JSON.parse(event.data)
@@ -102,7 +104,11 @@ async function connect(target, session) {
     }
     if (method === 'Runtime.exceptionThrown') session.errors.push(params.exceptionDetails.exception?.description ?? params.exceptionDetails.text)
     if (method === 'Runtime.consoleAPICalled' && params.type === 'error') session.errors.push(params.args.map((a) => a.value ?? a.description).join(' '))
-    if (method === 'Network.requestWillBeSent') session.requests.push(params.request.url)
+    if (method === 'Network.requestWillBeSent') {
+      session.requests.push(params.request.url)
+      if (params.type === 'Script') scriptRequests.set(params.requestId, params.request.url)
+    }
+    if (method === 'Network.loadingFailed' && !params.blockedReason && scriptRequests.has(params.requestId)) abortedScripts.push(`${params.errorText} ${scriptRequests.get(params.requestId)}`)
   }
 
   for (const domain of ['Page', 'Runtime', 'Network']) await send(`${domain}.enable`)
@@ -138,10 +144,22 @@ async function connect(target, session) {
   page.waitForPath = (path) => page.waitFor((p) => location.pathname + location.search === p, [path], { message: `adressen ${path}` })
   page.front = () => send('Page.bringToFront')
 
-  page.goto = async (path) => {
+  async function load(path) {
+    abortedScripts = []
     await page.run(() => { window.__old = true }).catch(() => {})
     await send('Page.navigate', { url: session.base + path })
-    await page.waitFor(() => !window.__old && document.readyState === 'complete' && document.querySelector('#root')?.children.length > 0, [], { timeout: 20000, message: `at ${path} lastes` })
+    await page.waitFor(() => !window.__old && document.readyState === 'complete' && document.querySelector('#root')?.children.length > 0, [], { timeout: 15000, message: `at ${path} lastes` })
+  }
+
+  page.goto = async (path) => {
+    try { await load(path) }
+    catch (error) {
+      // Chrome avbryter av og til hentingen av én av Vites filer. Da kjører appen aldri, og siden står blank.
+      // Bare i det tilfellet prøves det én gang til, og det skrives ut. Alle andre feil får testen til å feile.
+      if (!abortedScripts.length) throw error
+      console.warn(`ADVARSEL: ${path} ble blank fordi et skript ikke ble hentet (${abortedScripts[0]}). Laster en gang til.`)
+      await load(path)
+    }
   }
 
   /** Teller treff for en velger, eventuelt bare de med teksten. */

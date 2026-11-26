@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { DEMO_DATA_KEY, DEMO_USER_KEY, PUBLISHED_INDEX_KEY, PUBLISHED_TRIP_PREFIX, clearDemoUser, listPublished, loadDemo, loadPublished, publishDemo, readDemoUser, resetDemo, saveDemo, writeDemoUser, resetTexts } from '../src/lib/demoStore.js'
+import { DEMO_DATA_KEY, DEMO_USER_KEY, PUBLISHED_INDEX_KEY, PUBLISHED_TRIP_PREFIX, clearDemoUser, listPublished, loadDemo, loadPublished, publishDemo, readDemoUser, resetDemo, saveDemo, writeDemoUser, resetTexts, dataKeyFor } from '../src/lib/demoStore.js'
 import { publishTrip } from '../src/lib/publish.js'
 import { initialDemoData } from '../src/data/demo.js'
 
@@ -349,3 +349,13 @@ for (const [name, mutate] of [
     assert.ok(resetDemo(storage, initialDemoData, storage, a.trip.slug).trip.slug)
   })
 }
+
+test('dataKeyFor gir nøkkelen turen faktisk lagres under', () => {
+  const storage = withTrial()
+  const a = published()
+  publishDemo(storage, a)
+  assert.equal(dataKeyFor(a.trip), PUBLISHED_TRIP_PREFIX + a.trip.slug)
+  assert.equal(dataKeyFor(initialDemoData().trip), DEMO_DATA_KEY)
+  assert.equal(dataKeyFor(undefined), DEMO_DATA_KEY)
+  for (const data of [a, initialDemoData()]) assert.ok(storage.map.has(dataKeyFor(data.trip)))
+})

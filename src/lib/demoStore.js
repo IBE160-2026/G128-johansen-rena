@@ -136,6 +136,11 @@ export function loadDemo(storage, makeSeed, userStorage = storage, slug) {
   return seed
 }
 
+/** Nøkkelen turen ligger under i lagringen: en publisert tur har sin egen, ellers er det prøveturens. */
+export function dataKeyFor(trip) {
+  return trip?.demo_published === true ? PUBLISHED_TRIP_PREFIX + trip.slug : DEMO_DATA_KEY
+}
+
 /** Lagrer demo-data (en publisert tur under sin egen nøkkel). Returnerer false hvis lagringen er full eller utilgjengelig. */
 export function saveDemo(storage, data) {
   if (data?.trip?.demo_published === true) {
