@@ -60,15 +60,21 @@
 - [ ] 2026-11-26 [story-5-4-endringer](976-2026-11-26-02-50-00-story-5-4-endringer.md) — Epic 6 forutsetter utkast og generering fra Epic 2 (ikke bygget); avgrensning avgjøres før start
 - [ ] 2026-11-26 [story-2-2-ny-tur](975-2026-11-26-04-10-00-story-2-2-ny-tur.md) — «Beskrivelsen er klar» byttes ut med generering i Story 2.3 (mock-agenten)
 - [ ] 2026-11-26 [story-2-2-ny-tur](975-2026-11-26-04-10-00-story-2-2-ny-tur.md) — knappene i demo-banneret (Bytt rolle, Tilbakestill demo) er 20 px høye og under kravet om 48 px trykkflate
-- [ ] 2026-11-26 [story-2-2-ny-tur](975-2026-11-26-04-10-00-story-2-2-ny-tur.md) — merge 4.1 til 5.4 og 2.2 i rekkefølge, og vurder retrospektiv for Epic 4 og 5
-- [ ] 2026-11-26 [story-2-3-mock-agent](974-2026-11-26-05-40-00-story-2-3-mock-agent.md) — utkastet kan ikke redigeres eller publiseres ennå (Story 2.5 og 2.7)
+- [x] 2026-11-26 [story-2-2-ny-tur](975-2026-11-26-04-10-00-story-2-2-ny-tur.md) — merge 4.1 til 5.4 og 2.2 i rekkefølge, og vurder retrospektiv for Epic 4 og 5 (erstattet 2026-11-26 av nyere punkt)
+- [x] 2026-11-26 [story-2-3-mock-agent](974-2026-11-26-05-40-00-story-2-3-mock-agent.md) — utkastet kan ikke redigeres eller publiseres ennå (Story 2.5 og 2.7) (løst 2026-11-26)
 - [ ] 2026-11-26 [story-2-3-mock-agent](974-2026-11-26-05-40-00-story-2-3-mock-agent.md) — et nytt utkast overskriver det forrige (én lagringsnøkkel); vurder før 2.5 og 2.7
 - [ ] 2026-11-26 [story-2-3-mock-agent](974-2026-11-26-05-40-00-story-2-3-mock-agent.md) — Story 2.1 (innlogging) og 2.4 (Claude i Edge Function) venter på Supabase
-- [ ] 2026-11-26 [story-2-3-mock-agent](974-2026-11-26-05-40-00-story-2-3-mock-agent.md) — merge 4.1 til 5.4 og 2.2 til 2.3 i rekkefølge
-- [ ] 2026-11-26 [story-2-5-rediger-utkast](973-2026-11-26-07-40-00-story-2-5-rediger-utkast.md) — Publiser er deaktivert til Story 2.7 (publisering)
+- [x] 2026-11-26 [story-2-3-mock-agent](974-2026-11-26-05-40-00-story-2-3-mock-agent.md) — merge 4.1 til 5.4 og 2.2 til 2.3 i rekkefølge (erstattet 2026-11-26 av nyere punkt)
+- [x] 2026-11-26 [story-2-5-rediger-utkast](973-2026-11-26-07-40-00-story-2-5-rediger-utkast.md) — Publiser er deaktivert til Story 2.7 (publisering) (løst 2026-11-26)
 - [ ] 2026-11-26 [story-2-5-rediger-utkast](973-2026-11-26-07-40-00-story-2-5-rediger-utkast.md) — områdets sirkel kan ikke dras på kartet (bare felt), og fanene mangler pil-navigasjon
 - [ ] 2026-11-26 [story-2-5-rediger-utkast](973-2026-11-26-07-40-00-story-2-5-rediger-utkast.md) — live-delen av redigering (supabase-js, RLS, CHECK) er ikke med før Supabase finnes (Story 7.4)
-- [ ] 2026-11-26 [story-2-5-rediger-utkast](973-2026-11-26-07-40-00-story-2-5-rediger-utkast.md) — merge 4.1 til 5.4 og 2.2 til 2.5 i rekkefølge
+- [x] 2026-11-26 [story-2-5-rediger-utkast](973-2026-11-26-07-40-00-story-2-5-rediger-utkast.md) — merge 4.1 til 5.4 og 2.2 til 2.5 i rekkefølge (erstattet 2026-11-26 av nyere punkt)
 - [ ] 2026-11-26 [story-2-6-tema](972-2026-11-26-09-50-00-story-2-6-tema.md) — aktiv fane i meny bruker faste farger og følger ikke temaet (bevisst avgrensning)
 - [ ] 2026-11-26 [story-2-6-tema](972-2026-11-26-09-50-00-story-2-6-tema.md) — live henter ikke trips.theme ennå (Story 2.1 og 7.4)
-- [ ] 2026-11-26 [story-2-6-tema](972-2026-11-26-09-50-00-story-2-6-tema.md) — merge 4.1 til 5.4 og 2.2 til 2.6 i rekkefølge
+- [x] 2026-11-26 [story-2-6-tema](972-2026-11-26-09-50-00-story-2-6-tema.md) — merge 4.1 til 5.4 og 2.2 til 2.6 i rekkefølge (erstattet 2026-11-26 av nyere punkt)
+- [ ] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — publisert demotur beholder prøveturens navn, beskrivelse og kunngjøring fra mock-agenten, og Utkast kan ikke redigere dem
+- [ ] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — lenke og QR-kode virker bare i nettleseren turen ble publisert i; live-publisering venter på Supabase og Story 2.1
+- [ ] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — publiserte demoturer kan ikke avpubliseres eller slettes, og en ødelagt oversikt overskrives ved neste publisering
+- [ ] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — delingssiden nevner «Supabase» slik spec-en krever, selv om mikroteksten ellers skal være uten tekniske ord; vurder ny tekst
+- [ ] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — bygget varsler om en JS-fil over 500 kB (568 kB); vurder kodedeling
+- [ ] 2026-11-26 [story-2-7-publiser](971-2026-11-26-17-58-56-story-2-7-publiser.md) — merge 4.1 til 5.4 og 2.2 til 2.7 i rekkefølge
