@@ -104,3 +104,5 @@
 - [ ] 2026-11-26 [sensorstotte](963-2026-11-26-21-23-18-sensorstotte.md) — spec-4-1 står fortsatt med status `review` og har tom reviewlogg, mens sprint-status sier `done`
 - [ ] 2026-11-26 [sensorstotte](963-2026-11-26-21-23-18-sensorstotte.md) — en fane sluttet én gang å svare midt i `endringer.e2e.js`; ukjent årsak, ikke gjenskapt med diagnostikk
 - [ ] 2026-11-26 [sensorstotte](963-2026-11-26-21-23-18-sensorstotte.md) — årsaken til at Chrome av og til avbryter hentingen av en skriptfil i nettlesertestene, er ukjent
+- [ ] 2026-11-26 [rapport-til-stian](962-2026-11-26-22-24-47-rapport-til-stian.md) — `sensorstotte` er ikke merget inn i `main`
+- [ ] 2026-11-26 [rapport-til-stian](962-2026-11-26-22-24-47-rapport-til-stian.md) — send Stian lenken til rapporten
