@@ -24,3 +24,18 @@ export function shouldRefreshNow(last, now, gap = REFRESH_GAP_MS) {
   if (now < last) return true // klokka gikk bakover
   return now - last >= gap
 }
+
+/**
+ * Husker hvilke datasett som alt står i lagringen (lest derfra, eller nettopp skrevet), så de ikke lagres en gang til.
+ * Alle må huskes, ikke bare det siste: lagringen kjører etter visningen, og kommer to lesinger tett, ville det
+ * eldste ellers sett ut som en lokal endring og blitt skrevet over nyere data fra en annen fane.
+ */
+export function createStoredMarks() {
+  const marks = new WeakSet()
+  const isData = (value) => value !== null && typeof value === 'object'
+  return {
+    add: (data) => { if (isData(data)) marks.add(data) },
+    has: (data) => isData(data) && marks.has(data),
+  }
+}
+
