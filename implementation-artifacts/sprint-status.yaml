@@ -30,7 +30,7 @@
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 
 generated: 10-28-2026 21:03
-last_updated: 11-26-2026 11:00
+last_updated: 11-26-2026 19:59
 project: G128-johansen-rena
 project_key: NOKEY
 tracking_system: file-system
@@ -48,12 +48,12 @@ development_status:
 
   epic-2: in-progress
   2-1-arrangøren-logger-inn-med-magisk-lenke: backlog
-  2-2-arrangøren-beskriver-en-ny-tur: review
-  2-3-utkast-genereres-med-mock-agenten: review
+  2-2-arrangøren-beskriver-en-ny-tur: done
+  2-3-utkast-genereres-med-mock-agenten: done
   2-4-utkast-genereres-med-claude-i-edge-function: backlog
-  2-5-arrangøren-redigerer-program-og-poster: review
-  2-6-turen-får-tema: review
-  2-7-arrangøren-publiserer-turen: review
+  2-5-arrangøren-redigerer-program-og-poster: done
+  2-6-turen-får-tema: done
+  2-7-arrangøren-publiserer-turen: done
   epic-2-retrospective: optional
 
   epic-3: in-progress
@@ -65,18 +65,18 @@ development_status:
   3-6-poeng-beregnes-fra-godkjente-innsendinger: done
   epic-3-retrospective: optional
 
-  epic-4: in-progress
-  4-1-arrangøren-fordeler-deltakerne-på-lag: review
-  4-2-deltakeren-ser-ledertavlen: review
-  4-3-ledertavlen-oppdateres-i-sanntid: review
-  4-4-deltakeren-sender-bilde: review
+  epic-4: done
+  4-1-arrangøren-fordeler-deltakerne-på-lag: done
+  4-2-deltakeren-ser-ledertavlen: done
+  4-3-ledertavlen-oppdateres-i-sanntid: done
+  4-4-deltakeren-sender-bilde: done
   epic-4-retrospective: optional
 
-  epic-5: in-progress
-  5-1-arrangøren-endrer-en-publisert-tur: review
-  5-2-arrangøren-legger-til-nye-poster-og-programposter-underveis: review
-  5-3-arrangøren-deaktiverer-en-post: review
-  5-4-deltakerne-ser-endringer-med-en-gang: review
+  epic-5: done
+  5-1-arrangøren-endrer-en-publisert-tur: done
+  5-2-arrangøren-legger-til-nye-poster-og-programposter-underveis: done
+  5-3-arrangøren-deaktiverer-en-post: done
+  5-4-deltakerne-ser-endringer-med-en-gang: done
   epic-5-retrospective: optional
 
   epic-6: backlog
