@@ -1,4 +1,4 @@
-import { validateTrip } from './validate.js'
+import { pointsFromInput, validateTrip } from './validate.js'
 
 /**
  * Ren validering av én endring i en tur (Story 5.1, AD-1, AD-2). Setter endringen inn i en kopi av turen,
@@ -10,7 +10,8 @@ import { validateTrip } from './validate.js'
  * @param {string | null} id tom for et nytt element
  * @returns {{ ok: true } | { ok: false, errors: { field: string | null, message: string }[] }}
  */
-const SHOWN = { program: ['event_date', 'start_time', 'title', 'description'], checkpoints: ['title', 'description', 'points', 'latitude', 'longitude'] }
+const MAX_RADIUS_M = 2000
+const SHOWN = { program: ['event_date', 'start_time', 'title', 'description'], checkpoints: ['title', 'description', 'points', 'radius_m', 'latitude', 'longitude'] }
 const MAX_LENGTH = { title: 120, description: 1000 }
 
 export function validateChange(data, collection, record, id) {
@@ -50,6 +51,11 @@ export function validateChange(data, collection, record, id) {
     else if (issue.path.startsWith(`${prefix}.`)) push(issue.path.slice(prefix.length + 1), issue.message)
   }
 
+  if (collection === 'checkpoints' && 'radius_m' in record && !unchanged('radius_m') && Number.isFinite(record.radius_m) && record.radius_m > 0) {
+    if (!Number.isInteger(record.radius_m)) errors.push({ field: 'radius_m', message: 'Radius må være et helt antall meter.' })
+    else if (record.radius_m > MAX_RADIUS_M) errors.push({ field: 'radius_m', message: `Radius kan ikke være større enn ${MAX_RADIUS_M} meter.` })
+  }
+
   // Det skjemaene tidligere sjekket med required og maxLength, og som validateTrip ikke dekker
   const text = (value) => (typeof value === 'string' ? value.trim() : '')
   if (collection === 'checkpoints' && (isNew || 'description' in record) && !unchanged('description') && !text(merged.description)) errors.push({ field: 'description', message: 'Oppgaven må ha en beskrivelse.' })
@@ -65,4 +71,30 @@ export function validateChange(data, collection, record, id) {
     }
   }
   return errors.length === 0 ? { ok: true } : { ok: false, errors }
+}
+
+const numberOrNaN = (text) => (typeof text === 'string' && text.trim() !== '' ? Number(text) : NaN)
+
+/**
+ * Posten som skal lagres, bygget fra skjemaet (Story 5.2). Ny post får status `active` og plass etter de andre.
+ * En redigert post beholder plassen sin, og radius og stedskrav sendes bare med når arrangøren har endret dem
+ * (eldre rader kan mangle dem og skal ikke få nye verdier av å få en ny tittel).
+ */
+export function buildCheckpointRecord(form, checkpoints, editingId) {
+  const list = Array.isArray(checkpoints) ? checkpoints.filter(Boolean) : []
+  const existing = editingId ? list.find((item) => item.id === editingId) : null
+  const radius = numberOrNaN(form.radius_m)
+  const requires = form.requires_location === true
+  const record = {
+    title: form.title,
+    description: form.description,
+    points: pointsFromInput(form.points),
+    latitude: numberOrNaN(form.latitude),
+    longitude: numberOrNaN(form.longitude),
+  }
+  if (!existing) return { ...record, radius_m: radius, requires_location: requires, position: Math.max(0, ...list.map((item) => item.position ?? 0)) + 1, status: 'active' }
+  if (!Object.is(radius, existing.radius_m ?? 50)) record.radius_m = radius
+  if (requires !== (existing.requires_location === true)) record.requires_location = requires
+  record.position = existing.position
+  return record
 }

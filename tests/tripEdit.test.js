@@ -105,13 +105,15 @@ test('tom oppgavebeskrivelse og for lang tittel avvises ved feltet', async () =>
   assert.ok(result.errors.some((e) => e.field === 'title'))
 })
 
-test('feil på felt som ikke vises i skjemaet blir en felles melding', async () => {
+test('radius 0 eller tom gir feil ved radiusfeltet', async () => {
   const { validateChange } = await import('../src/lib/tripEdit.js')
   const data = { trip: { name: 'T', start_date: '2026-04-24', end_date: '2026-04-24', area: { center: { lat: 47.5, lng: 19.04 }, radius_m: 6000 } },
     program: [{ id: 'a', event_date: '2026-04-24', start_time: '12:00', title: 'A' }], checkpoints: [], teams: [] }
   const result = validateChange(data, 'checkpoints', { title: 'P', description: 'o', points: 10, latitude: 47.5, longitude: 19.04, radius_m: 0, requires_location: false }, null)
   assert.equal(result.ok, false)
-  assert.ok(result.errors.some((e) => e.field === null && /Radius/.test(e.message)))
+  assert.ok(result.errors.some((e) => e.field === 'radius_m' && /Radius/.test(e.message)))
+  const empty = validateChange(data, 'checkpoints', { title: 'P', description: 'o', points: 10, latitude: 47.5, longitude: 19.04, radius_m: NaN, requires_location: false }, null)
+  assert.ok(empty.errors.some((e) => e.field === 'radius_m'))
 })
 
 test('tom koordinat (NaN) avvises', async () => {
@@ -120,4 +122,52 @@ test('tom koordinat (NaN) avvises', async () => {
   const result = validateChange(data, 'checkpoints', { title: 'P', description: 'o', points: 10, latitude: NaN, longitude: NaN, radius_m: 50, requires_location: false }, null)
   assert.equal(result.ok, false)
   assert.ok(result.errors.some((e) => e.field === 'latitude'))
+})
+
+import { buildCheckpointRecord } from '../src/lib/tripEdit.js'
+
+const form = (extra = {}) => ({ title: 'P', description: 'o', points: '10', latitude: '47.5', longitude: '19.04', radius_m: '50', requires_location: false, ...extra })
+
+test('ny post: neste plass etter høyeste (også med hull), status aktiv, radius og stedskrav følger skjemaet', () => {
+  const list = [{ id: 'a', position: 1 }, { id: 'b', position: 4 }]
+  const r = buildCheckpointRecord(form({ radius_m: '80', requires_location: true }), list, null)
+  assert.equal(r.position, 5)
+  assert.equal(r.status, 'active')
+  assert.equal(r.radius_m, 80)
+  assert.equal(r.requires_location, true)
+  assert.equal(buildCheckpointRecord(form(), [], null).position, 1)
+})
+
+test('tomt radiusfelt blir NaN og avvises', () => {
+  const r = buildCheckpointRecord(form({ radius_m: '' }), [], null)
+  assert.ok(Number.isNaN(r.radius_m))
+})
+
+test('redigering beholder plassen og sender bare endret radius og stedskrav', () => {
+  const list = [{ id: 'a', position: 3, radius_m: 60, requires_location: true }, { id: 'legacy', position: 7 }]
+  const same = buildCheckpointRecord(form({ radius_m: '60', requires_location: true }), list, 'a')
+  assert.equal(same.position, 3)
+  assert.ok(!('radius_m' in same) && !('requires_location' in same) && !('status' in same))
+  const changed = buildCheckpointRecord(form({ radius_m: '90', requires_location: false }), list, 'a')
+  assert.equal(changed.radius_m, 90)
+  assert.equal(changed.requires_location, false)
+  const legacy = buildCheckpointRecord(form({ radius_m: '50', requires_location: false }), list, 'legacy')
+  assert.ok(!('radius_m' in legacy) && !('requires_location' in legacy)) // eldre rad uten verdier får ikke nye av en ny tittel
+})
+
+test('radius må være et helt tall og høyst 2000 meter', () => {
+  const data = { trip: { name: 'T', start_date: '2026-04-24', end_date: '2026-04-24' }, program: [{ id: 'a', event_date: '2026-04-24', start_time: '12:00', title: 'A' }], checkpoints: [], teams: [] }
+  for (const radius_m of [0.5, 2001, 1e9]) {
+    const r = validateChange(data, 'checkpoints', buildCheckpointRecord(form({ radius_m: String(radius_m) }), [], null), null)
+    assert.equal(r.ok, false)
+    assert.ok(r.errors.some((e) => e.field === 'radius_m'))
+  }
+  assert.deepEqual(validateChange(data, 'checkpoints', buildCheckpointRecord(form({ radius_m: '2000' }), [], null), null), { ok: true })
+})
+
+test('feil på et felt skjemaet ikke viser blir en felles melding', () => {
+  const data = { trip: { name: 'T', start_date: '2026-04-24', end_date: '2026-04-24' }, program: [{ id: 'a', event_date: '2026-04-24', start_time: '12:00', title: 'A' }], checkpoints: [], teams: [] }
+  const r = validateChange(data, 'checkpoints', { ...buildCheckpointRecord(form(), [], null), status: 'ugyldig' }, null)
+  assert.equal(r.ok, false)
+  assert.ok(r.errors.some((e) => e.field === null))
 })
