@@ -3,7 +3,7 @@ import { initialDemoData } from '../data/demo.js'
 import { demoMode, supabase } from '../lib/supabase.js'
 import { clearTripCache, isNetworkError, loadTripCache, saveTripCache } from '../lib/tripCache.js'
 import { compressImage } from '../lib/image.js'
-import { buildSubmissionEntry, validateNote, validationError } from '../lib/submission.js'
+import { addDemoSubmission, buildSubmissionEntry, validateNote, validationError } from '../lib/submission.js'
 import { applyReview, buildReviewUpdate } from '../lib/review.js'
 import { changedItems, isChanged as isItemChanged, loadSeen, markAllSeen as markAllItemsSeen, markSeen as markItemSeen, mergeSeen, readSeen, saveSeen } from '../lib/changes.js'
 import { hasSubmissions } from '../lib/scoring.js'
@@ -295,9 +295,14 @@ export function TripProvider({ slug, children }) {
     const entry = buildSubmissionEntry({ tripId: data.trip.id, teamId: own.team_id, checkpointId, userId, note })
     if (demoMode) {
       const url = await demoImageDataUrl(file)
-      const updated = { ...data, submissions: [{ ...entry, url, id: crypto.randomUUID(), created_at: new Date().toISOString() }, ...data.submissions] }
-      if (!saveDemo(storage, updated)) throw new Error('Demolagringen er full. Slett noen bilder eller nullstill demoen.')
-      setData(updated)
+      // Les på nytt etter ventingen: `data` er fra før, og en annen fane kan ha lagret endringer imens
+      const added = addDemoSubmission(loadDemo(storage, initialDemoData, userStorage, slug), { ...entry, url, id: crypto.randomUUID(), created_at: new Date().toISOString() })
+      if (added.error) {
+        readDemoAgain() // vis det som gjorde at innsendingen ble avvist
+        throw validationError(added.error)
+      }
+      if (!saveDemo(storage, added.data)) throw new Error('Demolagringen er full. Slett noen bilder eller nullstill demoen.')
+      setData(added.data)
     } else {
       const blob = await compressImage(file) // maks 1600 px, JPEG (AD-11)
       const path = await uploadPhoto(data.trip.id, userId, blob)

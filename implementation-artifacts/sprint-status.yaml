@@ -30,7 +30,7 @@
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 
 generated: 10-28-2026 21:03
-last_updated: 11-26-2026 11:00
+last_updated: 11-26-2026 20:10
 project: G128-johansen-rena
 project_key: NOKEY
 tracking_system: file-system
@@ -48,12 +48,12 @@ development_status:
 
   epic-2: in-progress
   2-1-arrangøren-logger-inn-med-magisk-lenke: backlog
-  2-2-arrangøren-beskriver-en-ny-tur: review
-  2-3-utkast-genereres-med-mock-agenten: review
+  2-2-arrangøren-beskriver-en-ny-tur: done
+  2-3-utkast-genereres-med-mock-agenten: done
   2-4-utkast-genereres-med-claude-i-edge-function: backlog
-  2-5-arrangøren-redigerer-program-og-poster: review
-  2-6-turen-får-tema: review
-  2-7-arrangøren-publiserer-turen: review
+  2-5-arrangøren-redigerer-program-og-poster: done
+  2-6-turen-får-tema: done
+  2-7-arrangøren-publiserer-turen: done
   epic-2-retrospective: optional
 
   epic-3: in-progress
@@ -65,19 +65,19 @@ development_status:
   3-6-poeng-beregnes-fra-godkjente-innsendinger: done
   epic-3-retrospective: optional
 
-  epic-4: in-progress
-  4-1-arrangøren-fordeler-deltakerne-på-lag: review
-  4-2-deltakeren-ser-ledertavlen: review
-  4-3-ledertavlen-oppdateres-i-sanntid: review
-  4-4-deltakeren-sender-bilde: review
-  epic-4-retrospective: optional
+  epic-4: done
+  4-1-arrangøren-fordeler-deltakerne-på-lag: done
+  4-2-deltakeren-ser-ledertavlen: done
+  4-3-ledertavlen-oppdateres-i-sanntid: done
+  4-4-deltakeren-sender-bilde: done
+  epic-4-retrospective: done
 
-  epic-5: in-progress
-  5-1-arrangøren-endrer-en-publisert-tur: review
-  5-2-arrangøren-legger-til-nye-poster-og-programposter-underveis: review
-  5-3-arrangøren-deaktiverer-en-post: review
-  5-4-deltakerne-ser-endringer-med-en-gang: review
-  epic-5-retrospective: optional
+  epic-5: done
+  5-1-arrangøren-endrer-en-publisert-tur: done
+  5-2-arrangøren-legger-til-nye-poster-og-programposter-underveis: done
+  5-3-arrangøren-deaktiverer-en-post: done
+  5-4-deltakerne-ser-endringer-med-en-gang: done
+  epic-5-retrospective: done
 
   epic-6: backlog
   6-1-arrangøren-regenererer-én-post: backlog
@@ -95,18 +95,72 @@ development_status:
 # Readiness-funn fra sprint planning (CONCERNS), ikke fra en retrospektiv
 action_items:
   - epic: 1
-    action: "Blåtur-malen og gruppens arkitektur mangler. Story 1.5 har ikke noe navigasjonsmønster før malen er inne, og spinen må oppdateres (bmad-architecture, Update) når den kommer."
+    action: "Blåtur-malen og gruppens arkitektur mangler. Story 1.5 har ikke noe navigasjonsmønster
+      før malen er inne, og spinen må oppdateres (bmad-architecture, Update) når den
+      kommer."
     owner: "Kevin og Stian"
     status: open
   - epic: 2
-    action: "Fargetokens og temalister (Story 1.1 og 2.6) er antakelser i DESIGN.md. Gruppen skal vurdere fargene."
+    action: "Fargetokens og temalister (Story 1.1 og 2.6) er antakelser i DESIGN.md.
+      Gruppen skal vurdere fargene."
     owner: "Kevin og Stian"
     status: open
   - epic: 4
-    action: "Personvern for bilder (samtykke, lagringstid og sletting) må avklares før Story 4.4 (PRD §8.6)."
+    action: "Personvern for bilder (samtykke, lagringstid og sletting) må avklares
+      før Story 4.4 (PRD §8.6)."
     owner: "Kevin og Stian"
     status: open
   - epic: 4
-    action: "Testoppsett for sanntidsledertavle på eksamen må avgjøres før Story 4.3 (PRD §8.4)."
+    action: "Testoppsett for sanntidsledertavle på eksamen må avgjøres før Story 4.3
+      (PRD §8.4)."
     owner: "Kevin og Stian"
     status: open
+  - id: "epic-4-retro-item-5-rett-overskrivingen-i-demo-submit-skal-b"
+    epic: 4
+    action: "Rett overskrivingen i demo: submit skal bygge på de nyeste lagrede dataene
+      etter bildebehandlingen, med test (funn 4-A)."
+    owner: "Kevin og Stian"
+    status: done
+    ref: "implementation-artifacts/epic-4-retro-2026-11-26.md"
+  - id: "epic-4-retro-item-6-live-test-av-epic-4-migrasjon-for-lagfar"
+    epic: 4
+    action: "Live-test av Epic 4 (migrasjon for lagfarge, Realtime-publication i en
+      migrasjon, 4.3 og 4.4 mot Supabase), og avgjør personvern for bilder og testoppsett
+      til eksamen (funn 4-C, 4-D, 4-F)."
+    owner: "Kevin og Stian"
+    status: open
+    ref: "implementation-artifacts/epic-4-retro-2026-11-26.md"
+  - id: "epic-4-retro-item-7-legg-nettlesertestene-inn-i-repoet-som-g"
+    epic: 4
+    action: "Legg nettlesertestene inn i repoet som grunnlag for Story 7.1, med skjermbilder
+      og mål av utseendet (funn 4-H)."
+    owner: "Kevin og Stian"
+    status: open
+    ref: "implementation-artifacts/epic-4-retro-2026-11-26.md"
+  - id: "epic-4-retro-item-8-samle-statustekstene-så-team-jsx-bruker"
+    epic: 4
+    action: "Samle statustekstene så Team.jsx bruker samme regel som checkpointStatus
+      (funn 4-G)."
+    owner: "Kevin og Stian"
+    status: open
+    ref: "implementation-artifacts/epic-4-retro-2026-11-26.md"
+  - id: "epic-5-retro-item-9-live-test-av-epic-5-kjør-de-to-migrasjon"
+    epic: 5
+    action: "Live-test av Epic 5: kjør de to migrasjonene og prøv databasekravene
+      i 5.1, 5.3 og 5.4 med egne arrangør- og deltakerbrukere (funn 5-C, 5-D)."
+    owner: "Kevin og Stian"
+    status: open
+    ref: "implementation-artifacts/epic-5-retro-2026-11-26.md"
+  - id: "epic-5-retro-item-10-del-opp-de-lange-linjene-i-admin-jsx-ute"
+    epic: 5
+    action: "Del opp de lange linjene i Admin.jsx uten å endre oppførsel (funn 5-E)."
+    owner: "Kevin og Stian"
+    status: open
+    ref: "implementation-artifacts/epic-5-retro-2026-11-26.md"
+  - id: "epic-5-retro-item-11-oppdater-epics-md-så-story-4-1-og-5-1-be"
+    epic: 5
+    action: "Oppdater epics.md så Story 4.1 og 5.1 beskriver Admin slik det ble bygget
+      (funn 5-F)."
+    owner: "Kevin og Stian"
+    status: open
+    ref: "implementation-artifacts/epic-5-retro-2026-11-26.md"
