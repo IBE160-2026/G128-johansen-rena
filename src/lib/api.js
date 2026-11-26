@@ -1,6 +1,8 @@
 import { supabase } from './supabase.js'
 import { validateImage } from './core.js'
 import { applySignedUrls, pathsToSign } from './media.js'
+import { generateDraft } from './generate.js'
+import { seedDraft } from '../data/demo.js'
 
 // Demo-implementasjonen (lagring av seed-turen i nettleseren) ligger i demoStore.js, men går via api.js (AD-4).
 export { DEMO_DATA_KEY, DEMO_USER_KEY, clearDemoUser, loadDemo, readDemoUser, resetDemo, saveDemo, writeDemoUser } from './demoStore.js'
@@ -65,4 +67,11 @@ export async function changeRecord(table, id, patch) {
 
 export async function removeRecord(table, id) {
   return unwrap(await supabase.from(table).delete().eq('id', id))
+}
+
+export { GENERATE_STEPS } from './generate.js'
+
+/** Lager et utkast fra en TripRequest (demo, Story 2.3; live kommer i 2.4). Se `generateDraft` i generate.js. */
+export function generateTrip(req, options) {
+  return generateDraft(req, seedDraft, options)
 }

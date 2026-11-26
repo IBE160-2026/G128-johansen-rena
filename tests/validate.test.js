@@ -232,3 +232,15 @@ for (const input of [null, undefined, 'tekst', 42, []]) {
 test('tomt objekt avvises med én feil per manglende del', () => {
   assert.deepEqual(issuesOf({}).map((issue) => issue.path), ['trip', 'program_items', 'checkpoints', 'teams'])
 })
+
+test('validateTrip med forespørsel: periode, lag og poster må stemme', async () => {
+  const { validateTrip: vt } = await import('../src/lib/validate.js')
+  const d = validDraft()
+  const periode = { destination: 'x', start_date: d.trip.start_date, end_date: d.trip.end_date, participant_count: 50, description: 'y'.repeat(40) }
+  assert.deepEqual(vt(d, periode), { ok: true })
+  assert.equal(vt(d, { ...periode, end_date: '2026-04-26' }).ok, false)
+  assert.equal(vt(d, { ...periode, team_count: d.teams.length + 1 }).ok, false)
+  assert.equal(vt(d, { ...periode, post_count: d.checkpoints.length + 1 }).ok, false)
+  assert.deepEqual(vt(d), { ok: true })
+  assert.deepEqual(vt(d, 'ikke en forespørsel'), { ok: true }) // ugyldig forespørsel hoppes over
+})

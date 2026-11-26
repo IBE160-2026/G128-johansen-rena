@@ -61,3 +61,7 @@
 - [ ] 2026-11-26 [story-2-2-ny-tur](975-2026-11-26-04-10-00-story-2-2-ny-tur.md) — «Beskrivelsen er klar» byttes ut med generering i Story 2.3 (mock-agenten)
 - [ ] 2026-11-26 [story-2-2-ny-tur](975-2026-11-26-04-10-00-story-2-2-ny-tur.md) — knappene i demo-banneret (Bytt rolle, Tilbakestill demo) er 20 px høye og under kravet om 48 px trykkflate
 - [ ] 2026-11-26 [story-2-2-ny-tur](975-2026-11-26-04-10-00-story-2-2-ny-tur.md) — merge 4.1 til 5.4 og 2.2 i rekkefølge, og vurder retrospektiv for Epic 4 og 5
+- [ ] 2026-11-26 [story-2-3-mock-agent](974-2026-11-26-05-40-00-story-2-3-mock-agent.md) — utkastet kan ikke redigeres eller publiseres ennå (Story 2.5 og 2.7)
+- [ ] 2026-11-26 [story-2-3-mock-agent](974-2026-11-26-05-40-00-story-2-3-mock-agent.md) — et nytt utkast overskriver det forrige (én lagringsnøkkel); vurder før 2.5 og 2.7
+- [ ] 2026-11-26 [story-2-3-mock-agent](974-2026-11-26-05-40-00-story-2-3-mock-agent.md) — Story 2.1 (innlogging) og 2.4 (Claude i Edge Function) venter på Supabase
+- [ ] 2026-11-26 [story-2-3-mock-agent](974-2026-11-26-05-40-00-story-2-3-mock-agent.md) — merge 4.1 til 5.4 og 2.2 til 2.3 i rekkefølge

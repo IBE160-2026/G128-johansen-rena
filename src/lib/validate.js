@@ -54,9 +54,10 @@ function datesBetween(start, end) {
 
 /**
  * @param {unknown} draft
+ * @param {unknown} [req] valgfri TripRequest (AD-15). Er den gyldig, må utkastet stemme med periode, lagtall og postantall.
  * @returns {{ ok: true } | { ok: false, issues: Issue[] }}
  */
-export function validateTrip(draft) {
+export function validateTrip(draft, req) {
   /** @type {Issue[]} */
   const issues = []
   const add = (path, message) => issues.push({ path, message })
@@ -157,6 +158,15 @@ export function validateTrip(draft) {
       else if (names.has(team.name.trim())) add(`${at}.name`, 'To lag kan ikke ha samme navn.')
       else names.add(team.name.trim())
     })
+  }
+
+  if (validateTripRequest(req).ok) {
+    if (trip && (trip.start_date !== req.start_date || trip.end_date !== req.end_date)) add('trip', 'Perioden stemmer ikke med forespørselen.')
+    if (req.team_count !== undefined && Array.isArray(draft.teams) && draft.teams.length !== req.team_count) add('teams', `Utkastet må ha ${req.team_count} lag.`)
+    if (req.post_count !== undefined && checkpoints) {
+      const active = checkpoints.filter((cp) => isObject(cp) && cp.status !== 'deactivated').length
+      if (active !== req.post_count) add('checkpoints', `Utkastet må ha ${req.post_count} aktive poster.`)
+    }
   }
 
   return issues.length === 0 ? { ok: true } : { ok: false, issues }
