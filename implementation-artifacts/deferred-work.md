@@ -81,3 +81,10 @@
 - source_spec: `implementation-artifacts/spec-4-3-ledertavlen-oppdateres-i-sanntid.md`
   summary: En lest-på-nytt-henting kan overskrive en lokal endring som ikke ble lagret fordi demolagringen var full.
   evidence: `readDemoAgain` erstatter tilstanden med lagret kopi. Sjelden (full lagring), og feilmeldingen vises først.
+
+- source_spec: `implementation-artifacts/spec-4-4-deltakeren-ser-turens-bilder.md`
+  summary: Samlet signering i `loadTrip` (ett kall, tom liste, feil svelges) og plassholderen i galleriet har ingen automatiske tester.
+  evidence: `api.js` kan ikke importeres uten Supabase-miljø i `node --test`, og repoet har ingen komponenttester. Dekkes av Story 7.4 (live) og manuell sjekk.
+- source_spec: `implementation-artifacts/spec-4-4-deltakeren-ser-turens-bilder.md`
+  summary: Signerte URL-er fornyes ikke før siden lastes på nytt, og ett samlet `createSignedUrls` har ingen oppdeling ved svært mange bilder.
+  evidence: URL-ene varer 3600 s. Galleriet bytter nå til plassholder ved lastefeil, men henter ikke nye URL-er.

@@ -42,3 +42,8 @@
 - [ ] 2026-11-25 [story-4-2-ledertavlen](982-2026-11-25-20-40-00-story-4-2-ledertavlen.md) — merge 4.1 og 4.2 (4.2 bygger på 4.1) og sett begge til done
 - [ ] 2026-11-25 [story-4-2-ledertavlen](982-2026-11-25-20-40-00-story-4-2-ledertavlen.md) — prøv aria-live-melding, dra-ned-gest og animasjon for hånd på mobil
 - [ ] 2026-11-25 [story-4-2-ledertavlen](982-2026-11-25-20-40-00-story-4-2-ledertavlen.md) — vurder «Oppdateres live»-merket i Story 4.3
+- [ ] 2026-11-25 [story-4-3-sanntid](981-2026-11-25-21-30-00-story-4-3-sanntid.md) — test Realtime og 5 s-kravet mot Supabase (Story 7.4)
+- [ ] 2026-11-25 [story-4-3-sanntid](981-2026-11-25-21-30-00-story-4-3-sanntid.md) — merge 4.1, 4.2 og 4.3 i rekkefølge og sett dem til done
+- [ ] 2026-11-25 [story-4-4-bilder](980-2026-11-25-22-30-00-story-4-4-bilder.md) — test samlet signering og avvisning fra annen tur mot Supabase (Story 7.4)
+- [ ] 2026-11-25 [story-4-4-bilder](980-2026-11-25-22-30-00-story-4-4-bilder.md) — merge 4.1 til 4.4 i rekkefølge, sett dem til done og vurder retrospektiv for Epic 4
+- [ ] 2026-11-25 [story-4-4-bilder](980-2026-11-25-22-30-00-story-4-4-bilder.md) — samsvar sprint-nøkkelen 4-4-deltakeren-sender-bilde med epics-tittelen «ser turens bilder»

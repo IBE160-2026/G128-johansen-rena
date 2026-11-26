@@ -1,5 +1,6 @@
 import { supabase } from './supabase.js'
 import { validateImage } from './core.js'
+import { applySignedUrls, pathsToSign } from './media.js'
 
 // Demo-implementasjonen (lagring av seed-turen i nettleseren) ligger i demoStore.js, men går via api.js (AD-4).
 export { DEMO_DATA_KEY, DEMO_USER_KEY, clearDemoUser, loadDemo, readDemoUser, resetDemo, saveDemo, writeDemoUser } from './demoStore.js'
@@ -27,12 +28,18 @@ export async function loadTrip(userId, slug) {
   ])
   const visibleDestination = unwrap(await supabase.rpc('get_trip_destination', { p_trip: tripId }))
   const result = { trip: { ...unwrap(trip), destination: visibleDestination || 'Hemmelig' }, members: unwrap(members), teams: unwrap(teams), program: unwrap(program), checkpoints: unwrap(checkpoints), submissions: unwrap(submissions), photos: unwrap(photos) }
-  for (const item of [...result.photos, ...result.submissions]) {
-    if (item.storage_path) {
-      const signed = await supabase.storage.from('trip-media').createSignedUrl(item.storage_path, 3600)
-      item.url = signed.data?.signedUrl ?? null
-    }
+  const items = [...result.photos, ...result.submissions]
+  const paths = pathsToSign(items, tripId)
+  let signed = []
+  if (paths.length) {
+    try {
+      const res = await supabase.storage.from('trip-media').createSignedUrls(paths, 3600)
+      if (res.error) console.warn('Kunne ikke signere bilde-URL-er', res.error)
+      signed = res.error ? [] : res.data
+    } catch (e) { console.warn('Kunne ikke signere bilde-URL-er', e); signed = [] }
   }
+  result.photos = applySignedUrls(result.photos, signed)
+  result.submissions = applySignedUrls(result.submissions, signed)
   return { ...result, own }
 }
 
