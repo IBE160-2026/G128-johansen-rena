@@ -79,3 +79,15 @@ test('deaktiverte poster teller ikke som aktive', () => {
   d.checkpoints[0].status = 'deactivated'
   assert.equal(validateTrip(d, r).ok, false)
 })
+
+test('turens tekster passer forespørselen og nevner ikke prøveturen', () => {
+  const d = buildMockDraft(req({ participant_count: 9 }), seedDraft)
+  assert.equal(d.trip.name, `Tur til ${seedDraft.trip.destination}`)
+  assert.equal(d.trip.description, `3 dager i ${seedDraft.trip.destination} for 9 deltakere, med program og rebus gjennom byen.`)
+  assert.doesNotMatch(`${d.trip.name} ${d.trip.description} ${d.trip.announcement}`, /prøvetur|åtte venner/i)
+})
+
+test('en dag og en deltaker skrives i entall', () => {
+  const d = buildMockDraft(req({ end_date: '2026-06-01', participant_count: 1 }), seedDraft)
+  assert.match(d.trip.description, /^En dag i .+ for 1 deltaker,/)
+})

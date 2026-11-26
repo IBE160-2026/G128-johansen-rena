@@ -8,6 +8,7 @@ import { formatDate, sortEvents } from '../lib/core.js'
 import { pointsFromInput } from '../lib/validate.js'
 import { buildCheckpointRecord, validateChange } from '../lib/tripEdit.js'
 import { memberCounts, teamColorToken } from '../lib/teams.js'
+import { resetTexts } from '../lib/api.js'
 
 const EMPTY_TASK = { title: '', description: '', points: '10', latitude: '', longitude: '', radius_m: '50', requires_location: false }
 const tabs = [['overview', 'Oversikt'], ['program', 'Program'], ['checkpoints', 'Rebusposter'], ['teams', 'Lag'], ['inbox', 'Innsendinger']]
@@ -118,7 +119,7 @@ export default function Admin() {
       <section className="surface"><div className="section-title"><div><span className="eyebrow">TURINNSTILLINGER</span><h3>Informasjon til deltakerne</h3></div></div>
         <form className="form-stack" onSubmit={(e) => { e.preventDefault(); perform(() => updateTrip({ announcement })) }}><label htmlFor="announcement">Felles beskjed</label><textarea id="announcement" rows="3" maxLength="500" value={announcement} onChange={(e) => setAnnouncement(e.target.value)}/><button className="button primary" disabled={working}>Lagre beskjed</button></form>
         <div className="settings-row"><span><strong>Vis destinasjon</strong><small>Avslør byen for alle deltakere</small></span><button className={`button small ${data.trip.destination_revealed ? 'primary' : 'outline'}`} disabled={working} onClick={() => perform(() => updateTrip({ destination_revealed: !data.trip.destination_revealed }))}>{data.trip.destination_revealed ? 'Synlig ✓' : 'Hemmelig'}</button></div>
-        {demoMode && <div className="settings-row"><span><strong>Nullstill demo</strong><small>Sletter lokale demoendringer i denne nettleseren</small></span><button className="button small danger-button" onClick={() => { if (window.confirm('Nullstille demoen?')) resetDemo() }}>Nullstill</button></div>}
+        {demoMode && <div className="settings-row"><span><strong>{resetTexts(data.trip).title}</strong><small>{resetTexts(data.trip).description}</small></span><button className="button small danger-button" onClick={() => { if (window.confirm(resetTexts(data.trip).question)) resetDemo() }}>Nullstill</button></div>}
       </section>
       <section className="surface"><div className="section-title"><h3>Stillingen</h3></div>{leaderboard.map((team) => <div className="admin-row" key={team.id}><span>{team.emoji} {team.name}</span><strong>{team.points} p</strong></div>)}</section>
     </div>}

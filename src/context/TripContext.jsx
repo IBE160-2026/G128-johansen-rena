@@ -30,7 +30,7 @@ function fileAsDataUrl(file) {
 }
 
 export function TripProvider({ slug, children }) {
-  const [data, setData] = useState(() => demoMode ? loadDemo(storage, initialDemoData, userStorage) : null)
+  const [data, setData] = useState(() => demoMode ? loadDemo(storage, initialDemoData, userStorage, slug) : null)
   const [session, setSession] = useState(null)
   const [demoUserId, setDemoUserId] = useState(savedDemoUser)
   const [loading, setLoading] = useState(!demoMode)
@@ -51,11 +51,11 @@ export function TripProvider({ slug, children }) {
   /** Leser demodata fra lagring uten å lagre eller sende signal på nytt. */
   const readDemoAgain = useCallback(() => {
     let next = null
-    try { next = loadDemo(storage, initialDemoData, userStorage) } catch { /* ødelagt lagring: behold det som vises */ }
+    try { next = loadDemo(storage, initialDemoData, userStorage, slug) } catch { /* ødelagt lagring: behold det som vises */ }
     if (!next?.trip) return
     receivedRef.current = next
     setData(next)
-  }, [])
+  }, [slug])
 
   const refresh = useCallback(async (userId) => {
     if (demoMode || !userId) return
@@ -373,7 +373,7 @@ export function TripProvider({ slug, children }) {
 
   function resetDemo() {
     if (!demoMode) return
-    setData(resetDemoStore(storage, initialDemoData, userStorage))
+    setData(resetDemoStore(storage, initialDemoData, userStorage, slug))
     setDemoUserId(null)
     setError('')
   }

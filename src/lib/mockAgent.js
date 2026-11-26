@@ -15,6 +15,17 @@ const EXTRA_TEAMS = [
   { name: 'Delfinene', emoji: '🐬' }, { name: 'Hjortene', emoji: '🦌' }, { name: 'Pantrene', emoji: '🐆' },
 ]
 
+/** Navn, beskrivelse og velkomstbeskjed som passer forespørselen, ikke prøveturens. */
+function tripTexts(destination, dayCount, participants) {
+  const days = dayCount === 1 ? 'En dag' : `${dayCount} dager`
+  const group = participants > 0 ? ` for ${participants} ${participants === 1 ? 'deltaker' : 'deltakere'}` : ''
+  return {
+    name: `Tur til ${destination}`,
+    description: `${days} i ${destination}${group}, med program og rebus gjennom byen.`,
+    announcement: 'Velkommen til turen! 🎉',
+  }
+}
+
 /** Stabil uuid-lignende id fra en tekst (FNV-1a i fire omganger). */
 function stableId(text) {
   let hex = ''
@@ -37,12 +48,14 @@ export function buildMockDraft(req, seed) {
 
   const trip = { ...structuredClone(seed.trip), start_date: req.start_date, end_date: req.end_date }
   trip.id = id('trip', 0)
+  const dates = datesBetween(req.start_date, req.end_date)
+  Object.assign(trip, tripTexts(seed.trip.destination, dates.length, req.participant_count))
 
   // Programmet: seed-dagene i rekkefølge, om igjen når de er brukt opp.
   const seedDates = [...new Set(seed.program_items.map((item) => item.event_date))].sort()
   const days = seedDates.map((date) => seed.program_items.filter((item) => item.event_date === date))
   const program_items = []
-  datesBetween(req.start_date, req.end_date).forEach((date, dayIndex) => {
+  dates.forEach((date, dayIndex) => {
     days[dayIndex % days.length].forEach((item, i) => {
       program_items.push({ ...item, id: id('program', `${dayIndex}-${i}`), event_date: date })
     })

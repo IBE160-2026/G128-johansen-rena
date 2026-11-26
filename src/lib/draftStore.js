@@ -27,6 +27,12 @@ export function loadDraft(storage) {
   } catch { return null }
 }
 
+/** Er det lagrede utkastet fortsatt det samme? Nei når en annen fane har publisert eller byttet det ut. */
+export function isCurrentDraft(storage, createdAt) {
+  const latest = loadDraft(storage)
+  return latest !== null && latest.created_at === createdAt
+}
+
 export function clearDraft(storage) {
   try { storage.removeItem(DRAFT_KEY) } catch { /* ignorer */ }
 }

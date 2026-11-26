@@ -128,3 +128,15 @@ h1,h2,h3,.sidebar-brand strong{font-family:'Cormorant Garamond',Georgia,serif}h1
 .theme-chosen{font-size:12px;font-weight:800;margin-left:auto}
 
 .hero-card .eyebrow{color:var(--accent-on-dark)}
+/* Story 2.7: delingssiden, publiserte turer i Mine turer og turkoden fra lenken */
+.trip-list li{flex-wrap:wrap}
+.trip-list li>div:first-child{flex:1 1 200px;min-width:0;overflow-wrap:anywhere}
+.trip-actions{display:flex;gap:8px;flex-shrink:0}
+.share-card{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.share-card h2{margin:0;font-size:var(--text-meta);color:var(--muted)}
+.share-card p{margin:0}
+.share-card .share-code{font-size:40px;font-weight:800;letter-spacing:6px;color:var(--ink-primary);user-select:all}
+.share-card .share-link{max-width:100%;overflow-wrap:anywhere;font-size:var(--text-meta);user-select:all}
+.share-qr{width:min(240px,100%);height:auto}
+.link-code{margin:0;overflow-wrap:anywhere}
+.welcome-form>.button,.welcome-form select,.welcome-form input,.welcome-form .form-stack .button,.segmented button{min-height:var(--tap-min)}

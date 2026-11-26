@@ -63,8 +63,13 @@ For lokal seed er tur-UUID-en som vist. For hostet miljø må du bruke faktisk U
 
 Ølteller, spinnhjul, avstemninger, hemmelige oppdrag, generert vær og pakkevisning. Dette kan senere bli valgfrie moduler.
 
+### Publisering i demo
+
+Et gyldig utkast kan publiseres fra **Utkast**. Turen får turkode, lenke og QR-kode (laget lokalt med pakken `qrcode`) og kan spilles på `/t/<slug>` med fiktive deltakere. Den lagres bare i nettleseren den ble publisert i, så lenken og QR-koden virker ikke på andre enheter. **Tilbakestill demo** på en publisert tur setter den tilbake til slik den ble publisert. Avpublisering og sletting finnes ikke ennå.
+
 ## Ikke implementert ennå
 
+- Publisering i live-modus (venter på Supabase og Story 2.1).
 - **GPS-låst opplåsing** er ikke implementert ennå (Story 3.2). Den skjer i klienten, og posisjonen sendes aldri til serveren (AD-6). Arrangørens godkjenning er kontrollen.
 - KI-generering av nye turer og tema (Epic 2).
 - Automatisk migrering fra dagens produksjonsdatabase.

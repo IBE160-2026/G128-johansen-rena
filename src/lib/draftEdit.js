@@ -25,6 +25,16 @@ export function updateElement(draft, section, id, patch) {
   return { ...draft, [section]: next }
 }
 
+/** Turens tekster som arrangøren kan redigere, med lengste lengde (beskjeden har samme grense som i Admin). */
+export const TRIP_TEXT_LIMITS = { name: 120, description: 500, announcement: 500 }
+
+/** Endrer navn, beskrivelse eller velkomstbeskjed. Andre felt og verdier som ikke er tekst, ignoreres. */
+export function updateTripText(draft, patch) {
+  if (!isObject(draft) || !isObject(draft.trip) || !isObject(patch)) return draft
+  const fields = Object.entries(patch).filter(([key, value]) => Object.hasOwn(TRIP_TEXT_LIMITS, key) && typeof value === 'string')
+  return fields.length ? { ...draft, trip: { ...draft.trip, ...Object.fromEntries(fields) } } : draft
+}
+
 /** Feil for et område, ellers null. Samme grenser som validateTrip. */
 export function areaError(area) {
   if (!isObject(area) || !isObject(area.center)) return 'Området mangler midtpunkt.'

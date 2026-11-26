@@ -135,3 +135,13 @@
 - source_spec: `implementation-artifacts/spec-2-6-turen-far-tema.md`
   summary: Aktiv fane i sidemeny og bunnmeny bruker faste farger og følger ikke temaet; live henter ikke `trips.theme`.
   evidence: Spec begrenser temaet til toppen og primærfargede flater (beslutning 6). Live-henting av tema følger med Story 2.1 og 7.4.
+
+- source_spec: `implementation-artifacts/spec-2-7-arrangoren-publiserer-turen.md`
+  summary: Delingssiden, publiseringsknappen, Mine turer, turkoden på velkomstsiden og koblingen av `slug` i TripContext har ingen komponenttester.
+  evidence: Ingen DOM-testoppsett. `publish.js` og `demoStore.js` er testet som rene funksjoner; flyten er sjekket i headless Chrome på 390 px.
+- source_spec: `implementation-artifacts/spec-2-7-arrangoren-publiserer-turen.md`
+  summary: Publisering i live-modus er ikke bygget, og publiserte demoturer kan ikke avpubliseres eller slettes.
+  evidence: Bevisst avgrensning i spec (beslutning 11 og «Never»). Gamle publiserte turer tar plass i localStorage.
+- source_spec: `implementation-artifacts/spec-2-7-arrangoren-publiserer-turen.md`
+  summary: Er oversikten over publiserte turer ødelagt, overskrives den ved neste publisering, og eldre turer forsvinner fra Mine turer. Delvis ødelagte turer (for eksempel uten turkode) oppdages ikke.
+  evidence: Funnet i review. Krever at localStorage er endret utenfor appen. Turene ligger fortsatt under egne nøkler og kan åpnes på adressen.

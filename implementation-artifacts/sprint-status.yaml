@@ -30,7 +30,7 @@
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 
 generated: 10-28-2026 21:03
-last_updated: 11-26-2026 09:00
+last_updated: 11-26-2026 11:00
 project: G128-johansen-rena
 project_key: NOKEY
 tracking_system: file-system
@@ -53,7 +53,7 @@ development_status:
   2-4-utkast-genereres-med-claude-i-edge-function: backlog
   2-5-arrangøren-redigerer-program-og-poster: review
   2-6-turen-får-tema: review
-  2-7-arrangøren-publiserer-turen: backlog
+  2-7-arrangøren-publiserer-turen: review
   epic-2-retrospective: optional
 
   epic-3: in-progress

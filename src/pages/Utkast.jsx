@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, Navigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useTrip } from '../context/TripContext.jsx'
 import DemoBanner from '../components/DemoBanner.jsx'
 import LocationPicker from '../components/LocationPicker.jsx'
-import { loadDraft, saveDraft } from '../lib/draftStore.js'
-import { areaError, draftErrors, updateArea, updateElement, updateTheme } from '../lib/draftEdit.js'
+import { clearDraft, isCurrentDraft, loadDraft, saveDraft } from '../lib/draftStore.js'
+import { canPublish, publishDraft } from '../lib/api.js'
+import { areaError, draftErrors, TRIP_TEXT_LIMITS, updateArea, updateElement, updateTheme, updateTripText } from '../lib/draftEdit.js'
 import { formatDate } from '../lib/core.js'
 import { pointsFromInput, THEME_ACCENTS, THEME_ICONS } from '../lib/validate.js'
 import { ACCENT_COLORS, ICON_SYMBOLS, resolveTheme, themeVars } from '../lib/theme.js'
@@ -12,7 +13,8 @@ import { ACCENT_COLORS, ICON_SYMBOLS, resolveTheme, themeVars } from '../lib/the
 const storage = (() => { try { return window.localStorage } catch { return null } })()
 const safe = storage ?? { getItem: () => null, setItem: () => { throw new Error('ingen lagring') } }
 
-const TABS = [['program', 'Program'], ['poster', 'Poster'], ['lag', 'Lag'], ['poeng', 'Poeng'], ['tema', 'Tema']]
+const TABS = [['turen', 'Turen'], ['program', 'Program'], ['poster', 'Poster'], ['lag', 'Lag'], ['poeng', 'Poeng'], ['tema', 'Tema']]
+const STALE_DRAFT = 'Utkastet er publisert eller byttet ut i en annen fane. Last siden på nytt.'
 const decimal = (text) => (String(text).trim() === '' ? NaN : Number(String(text).trim().replace(',', '.')))
 const same = (a, b) => a === b || (Number.isNaN(a) && Number.isNaN(b))
 
@@ -39,7 +41,7 @@ function NumField({ id, label, value, parse, onValue, errors, inputMode = 'decim
   )
 }
 
-function AreaFields({ area, onArea, general }) {
+function AreaFields({ area, onArea, onProblem, general }) {
   const [texts, setTexts] = useState({ lat: String(area.center.lat), lng: String(area.center.lng), radius: String(area.radius_m) })
   const [error, setError] = useState('')
   function change(key, value) {
@@ -48,8 +50,10 @@ function AreaFields({ area, onArea, general }) {
     const candidate = { center: { lat: decimal(next.lat), lng: decimal(next.lng) }, radius_m: decimal(next.radius) }
     const problem = areaError(candidate)
     setError(problem ?? '')
+    onProblem(Boolean(problem))
     if (!problem) onArea(candidate)
   }
+  useEffect(() => () => onProblem(false), []) // eslint-disable-line react-hooks/exhaustive-deps -- feltene fylles på nytt neste gang
   const msg = error || general.find((g) => g.path.startsWith('trip.area'))?.message
   return (
     <fieldset className="surface draft-area">
@@ -72,8 +76,11 @@ export default function Utkast() {
   const [draft, setDraft] = useState(stored?.draft ?? null)
   const draftRef = useRef(draft)
   const [saved, setSaved] = useState('')
-  const [tab, setTab] = useState('program')
+  const [tab, setTab] = useState('turen')
   const [selected, setSelected] = useState(null)
+  const [publishError, setPublishError] = useState('')
+  const [areaPending, setAreaPending] = useState(false)
+  const navigate = useNavigate()
 
   if (!isOrganizer) return <Navigate to="/" replace />
 
@@ -95,9 +102,27 @@ export default function Utkast() {
   /** Alle endringer går hit: nytt utkast i visningen og lagret med en gang. */
   function apply(next) {
     if (next === draftRef.current) return
+    // en gammel fane skal ikke lagre et lukket utkast på nytt eller skrive over et nytt
+    if (!isCurrentDraft(safe, stored.created_at)) { setPublishError(STALE_DRAFT); return }
     draftRef.current = next
     setDraft(next)
+    setPublishError('')
     setSaved(saveDraft(safe, stored.request, next, new Date(stored.created_at ?? Date.now())) ? 'Lagret' : 'Kunne ikke lagre')
+  }
+  /** Publiserer etter bekreftelse. Utkastet tømmes først når turen er lagret. */
+  function publish() {
+    if (!canPublish(draftRef.current)) return
+    if (!window.confirm('Publisere turen? Den får turkode, lenke og QR-kode (i demo virker de bare i denne nettleseren), og utkastet lukkes. Du kan ikke angre publiseringen.')) return
+    if (!isCurrentDraft(safe, stored.created_at)) { setPublishError(STALE_DRAFT); return } // sjekkes etter bekreftelsen
+    const result = publishDraft(safe, draftRef.current, stored.request)
+    if (!result.ok) {
+      setPublishError(result.error === 'STORAGE_FAILED'
+        ? 'Turen kunne ikke lagres. Lagringen i nettleseren kan være full eller sperret. Fjern noen bilder i demoen og prøv igjen. Utkastet ditt er beholdt.'
+        : 'Turen kunne ikke publiseres. Prøv igjen. Utkastet ditt er beholdt.')
+      return
+    }
+    clearDraft(safe)
+    navigate(`/del/${result.data.trip.slug}`, { replace: true })
   }
   const edit = (section, id, patch) => apply(updateElement(draftRef.current, section, id, patch))
 
@@ -127,6 +152,23 @@ export default function Utkast() {
       onValue={(v) => edit('checkpoints', cp.id, { points: v })} errors={errorsFor(cp.id, 'points')} />
   )
 
+  const tripErrors = (field) => errors.general.filter((g) => g.path === `trip.${field}`)
+  const tripText = (field, label, multiline) => (
+    <Field id={`trip-${field}`} label={label} errors={tripErrors(field)}>
+      {(aria) => {
+        const props = { ...aria, maxLength: TRIP_TEXT_LIMITS[field], value: trip[field] ?? '', onChange: (e) => apply(updateTripText(draftRef.current, { [field]: e.target.value })) }
+        return multiline ? <textarea {...props} rows={3} /> : <input {...props} type="text" />
+      }}
+    </Field>
+  )
+  const tripPanel = (
+    <div className="surface draft-card">
+      {tripText('name', 'Navn på turen')}
+      {tripText('description', 'Beskrivelse', true)}
+      {tripText('announcement', 'Velkomstbeskjed til deltakerne', true)}
+    </div>
+  )
+
   const programPanel = (
     <ul className="draft-list">
       {items.map((item) => ( // stabil rekkefølge (som utkastet), så et kort ikke hopper mens datoen eller klokkeslettet endres
@@ -145,7 +187,7 @@ export default function Utkast() {
 
   const postPanel = (
     <>
-      <AreaFields area={trip.area} general={errors.general} onArea={(area) => apply(updateArea(draftRef.current, area))} />
+      <AreaFields area={trip.area} onProblem={setAreaPending} general={errors.general} onArea={(area) => apply(updateArea(draftRef.current, area))} />
       <ul className="draft-list">
         {checkpoints.map((cp) => (
           <li key={cp.id} className={`surface draft-card${selectedPost?.id === cp.id ? ' selected' : ''}`} onFocusCapture={() => setSelected(cp.id)}>
@@ -242,7 +284,7 @@ export default function Utkast() {
     </>
   )
 
-  const panels = { program: programPanel, poster: postPanel, lag: teamPanel, poeng: pointsPanel, tema: themePanel }
+  const panels = { turen: tripPanel, program: programPanel, poster: postPanel, lag: teamPanel, poeng: pointsPanel, tema: themePanel }
   const hasMap = tab === 'poster' && selectedPost
 
   return (
@@ -251,7 +293,7 @@ export default function Utkast() {
       <main className="start draft-view">
         <div className="start-panel draft-panel">
           <span className="eyebrow">UTKAST</span>
-          <h1>{trip.name}</h1>
+          <h1>{trip.name || 'Uten navn'}</h1>
           <p className="muted">Demo: KI-en er simulert, og destinasjonen er alltid prøveturens. Endringer lagres med en gang.</p>
           <dl className="request-summary surface">
             <dt>Periode</dt><dd>{period}</dd>
@@ -263,13 +305,15 @@ export default function Utkast() {
           <div className="draft-status surface">
             {errors.count > 0
               ? <p className="field-error draft-count">{errors.count} ting må rettes før publisering</p>
-              : <p className="draft-count draft-ok">Utkastet er klart for publisering</p>}
+              : areaPending
+                ? <p className="field-error draft-count">Rett området før publisering</p>
+                : <p className="draft-count draft-ok">Utkastet er klart for publisering</p>}
             {errors.general.length > 0 && <ul className="draft-general">{errors.general.map((g, i) => <li key={`${g.path}-${i}`} className="field-error">{g.message}</li>)}</ul>}
             <div className="draft-actions">
-              <button type="button" className="button gold" disabled>Publiser</button>
+              <button type="button" className="button gold" disabled={!canPublish(draft) || areaPending} onClick={publish}>Publiser</button>
               <p className="save-status" role="status">{saved}</p>
             </div>
-            {errors.count === 0 && <p className="muted">Publisering kommer i neste steg</p>}
+            {publishError && <p className="field-error" role="alert">{publishError}</p>}
           </div>
 
           <div role="tablist" aria-label="Utkast" className="draft-tabs">
