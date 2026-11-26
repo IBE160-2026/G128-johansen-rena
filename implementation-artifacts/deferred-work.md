@@ -67,3 +67,10 @@
 - source_spec: `implementation-artifacts/spec-3-6-poeng-beregnes-fra-godkjente-innsendinger.md`
   summary: Admin-postskjemaet (`saveTask`) og Laget-fanen har ingen kjørende komponenttest.
   evidence: Ingen React-testoppsett. Verifisert i headless Chrome. Dekkes av flyttesten i Story 7.1.
+
+- source_spec: `implementation-artifacts/spec-4-2-deltakeren-ser-ledertavlen.md`
+  summary: Ledertavlens oppdatering, dra-ned-gest og live-melding har ingen automatiske tester.
+  evidence: Repoet har ingen DOM-testoppsett; bare den rene `rankStandings` er testet. Verifiseres manuelt og i Story 7.1.
+- source_spec: `implementation-artifacts/spec-4-2-deltakeren-ser-ledertavlen.md`
+  summary: Merket «Oppdateres live» på ledertavlen lover mer enn 4.2 leverer.
+  evidence: Det finnes ingen sanntid før Story 4.3. Teksten bør vurderes da.
